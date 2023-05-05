@@ -120,4 +120,24 @@ class Common extends REST_Controller {
             } 
         echo json_encode($response);
     } 
+    public function get_all_common_details_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $gender = $this->model->selectWhereData('tbl_gender',array(),array('id','gender'),false);
+            $marital_status = $this->model->selectWhereData('tbl_marital_status',array('status'=>1),array('id','marital_status'),false);
+            $state_data = $this->model->selectWhereData('tbl_states',array(),array('id','name'),false);
+            $response['code'] = REST_Controller::HTTP_OK;
+            $response['status'] = true;
+            $response['message'] = 'success';
+            $response['gender_data'] = $gender;
+            $response['marital_status_data'] = $marital_status;
+            $response['state_data'] = $state_data;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
 }

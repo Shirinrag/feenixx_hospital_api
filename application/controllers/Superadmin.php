@@ -41,7 +41,13 @@ class Superadmin extends REST_Controller {
                 $email = $this->input->post('email');
                 $password = $this->input->post('password');
                 $specialization = $this->input->post('specialization');
-                $address = $this->input->post('address');
+                $address1 = $this->input->post('address1');
+                $address2 = $this->input->post('address2');
+                $state = $this->input->post('state');
+                $city = $this->input->post('city');
+                $pincode = $this->input->post('pincode');
+                $dob = $this->input->post('dob');
+                $gender = $this->input->post('gender');              
                 $profile_image = $this->input->post('image');
                 if(empty($first_name)){
                     $response['message'] = "First Name is required";
@@ -57,6 +63,21 @@ class Superadmin extends REST_Controller {
                     $response['code'] = 201;
                 }else if(empty($specialization)){
                     $response['message'] = "Specialization is required";
+                    $response['code'] = 201;
+                }else if(empty($dob)){
+                    $response['message'] = "DOB is required";
+                    $response['code'] = 201;
+                }else if(empty($address1)){
+                    $response['message'] = "Address 1 is required";
+                    $response['code'] = 201;
+                }else if(empty($state)){
+                    $response['message'] = "State is required";
+                    $response['code'] = 201;
+                }else if(empty($city)){
+                    $response['message'] = "City is required";
+                    $response['code'] = 201;
+                }else if(empty($pincode)){
+                    $response['message'] = "Pincode is required";
                     $response['code'] = 201;
                 }else{
                     $is_file = true;
@@ -97,14 +118,28 @@ class Superadmin extends REST_Controller {
                                 'last_name' =>  $last_name,
                                 'email' => $email,
                                 'contact_no' => $phone_no,
+                                'fk_designation_id'=>$specialization,
+                                'address1'=>$address1,
+                                'address2'=>$address2,
+                                'state'=>$state,
+                                'city'=>$city,
+                                'pincode'=>$pincode,
+                                'dob'=>$dob,
+                                'image'=>$profile_image,
+                                'fk_gender_id'=>$gender
+                            );
+                            $inserted_id = $this->model->insertData('tbl_doctor',$curl_data);
+
+                            $insert_data=array(
+                                'fk_id'=>$inserted_id,
+                                'first_name' => $first_name,
+                                'last_name' =>  $last_name,
+                                'email' => $email,
+                                'contact_no' => $phone_no,
                                 'password' => dec_enc('encrypt',$password),
                                 'fk_user_type'=>$user_type['id'],
-                                'specialization'=>$specialization,
-                                'address'=>$address,
-                                'image'=>$profile_image
-
                             );
-                            $inserted_id = $this->model->insertData('tbl_users',$curl_data);
+                            $this->model->insertData('tbl_users',$insert_data);
                            
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
@@ -165,7 +200,13 @@ class Superadmin extends REST_Controller {
                 $first_name = $this->input->post('first_name');
                 $last_name = $this->input->post('last_name');
                 $specialization = $this->input->post('specialization');
-                $address = $this->input->post('address');
+                $address1 = $this->input->post('address1');
+                $address2 = $this->input->post('address2');
+                $state = $this->input->post('state');
+                $city = $this->input->post('city');
+                $pincode = $this->input->post('pincode');
+                $dob = $this->input->post('dob');
+                $gender = $this->input->post('gender');              
                 $profile_image = $this->input->post('image');
                 $id = $this->input->post('id');
                 if(empty($first_name)){
@@ -179,6 +220,24 @@ class Superadmin extends REST_Controller {
                     $response['code'] = 201;
                 }else if(empty($specialization)){
                     $response['message'] = " Specialization is required";
+                    $response['code'] = 201;
+                }else if(empty($dob)){
+                    $response['message'] = "DOB is required";
+                    $response['code'] = 201;
+                }else if(empty($address1)){
+                    $response['message'] = "Address 1 is required";
+                    $response['code'] = 201;
+                }else if(empty($state)){
+                    $response['message'] = "State is required";
+                    $response['code'] = 201;
+                }else if(empty($city)){
+                    $response['message'] = "City is required";
+                    $response['code'] = 201;
+                }else if(empty($pincode)){
+                    $response['message'] = "Pincode is required";
+                    $response['code'] = 201;
+                }else if(empty($gender)){
+                    $response['message'] = "Gender is required";
                     $response['code'] = 201;
                 }else{
                     $is_file = true;
@@ -214,8 +273,23 @@ class Superadmin extends REST_Controller {
                             'last_name' =>  $last_name,
                             'address' => $address,
                             'image' => $profile_image1,
+                            'fk_designation_id'=>$specialization,
+                            'address1'=>$address1,
+                            'address2'=>$address2,
+                            'state'=>$state,
+                            'city'=>$city,
+                            'pincode'=>$pincode,
+                            'dob'=>$dob,
+                            'fk_gender_id'=>$gender,
                         );
-                        $this->model->updateData('tbl_users',$curl_data,array('id'=>$id));
+                        $this->model->updateData('tbl_doctor',$curl_data,array('id'=>$id));
+
+                        $update_data = array(
+                            'first_name' => $first_name,
+                            'last_name' =>  $last_name,
+                        );
+                        $this->model->updateData('tbl_users',$update_data,array('fk_id'=>$id,'fk_user_type'=>2));
+
                         $response['code'] = REST_Controller::HTTP_OK;
                         $response['status'] = true;
                         $response['message'] = 'Doctor Details Updated Successfully';
@@ -240,9 +314,10 @@ class Superadmin extends REST_Controller {
                 $response['code'] = 201;
             } else {
                 $update_data = array(
-                    'login_status'=>$status,
+                    'status'=>$status,
                 );
-                $this->model->updateData('tbl_users',$update_data, array('id'=>$id));
+                $this->model->updateData('tbl_doctor',$update_data, array('id'=>$id));
+        
                 $response['message'] = 'success';
                 $response['code'] = 200;
                 $response['status'] = true;
@@ -266,7 +341,8 @@ class Superadmin extends REST_Controller {
                     $curl_data = array(
                         'del_status' =>0,
                     );
-                    $this->model->updateData('tbl_users',$curl_data,array('id'=>$id));
+                    $this->model->updateData('tbl_doctor',$curl_data,array('id'=>$id));
+                    $this->model->updateData('tbl_users',$curl_data,array('fk_id'=>$id,'fk_user_type'=>2));
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Doctor Deleted Successfully';
