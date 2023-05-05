@@ -4,8 +4,8 @@ function dec_enc($action, $string)
 {
     $output = false;
     $encrypt_method = "AES-256-CBC";
-    $secret_key = 'parking_adda key';
-    $secret_iv = 'parking_adda iv';
+    $secret_key = 'feenixx_hospital key';
+    $secret_iv = 'feenixx_hospital iv';
     $key = hash('sha256', $secret_key);
     $iv = substr(hash('sha256', $secret_iv), 0, 16);
     if ($action == 'encrypt') {
