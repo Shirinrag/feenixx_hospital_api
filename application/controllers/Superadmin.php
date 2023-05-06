@@ -102,14 +102,26 @@ class Superadmin extends REST_Controller {
                         }
                     }
                     if ($is_file) {
-                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_users', array('contact_no'=>$phone_no,'login_status'=>1,'del_status'=>1));
-                        $check_email_count = $this->model->CountWhereRecord('tbl_users', array('email'=>$email,'login_status'=>1,'del_status'=>1));
+                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_doctor', array('contact_no'=>$phone_no,'status'=>1,'del_status'=>1));
+                        $check_contact_no_count_1 = $this->model->CountWhereRecord('tbl_users', array('contact_no'=>$phone_no,'login_status'=>1,'del_status'=>1));
+                        $check_email_count = $this->model->CountWhereRecord('tbl_doctor', array('email'=>$email,'status'=>1,'del_status'=>1));
+                        $check_email_count_1 = $this->model->CountWhereRecord('tbl_users', array('email'=>$email,'login_status'=>1,'del_status'=>1));
                         if($check_contact_no_count > 0){
                             $response['code'] = 201;
                             $response['status'] = false;
                             $response['message'] = 'Contact No is Already exist.';
                             $response['error_status'] = 'contact_no';                     
+                        }else if($check_contact_no_count_1 > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Contact No is Already exist.';
+                            $response['error_status'] = 'contact_no';                     
                         }elseif($check_email_count > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Email is Already exist.';
+                            $response['error_status'] = 'email';                     
+                        }elseif($check_email_count_1 > 0){
                             $response['code'] = 201;
                             $response['status'] = false;
                             $response['message'] = 'Email is Already exist.';
@@ -391,10 +403,9 @@ class Superadmin extends REST_Controller {
                     $response['code'] = 201;
                 }else if(empty($email)){
                     $response['message'] = "Email is required";
-                    $response['code'] = 201;
-
-                }else if(empty($specialization)){
-                    $response['message'] = "Specialization is required";
+                    $response['code'] = 201; 
+                }else if(empty($fk_marital_status_id)){
+                    $response['message'] = "Marital Status is required";
                     $response['code'] = 201;
                 }else if(empty($dob)){
                     $response['message'] = "DOB is required";
@@ -411,36 +422,27 @@ class Superadmin extends REST_Controller {
                 }else if(empty($pincode)){
                     $response['message'] = "Pincode is required";
                     $response['code'] = 201;
-                }else{
-                    $is_file = true;
-                    if (!empty($_FILES['image']['name'])) {
-                        $image = trim($_FILES['image']['name']);
-                        $image = preg_replace('/\s/', '_', $image);
-                        $cat_image = mt_rand(100000, 999999) . '_' . $image;
-                        $config['upload_path'] = './uploads/';
-                        $config['file_name'] = $cat_image;
-                        $config['overwrite'] = TRUE;
-                        $config["allowed_types"] = 'gif|jpg|jpeg|png|bmp';
-                        $this->load->library('upload', $config);
-                        $this->upload->initialize($config);
-                        if (!$this->upload->do_upload('image')) {
-                            $is_file = false;
-                            $errors = $this->upload->display_errors();
-                            $response['code'] = 201;
-                            $response['message'] = $errors;
-                        } else {
-                            $profile_image = 'uploads/' . $cat_image;
-                        }
-                    }
-                    if ($is_file) {
-                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_users', array('contact_no'=>$phone_no,'login_status'=>1,'del_status'=>1));
-                        $check_email_count = $this->model->CountWhereRecord('tbl_users', array('email'=>$email,'login_status'=>1,'del_status'=>1));
+                }else{                    
+                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_patients', array('contact_no'=>$phone_no,'status'=>1,'del_status'=>1));
+                        $check_contact_no_count_1 = $this->model->CountWhereRecord('tbl_users', array('contact_no'=>$phone_no,'login_status'=>1,'del_status'=>1));
+                        $check_email_count = $this->model->CountWhereRecord('tbl_patients', array('email'=>$email,'status'=>1,'del_status'=>1));
+                        $check_email_count_1 = $this->model->CountWhereRecord('tbl_users', array('email'=>$email,'login_status'=>1,'del_status'=>1));
                         if($check_contact_no_count > 0){
                             $response['code'] = 201;
                             $response['status'] = false;
                             $response['message'] = 'Contact No is Already exist.';
                             $response['error_status'] = 'contact_no';                     
+                        }elseif($check_contact_no_count_1 > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Contact No is Already exist.';
+                            $response['error_status'] = 'contact_no';                     
                         }elseif($check_email_count > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Email is Already exist.';
+                            $response['error_status'] = 'email';                     
+                        }elseif($check_email_count_1 > 0){
                             $response['code'] = 201;
                             $response['status'] = false;
                             $response['message'] = 'Email is Already exist.';
@@ -479,7 +481,6 @@ class Superadmin extends REST_Controller {
                             $response['status'] = true;
                             $response['message'] = 'Doctor Details Added Successfully';
                         }
-                    }
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
