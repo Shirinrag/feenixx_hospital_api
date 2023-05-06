@@ -61,6 +61,7 @@ class Superadmin extends REST_Controller {
                 }else if(empty($email)){
                     $response['message'] = "Email is required";
                     $response['code'] = 201;
+
                 }else if(empty($specialization)){
                     $response['message'] = "Specialization is required";
                     $response['code'] = 201;
@@ -106,11 +107,13 @@ class Superadmin extends REST_Controller {
                         if($check_contact_no_count > 0){
                             $response['code'] = 201;
                             $response['status'] = false;
-                            $response['message'] = 'Contact No is Already exist.';                     
+                            $response['message'] = 'Contact No is Already exist.';
+                            $response['error_status'] = 'contact_no';                     
                         }elseif($check_email_count > 0){
                             $response['code'] = 201;
                             $response['status'] = false;
-                            $response['message'] = 'Email is Already exist.';                     
+                            $response['message'] = 'Email is Already exist.';
+                            $response['error_status'] = 'email';                     
                         }else{
                             $user_type = $this->model->selectWhereData('tbl_user_type',array('user_type'=>"Doctor"),array('id'));
                             $curl_data =  array(
@@ -153,17 +156,22 @@ class Superadmin extends REST_Controller {
         }
         echo json_encode($response);
     }
-    public function display_all_doctor_details_get()
+    public function display_all_doctor_details_post()
     {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
         if ($validate) {
-               $this->load->model('superadmin_model');
-                $doctor_data = $this->superadmin_model->display_all_doctor_details();
+                $this->load->model('doctor_model');
+                $doctor_data = $this->doctor_model->get_datatables();
+                $count = $this->doctor_model->count_all();
+                $count_filtered = $this->doctor_model->count_filtered();             
+
                 $response['code'] = REST_Controller::HTTP_OK;
                 $response['status'] = true;
                 $response['message'] = 'success';
                 $response['doctor_data'] = $doctor_data;
+                $response['count'] = $count;
+                $response['count_filtered'] = $count_filtered;
         } else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';
@@ -180,11 +188,13 @@ class Superadmin extends REST_Controller {
                     $response['message'] = "Id is required";
                     $response['code'] = 201;
                 }else{
-                    $doctor_details = $this->model->selectWhereData('tbl_users',array('id'=>$id),array('*'));
+                    $doctor_details = $this->model->selectWhereData('tbl_doctor',array('id'=>$id),array('*'));
+                    $city_data = $this->model->selectWhereData('tbl_cities',array('state_id'=>$doctor_details['state']),array('id','city'),false);
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'success';
                     $response['doctor_details_data'] = $doctor_details;
+                    $response['city_data'] = $city_data;
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -262,7 +272,7 @@ class Superadmin extends REST_Controller {
                         }
                     }
                     if ($is_file) {
-                        $user_data = $this->model->selectWhereData('tbl_users',array('id'=>$id),array('image'));
+                        $user_data = $this->model->selectWhereData('tbl_doctor',array('id'=>$id),array('image'));
                         if(empty($profile_image)){
                             $profile_image1 = $user_data['image'];
                         }else{
@@ -271,7 +281,6 @@ class Superadmin extends REST_Controller {
                         $curl_data =  array(
                             'first_name' => $first_name,
                             'last_name' =>  $last_name,
-                            'address' => $address,
                             'image' => $profile_image1,
                             'fk_designation_id'=>$specialization,
                             'address1'=>$address1,
@@ -317,7 +326,7 @@ class Superadmin extends REST_Controller {
                     'status'=>$status,
                 );
                 $this->model->updateData('tbl_doctor',$update_data, array('id'=>$id));
-        
+                 // $this->model->updateData('tbl_users',$update_data,array('fk_id'=>$id,'fk_user_type'=>2));
                 $response['message'] = 'success';
                 $response['code'] = 200;
                 $response['status'] = true;
@@ -346,6 +355,131 @@ class Superadmin extends REST_Controller {
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Doctor Deleted Successfully';
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
+    public function add_patient_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $first_name = $this->input->post('first_name');
+                $last_name = $this->input->post('last_name');
+                $phone_number = $this->input->post('phone_number');
+                $email = $this->input->post('email');
+                $fk_marital_status_id = $this->input->post('fk_marital_status_id');
+                $address1 = $this->input->post('address1');
+                $address2 = $this->input->post('address2');
+                $state = $this->input->post('state');
+                $city = $this->input->post('city');
+                $pincode = $this->input->post('pincode');
+                $dob = $this->input->post('dob');
+                $gender = $this->input->post('gender');              
+                if(empty($first_name)){
+                    $response['message'] = "First Name is required";
+                    $response['code'] = 201;
+                }else if(empty($last_name)){
+                    $response['message'] = "Last Name is required";
+                    $response['code'] = 201;
+                }else if(empty($phone_no)){
+                    $response['message'] = "Phone No is required";
+                    $response['code'] = 201;
+                }else if(empty($email)){
+                    $response['message'] = "Email is required";
+                    $response['code'] = 201;
+
+                }else if(empty($specialization)){
+                    $response['message'] = "Specialization is required";
+                    $response['code'] = 201;
+                }else if(empty($dob)){
+                    $response['message'] = "DOB is required";
+                    $response['code'] = 201;
+                }else if(empty($address1)){
+                    $response['message'] = "Address 1 is required";
+                    $response['code'] = 201;
+                }else if(empty($state)){
+                    $response['message'] = "State is required";
+                    $response['code'] = 201;
+                }else if(empty($city)){
+                    $response['message'] = "City is required";
+                    $response['code'] = 201;
+                }else if(empty($pincode)){
+                    $response['message'] = "Pincode is required";
+                    $response['code'] = 201;
+                }else{
+                    $is_file = true;
+                    if (!empty($_FILES['image']['name'])) {
+                        $image = trim($_FILES['image']['name']);
+                        $image = preg_replace('/\s/', '_', $image);
+                        $cat_image = mt_rand(100000, 999999) . '_' . $image;
+                        $config['upload_path'] = './uploads/';
+                        $config['file_name'] = $cat_image;
+                        $config['overwrite'] = TRUE;
+                        $config["allowed_types"] = 'gif|jpg|jpeg|png|bmp';
+                        $this->load->library('upload', $config);
+                        $this->upload->initialize($config);
+                        if (!$this->upload->do_upload('image')) {
+                            $is_file = false;
+                            $errors = $this->upload->display_errors();
+                            $response['code'] = 201;
+                            $response['message'] = $errors;
+                        } else {
+                            $profile_image = 'uploads/' . $cat_image;
+                        }
+                    }
+                    if ($is_file) {
+                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_users', array('contact_no'=>$phone_no,'login_status'=>1,'del_status'=>1));
+                        $check_email_count = $this->model->CountWhereRecord('tbl_users', array('email'=>$email,'login_status'=>1,'del_status'=>1));
+                        if($check_contact_no_count > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Contact No is Already exist.';
+                            $response['error_status'] = 'contact_no';                     
+                        }elseif($check_email_count > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Email is Already exist.';
+                            $response['error_status'] = 'email';                     
+                        }else{
+                            $user_type = $this->model->selectWhereData('tbl_user_type',array('user_type'=>"Doctor"),array('id'));
+                            $curl_data =  array(
+                                'first_name' => $first_name,
+                                'last_name' =>  $last_name,
+                                'email' => $email,
+                                'contact_no' => $phone_no,
+                                'fk_designation_id'=>$specialization,
+                                'address1'=>$address1,
+                                'address2'=>$address2,
+                                'state'=>$state,
+                                'city'=>$city,
+                                'pincode'=>$pincode,
+                                'dob'=>$dob,
+                                'image'=>$profile_image,
+                                'fk_gender_id'=>$gender
+                            );
+                            $inserted_id = $this->model->insertData('tbl_doctor',$curl_data);
+
+                            $insert_data=array(
+                                'fk_id'=>$inserted_id,
+                                'first_name' => $first_name,
+                                'last_name' =>  $last_name,
+                                'email' => $email,
+                                'contact_no' => $phone_no,
+                                'password' => dec_enc('encrypt',$password),
+                                'fk_user_type'=>$user_type['id'],
+                            );
+                            $this->model->insertData('tbl_users',$insert_data);
+                           
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Doctor Details Added Successfully';
+                        }
+                    }
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

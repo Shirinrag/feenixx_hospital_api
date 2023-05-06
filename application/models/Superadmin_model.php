@@ -8,9 +8,9 @@ class Superadmin_model extends CI_Model {
 	}
 	public function display_all_doctor_details()
 	{
-		$this->db->select('tbl_doctor.*,tbl_state.name,CONCAT(tbl_doctor.status,",",tbl_doctor.id) AS statusdata,tbl_cities.city as city_name,tbl_gender.gender,tbl_designation.designation_name');
+		$this->db->select('tbl_doctor.*,tbl_states.name,CONCAT(tbl_doctor.status,",",tbl_doctor.id) AS statusdata,tbl_cities.city as city_name,tbl_gender.gender,tbl_designation.designation_name');
 		$this->db->from('tbl_doctor');
-		$this->db->join('tbl_state','tbl_state.id=tbl_doctor.state','left');
+		$this->db->join('tbl_states','tbl_states.id=tbl_doctor.state','left');
 		$this->db->join('tbl_cities','tbl_cities.id=tbl_doctor.city','left');
 		$this->db->join('tbl_gender','tbl_gender.id=tbl_doctor.fk_gender_id','left');
 		$this->db->join('tbl_designation','tbl_designation.id=tbl_doctor.fk_designation_id','left');
