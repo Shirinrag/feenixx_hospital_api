@@ -382,9 +382,10 @@ class Superadmin extends REST_Controller {
         if ($validate) {
                 $first_name = $this->input->post('first_name');
                 $last_name = $this->input->post('last_name');
-                $phone_number = $this->input->post('phone_number');
+                $phone_no = $this->input->post('phone_no');
                 $email = $this->input->post('email');
-                $fk_marital_status_id = $this->input->post('fk_marital_status_id');
+                $marital_status = $this->input->post('marital_status');
+                $blood_group = $this->input->post('blood_group');
                 $address1 = $this->input->post('address1');
                 $address2 = $this->input->post('address2');
                 $state = $this->input->post('state');
@@ -392,6 +393,8 @@ class Superadmin extends REST_Controller {
                 $pincode = $this->input->post('pincode');
                 $dob = $this->input->post('dob');
                 $gender = $this->input->post('gender');              
+                $emergency_contact_name = $this->input->post('emergency_contact_name');
+                $emergency_contact_phone = $this->input->post('emergency_contact_phone');
                 if(empty($first_name)){
                     $response['message'] = "First Name is required";
                     $response['code'] = 201;
@@ -404,7 +407,7 @@ class Superadmin extends REST_Controller {
                 }else if(empty($email)){
                     $response['message'] = "Email is required";
                     $response['code'] = 201; 
-                }else if(empty($fk_marital_status_id)){
+                }else if(empty($marital_status)){
                     $response['message'] = "Marital Status is required";
                     $response['code'] = 201;
                 }else if(empty($dob)){
@@ -448,24 +451,24 @@ class Superadmin extends REST_Controller {
                             $response['message'] = 'Email is Already exist.';
                             $response['error_status'] = 'email';                     
                         }else{
-                            $user_type = $this->model->selectWhereData('tbl_user_type',array('user_type'=>"Doctor"),array('id'));
+                            $user_type = $this->model->selectWhereData('tbl_user_type',array('user_type'=>"Patient"),array('id'));
                             $curl_data =  array(
                                 'first_name' => $first_name,
                                 'last_name' =>  $last_name,
                                 'email' => $email,
                                 'contact_no' => $phone_no,
-                                'fk_designation_id'=>$specialization,
+                                'fk_marital_status_id'=>$marital_status,
                                 'address1'=>$address1,
                                 'address2'=>$address2,
                                 'state'=>$state,
                                 'city'=>$city,
                                 'pincode'=>$pincode,
                                 'dob'=>$dob,
-                                'image'=>$profile_image,
-                                'fk_gender_id'=>$gender
+                                'fk_gender_id'=>$gender,
+                                'fk_blood_group_id'=>$blood_group
                             );
-                            $inserted_id = $this->model->insertData('tbl_doctor',$curl_data);
-
+                            $inserted_id = $this->model->insertData('tbl_patients',$curl_data);
+                            $password = "Password1";
                             $insert_data=array(
                                 'fk_id'=>$inserted_id,
                                 'first_name' => $first_name,
@@ -476,13 +479,34 @@ class Superadmin extends REST_Controller {
                                 'fk_user_type'=>$user_type['id'],
                             );
                             $this->model->insertData('tbl_users',$insert_data);
-                           
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
                             $response['message'] = 'Doctor Details Added Successfully';
                         }
                 }
         }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function display_all_patient_details_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $this->load->model('patient_model');
+                $patient_data = $this->patient_model->get_datatables();
+                $count = $this->patient_model->count_all();
+                $count_filtered = $this->patient_model->count_filtered();            
+
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['patient_data'] = $patient_data;
+                $response['count'] = $count;
+                $response['count_filtered'] = $count_filtered;
+        } else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';
         }

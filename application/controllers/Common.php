@@ -130,6 +130,8 @@ class Common extends REST_Controller {
             $marital_status = $this->model->selectWhereData('tbl_marital_status',array('status'=>1),array('id','marital_status'),false);
             $state_data = $this->model->selectWhereData('tbl_states',array(),array('id','name'),false);
             $designation_data = $this->model->selectWhereData('tbl_designation',array(),array('id','designation_name'),false);
+            $blood_group_data = $this->model->selectWhereData('tbl_blood_group',array(),array('id','blood_group'),false);
+            $patient_id = random_strings();
             $response['code'] = REST_Controller::HTTP_OK;
             $response['status'] = true;
             $response['message'] = 'success';
@@ -137,6 +139,8 @@ class Common extends REST_Controller {
             $response['marital_status_data'] = $marital_status;
             $response['state_data'] = $state_data;
             $response['designation_data'] = $designation_data;
+            $response['blood_group_data'] = $blood_group_data;
+            $response['patient_id'] = $patient_id;
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';

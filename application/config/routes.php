@@ -56,10 +56,13 @@ $route['register'] = 'common/register_data';
 $route['login-data'] = 'common/login_data';
 $route['get-all-common-details'] = 'common/get_all_common_details';
 $route['get-city-data-on-state-id'] = 'common/get_city_data_on_state_id';
+// ============================ Doctor Details===========================================
 $route['add-doctor'] = 'superadmin/add_doctor';
 $route['display-all-doctor-details'] = 'superadmin/display_all_doctor_details';
 $route['get-all-doctor-on-id'] = 'superadmin/get_all_doctor_on_id';
 $route['update-doctor'] = 'superadmin/update_doctor';
 $route['update-doctor-status'] = 'superadmin/update_doctor_status';
 $route['delete-doctor'] = 'superadmin/delete_doctor';
+// =========================== Patient Details=============================================
 $route['add-patient'] = 'superadmin/add_patient';
+$route['display-all-patient-details'] = 'superadmin/display_all_patient_details';

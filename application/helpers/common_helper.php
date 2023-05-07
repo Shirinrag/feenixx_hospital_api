@@ -60,3 +60,21 @@ function generate_request_id($tbl_name='',$column_name='')
         } while ($isUnique == false);
         return $randTemp;
     }
+
+    function random_strings() 
+    { 
+        $CI = get_instance();
+        $varchar = generate_varchar_string(4);
+        $rand = mt_rand(1000000, 9999999);
+        $randTemp = $varchar.$rand;
+        $isUnique = true;
+        do {
+            $result = $CI->db->get_where('tbl_patients', array('patient_id' => $randTemp));
+            if ($result->num_rows() > 0) {
+                $isUnique = false;
+            } else {
+                $isUnique = true;
+            }
+        } while ($isUnique == false);
+        return $randTemp;
+    }
