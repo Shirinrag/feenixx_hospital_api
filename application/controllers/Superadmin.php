@@ -380,6 +380,7 @@ class Superadmin extends REST_Controller {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
         if ($validate) {
+                $patient_id = $this->input->post('patient_id');
                 $first_name = $this->input->post('first_name');
                 $last_name = $this->input->post('last_name');
                 $phone_no = $this->input->post('phone_no');
@@ -453,6 +454,7 @@ class Superadmin extends REST_Controller {
                         }else{
                             $user_type = $this->model->selectWhereData('tbl_user_type',array('user_type'=>"Patient"),array('id'));
                             $curl_data =  array(
+                                'patient_id' => $patient_id,
                                 'first_name' => $first_name,
                                 'last_name' =>  $last_name,
                                 'email' => $email,
