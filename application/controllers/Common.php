@@ -95,6 +95,7 @@ class Common extends REST_Controller {
                 $response['code'] = 201;
             } else {
                 $encryptedpassword = dec_enc('encrypt',$password);
+                // echo '<pre>'; print_r($encryptedpassword); exit;
                 $check_email_count = $this->model->CountWhereRecord('tbl_users',array('email'=>$email));
                 if($check_email_count > 0) {       
                     $login_credentials_data = array(
@@ -109,13 +110,13 @@ class Common extends REST_Controller {
                             $response['data'] = $login_info;
                     } else {
                         $response['code'] = 201;
-                        $response['status'] = "wrong_password";
+                        $response['error_status'] = "wrong_password";
                         $response['message'] = 'Incorrect Password';
                     }      
                 }  else {
                     $response['code'] = 201;
                     $response['message'] = 'Incorrect Username';
-                    $response['status'] = "wrong_username";
+                    $response['error_status'] = "wrong_username";
                 }          
             } 
         echo json_encode($response);
