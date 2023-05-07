@@ -66,3 +66,4 @@ $route['delete-doctor'] = 'superadmin/delete_doctor';
 // =========================== Patient Details=============================================
 $route['add-patient'] = 'superadmin/add_patient';
 $route['display-all-patient-details'] = 'superadmin/display_all_patient_details';
+$route['get-all-patient-on-id'] = 'superadmin/get_all_patient_on_id';

@@ -467,7 +467,9 @@ class Superadmin extends REST_Controller {
                                 'pincode'=>$pincode,
                                 'dob'=>$dob,
                                 'fk_gender_id'=>$gender,
-                                'fk_blood_group_id'=>$blood_group
+                                'fk_blood_group_id'=>$blood_group,
+                                'emergency_contact_phone'=>$emergency_contact_phone,
+                                'emergency_contact_name'=>$emergency_contact_name,
                             );
                             $inserted_id = $this->model->insertData('tbl_patients',$curl_data);
                             $password = "Password1";
@@ -509,6 +511,30 @@ class Superadmin extends REST_Controller {
                 $response['count'] = $count;
                 $response['count_filtered'] = $count_filtered;
         } else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function get_all_patient_on_id_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                if(empty($id)){
+                    $response['message'] = "Id is required";
+                    $response['code'] = 201;
+                }else{
+                    $patient_details = $this->model->selectWhereData('tbl_patients',array('id'=>$id),array('*'));
+                    $city_data = $this->model->selectWhereData('tbl_cities',array('state_id'=>$patient_details['state']),array('id','city'),false);
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'success';
+                    $response['patient_details_data'] = $patient_details;
+                    $response['city_data'] = $city_data;
+                }
+        }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';
         }

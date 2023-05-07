@@ -11,8 +11,8 @@ class Patient_model extends CI_Model {
 
     public function _get_datatables_query()
     {    
-        $column_order = array('first_name','last_name','email','contact','dob','blood_group');
-        $column_search = array('first_name','last_name','email','contact','dob','blood_group');
+        $column_order = array('patient_id','first_name','last_name','email','contact','dob','blood_group');
+        $column_search = array('patient_id','first_name','last_name','email','contact','dob','blood_group');
 
         $this->db->select('tbl_patients.*,tbl_states.name,CONCAT(tbl_patients.status,",",tbl_patients.id) AS statusdata,tbl_cities.city as city_name,tbl_gender.gender,tbl_blood_group.blood_group');
         $this->db->from('tbl_patients');
