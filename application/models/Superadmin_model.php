@@ -20,5 +20,16 @@ class Superadmin_model extends CI_Model {
         $result = $query->result_array();
         return $result;
 	}
+	public function get_patient_details_on_patient_id($id='')
+	{
+		$this->db->select('tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_gender.gender,tbl_blood_group.blood_group');
+		$this->db->from('tbl_patients');
+		$this->db->join('tbl_gender','tbl_gender.id=tbl_patients.fk_gender_id','left');
+		$this->db->join('tbl_blood_group','tbl_blood_group.id=tbl_patients.fk_blood_group_id','left');
+		$this->db->where('tbl_patients.id',$id);
+		$query = $this->db->get();
+        $result = $query->row_array();
+        return $result;
+	}
 }
 

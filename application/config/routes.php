@@ -52,18 +52,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route['register'] = 'common/register_data';
-$route['login-data'] = 'common/login_data';
-$route['get-all-common-details'] = 'common/get_all_common_details';
-$route['get-city-data-on-state-id'] = 'common/get_city_data_on_state_id';
-// ============================ Doctor Details===========================================
-$route['add-doctor'] = 'superadmin/add_doctor';
-$route['display-all-doctor-details'] = 'superadmin/display_all_doctor_details';
-$route['get-all-doctor-on-id'] = 'superadmin/get_all_doctor_on_id';
-$route['update-doctor'] = 'superadmin/update_doctor';
-$route['update-doctor-status'] = 'superadmin/update_doctor_status';
-$route['delete-doctor'] = 'superadmin/delete_doctor';
-// =========================== Patient Details=============================================
-$route['add-patient'] = 'superadmin/add_patient';
-$route['display-all-patient-details'] = 'superadmin/display_all_patient_details';
-$route['get-all-patient-on-id'] = 'superadmin/get_all_patient_on_id';
+$route['register'] = 'common_api/register_data';
+$route['login-data'] = 'common_api/login_data';
+$route['get-all-common-details'] = 'common_api/get_all_common_details';
+$route['get-city-data-on-state-id'] = 'common_api/get_city_data_on_state_id';
+// ============================ Doctor Details=================================
+$route['add-doctor'] = 'superadmin_api/add_doctor';
+$route['display-all-doctor-details'] = 'superadmin_api/display_all_doctor_details';
+$route['get-all-doctor-on-id'] = 'superadmin_api/get_all_doctor_on_id';
+$route['update-doctor'] = 'superadmin_api/update_doctor';
+$route['update-doctor-status'] = 'superadmin_api/update_doctor_status';
+$route['delete-doctor'] = 'superadmin_api/delete_doctor';
+// =========================== Patient Details=================================
+$route['add-patient'] = 'superadmin_api/add_patient';
+$route['display-all-patient-details'] = 'superadmin_api/display_all_patient_details';
+$route['get-all-patient-on-id'] = 'superadmin_api/get_all_patient_on_id';
+$route['update-patient'] = 'superadmin_api/update_patient';
+$route['delete-patient'] = 'superadmin_api/delete_patient';
+// ============================= Appointment Details=========================
+$route['get-appointment-data'] = 'common_api/get_appointment_data';
+$route['get-patient-details-on-patient-id'] = 'doctor_api/get_patient_details_on_patient_id';
+

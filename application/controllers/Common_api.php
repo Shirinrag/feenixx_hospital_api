@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ini_set("memory_limit", "-1");
 require APPPATH . '/libraries/REST_Controller.php';
 
-class Common extends REST_Controller {
+class Common_api extends REST_Controller {
 
 	public function __construct() {
         parent::__construct();
@@ -158,6 +158,24 @@ class Common extends REST_Controller {
             $response['status'] = true;
             $response['message'] = 'success';
             $response['city_data'] = $city_data;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function get_appointment_data_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $patient_data = $this->model->selectWhereData('tbl_patients',array(),array('id','patient_id'),false);
+            $diseases_data = $this->model->selectWhereData('tbl_diseases',array('status'=>1),array('id','diseases_name'),false);            
+            $response['code'] = REST_Controller::HTTP_OK;
+            $response['status'] = true;
+            $response['message'] = 'success';
+            $response['patient_data'] = $patient_data;
+            $response['diseases_data'] = $diseases_data;
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';

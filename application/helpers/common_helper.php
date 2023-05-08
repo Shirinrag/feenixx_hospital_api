@@ -78,3 +78,17 @@ function generate_request_id($tbl_name='',$column_name='')
         } while ($isUnique == false);
         return $randTemp;
     }
+    function serial_no()
+    {
+        $CI = get_instance();
+        $serial_no = 000001;
+        do {
+            $result = $CI->db->get_where('tbl_appointment', array('serial_no' => $serial_no));
+            if ($result->num_rows() > 0) {
+                $isUnique = false;
+            } else {
+                $isUnique = true;
+            }
+        } while ($isUnique == false);
+        return $serial_no;
+    }

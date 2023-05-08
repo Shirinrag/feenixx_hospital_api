@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ini_set("memory_limit", "-1");
 require APPPATH . '/libraries/REST_Controller.php';
 
-class Superadmin extends REST_Controller {
+class Superadmin_api extends REST_Controller {
 
 	public function __construct() {
         parent::__construct();
@@ -533,6 +533,107 @@ class Superadmin extends REST_Controller {
                     $response['message'] = 'success';
                     $response['patient_details_data'] = $patient_details;
                     $response['city_data'] = $city_data;
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_patient_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                $first_name = $this->input->post('first_name');
+                $last_name = $this->input->post('last_name');
+                $marital_status = $this->input->post('marital_status');
+                $blood_group = $this->input->post('blood_group');
+                $address1 = $this->input->post('address1');
+                $address2 = $this->input->post('address2');
+                $state = $this->input->post('state');
+                $city = $this->input->post('city');
+                $pincode = $this->input->post('pincode');
+                $dob = $this->input->post('dob');
+                $gender = $this->input->post('gender');              
+                $emergency_contact_name = $this->input->post('emergency_contact_name');
+                $emergency_contact_phone = $this->input->post('emergency_contact_phone');
+                if(empty($first_name)){
+                    $response['message'] = "First Name is required";
+                    $response['code'] = 201;
+                }else if(empty($last_name)){
+                    $response['message'] = "Last Name is required";
+                    $response['code'] = 201;
+                }else if(empty($marital_status)){
+                    $response['message'] = "Marital Status is required";
+                    $response['code'] = 201;
+                }else if(empty($dob)){
+                    $response['message'] = "DOB is required";
+                    $response['code'] = 201;
+                }else if(empty($address1)){
+                    $response['message'] = "Address 1 is required";
+                    $response['code'] = 201;
+                }else if(empty($state)){
+                    $response['message'] = "State is required";
+                    $response['code'] = 201;
+                }else if(empty($city)){
+                    $response['message'] = "City is required";
+                    $response['code'] = 201;
+                }else if(empty($pincode)){
+                    $response['message'] = "Pincode is required";
+                    $response['code'] = 201;
+                }else{                    
+                            $curl_data =  array(
+                                'first_name' => $first_name,
+                                'last_name' =>  $last_name,
+                                'fk_marital_status_id'=>$marital_status,
+                                'address1'=>$address1,
+                                'address2'=>$address2,
+                                'state'=>$state,
+                                'city'=>$city,
+                                'pincode'=>$pincode,
+                                'dob'=>$dob,
+                                'fk_gender_id'=>$gender,
+                                'fk_blood_group_id'=>$blood_group,
+                                'emergency_contact_phone'=>$emergency_contact_phone,
+                                'emergency_contact_name'=>$emergency_contact_name,
+                            );
+                            $this->model->updateData('tbl_patients',$curl_data,array('id'=>$id));
+                            $password = "Password1";
+                            $update_data=array(
+                                'first_name' => $first_name,
+                                'last_name' =>  $last_name,
+                            );
+                            $this->model->updateData('tbl_users',$update_data,array('fk_id'=>$id,'fk_user_type'=>4));
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Doctor Details Updated Successfully';
+                        }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function delete_patient_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                if(empty($id)){
+                    $response['message'] = "Id is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data = array(
+                        'del_status' =>0,
+                    );
+                    $this->model->updateData('tbl_patients',$curl_data,array('id'=>$id));
+                    $this->model->updateData('tbl_users',$curl_data,array('fk_id'=>$id,'fk_user_type'=>4));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Patient Deleted Successfully';
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

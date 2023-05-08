@@ -13,3 +13,9 @@ ALTER TABLE `tbl_ward` ADD INDEX(`id`, `wards`);
 ALTER TABLE `tbl_patients` ADD `fk_blood_group_id` INT NULL DEFAULT NULL AFTER `fk_marital_status_id`;
 ALTER TABLE `tbl_patients` ADD `status` INT NOT NULL DEFAULT '1' AFTER `emergency_contact_phone`, ADD `del_status` INT NOT NULL DEFAULT '1' AFTER `status`;
 ALTER TABLE `tbl_patients` ADD `patient_id` VARCHAR(100) NULL DEFAULT NULL AFTER `id`;
+-- 08/05/2023
+ALTER TABLE `tbl_appointment` ADD INDEX(`id`,`fk_doctor_id`, `fk_patient_id`, `appointment_date`, `appointment_time`, `appointment_type`);
+ALTER TABLE `tbl_appointment_type` ADD INDEX(`id`, `type`);
+ALTER TABLE `tbl_patient_medical_documents` ADD INDEX(`id`, `fk_patient_id`);
+ALTER TABLE `tbl_patient_medical_documents` ADD `fk_appointment_id` INT NULL DEFAULT NULL AFTER `fk_patient_id`;
+ALTER TABLE `tbl_payment` ADD INDEX(`id`, `fk_patient_id`, `fk_appointment_id`, `payment_type`, `online_amount`, `cash_amount`, `mediclaim_amount`, `discount_amount`, `total_amount`);
