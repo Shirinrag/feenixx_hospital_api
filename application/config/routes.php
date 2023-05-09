@@ -73,3 +73,7 @@ $route['delete-patient'] = 'superadmin_api/delete_patient';
 $route['get-appointment-data'] = 'common_api/get_appointment_data';
 $route['get-patient-details-on-patient-id'] = 'doctor_api/get_patient_details_on_patient_id';
 
+$route['save-appointment-details'] = 'doctor_api/save_appointment_details';
+$route['get-all-appointment-details'] = 'doctor_api/get_all_appointment_details';
+
+
