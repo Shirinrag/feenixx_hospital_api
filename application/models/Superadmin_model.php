@@ -46,5 +46,16 @@ class Superadmin_model extends CI_Model {
         $result = $query->result_array();
         return $result;
 	}
+	public function display_all_diesases_details()
+	{
+		$this->db->select('tbl_diseases.*,CONCAT(tbl_diseases.status,",",tbl_diseases.id) AS statusdata');
+		$this->db->from('tbl_diseases');
+		$this->db->where('del_status',1);
+		$this->db->order_by('tbl_diseases.id','DESC');
+		$this->db->group_by('tbl_diseases.id');
+		$query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+	}
 }
 

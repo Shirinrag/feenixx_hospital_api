@@ -83,12 +83,26 @@ function generate_request_id($tbl_name='',$column_name='')
         $CI = get_instance();
         $serial_no = 000001;
         do {
-            $result = $CI->db->get_where('tbl_appointment', array('serial_no' => $serial_no));
+            $result = $CI->db->get_where('tbl_appointment', array('receipt_no' => $serial_no));
             if ($result->num_rows() > 0) {
                 $isUnique = false;
             } else {
-                $isUnique = true;
+                $isUnique = $serial_no + 1;
             }
         } while ($isUnique == false);
-        return $serial_no;
+        return $isUnique;
     }
+    function send_email($to="",$subject="",$message="",$attach=''){
+        // error_reporting(0);
+        $from = " noreply@feenixxhospitals.com";
+        $CI = get_instance();
+        $CI->load->library('email');
+        $email_data = $CI->load->view('new_email_template', $message, true);
+        $CI->email->set_mailtype("html");
+        $CI->email->from($from);
+        $CI->email->to($to);
+        $CI->email->subject($subject);
+         $CI->email->message($message);
+        $CI->email->attach($attach);
+        $CI->email->send();
+}

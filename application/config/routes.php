@@ -69,6 +69,12 @@ $route['display-all-patient-details'] = 'superadmin_api/display_all_patient_deta
 $route['get-all-patient-on-id'] = 'superadmin_api/get_all_patient_on_id';
 $route['update-patient'] = 'superadmin_api/update_patient';
 $route['delete-patient'] = 'superadmin_api/delete_patient';
+// ==================== ADD Diseases===================================
+$route['add-diseases'] = 'superadmin_api/add_diseases';
+$route['display-all-diesases-details'] = 'superadmin_api/display_all_diesases_details';
+$route['update-diseases'] = 'superadmin_api/update_diseases';
+$route['delete-diseases'] = 'superadmin_api/delete_diseases';
+$route['update-diseases-status'] = 'superadmin_api/update_diseases_status';
 // ============================= Appointment Details=========================
 $route['get-appointment-data'] = 'common_api/get_appointment_data';
 $route['get-patient-details-on-patient-id'] = 'doctor_api/get_patient_details_on_patient_id';

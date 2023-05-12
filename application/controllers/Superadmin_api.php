@@ -29,7 +29,7 @@ class Superadmin_api extends REST_Controller {
         $response = array('status' => false, 'msg' => 'Oops! Please try again later.', 'code' => 200);
         echo json_encode($response);
     }
-
+    //============================= Add Doctor==================================
     public function add_doctor_post()
     {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
@@ -155,6 +155,9 @@ class Superadmin_api extends REST_Controller {
                                 'fk_user_type'=>$user_type['id'],
                             );
                             $this->model->insertData('tbl_users',$insert_data);
+                            $this->load->model('email_model');
+                            $name = $first_name. " ".$last_name;
+                            $this->email_model->register_email($email,$email,$password,$name);
                            
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
@@ -374,7 +377,7 @@ class Superadmin_api extends REST_Controller {
         }
         echo json_encode($response);
     }
-
+    // =============================== Add Patient =========================
     public function add_patient_post()
     {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
@@ -641,5 +644,130 @@ class Superadmin_api extends REST_Controller {
         }
         echo json_encode($response);
     }
+    // =============================== Add Diseases==========================
+    public function add_diseases_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $diseases = $this->input->post('diseases');
+                if(empty($diseases)){
+                    $response['message'] = "First Name is required";
+                    $response['code'] = 201;
+                }else{
+                        $check_diseases_count = $this->model->CountWhereRecord('tbl_diseases', array('diseases_name'=>$diseases,'del_status'=>1));
+                        if($check_diseases_count > 0){
+                             $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Dieases is Already exist.';
+                        }else{                            
+                            $curl_data =  array(
+                                'diseases_name' => $diseases,
+                            );
+                            $inserted_id = $this->model->insertData('tbl_diseases',$curl_data);                       
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Dieases Added Successfully';
+                        }
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function display_all_diesases_details_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                 $this->load->model('superadmin_model');
+                $diseases_data = $this->superadmin_model->display_all_diesases_details();
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['diseases_data'] = $diseases_data;
+        } else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_diseases_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $diseases = $this->input->post('diseases');
+                $id = $this->input->post('id');
+                if(empty($diseases)){
+                    $response['message'] = "Diseases is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data =  array(
+                        'diseases_name' => $diseases,                       
+                    );
+                    $this->model->updateData('tbl_diseases',$curl_data,array('id'=>$id));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Diseases Updated Successfully';
+
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_diseases_status_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if($validate){
+            $id = $this->input->post('id');
+            $status=$this->input->post('status');
+            if (empty($id)) {
+                $response['message'] = 'id is required';
+                $response['code'] = 201;
+            } else {
+                $update_data = array(
+                    'status'=>$status,
+                );
+                $this->model->updateData('tbl_diseases',$update_data, array('id'=>$id));
+                $response['message'] = 'Status Changed Successfully';
+                $response['code'] = 200;
+                $response['status'] = true;
+            }
+        } else {
+            $response['message'] = 'Invalid Request';
+            $response['code'] = 204;
+        }
+        echo json_encode($response);
+    }
+    public function delete_diseases_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                if(empty($id)){
+                    $response['message'] = "Id is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data = array(
+                        'del_status' =>0,
+                    );
+                    $this->model->updateData('tbl_diseases',$curl_data,array('id'=>$id));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Diseases Deleted Successfully';
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    
 }
 ?>
