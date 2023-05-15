@@ -176,5 +176,31 @@ class Doctor_api extends REST_Controller {
         }
         echo json_encode($response);
     }
+    public function dashboard_count_data_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1));
+            $male_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>1));
+            $female_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>2));
+            $transgender_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>3));
+            $appointment_count = $this->model->countrecord('tbl_appointment');
+            $diseases_count = $this->model->CountWhereInRecord('tbl_diseases',array('del_status'=>1));
+            $response['code'] = REST_Controller::HTTP_OK;
+            $response['status'] = true;
+            $response['message'] = 'success';
+            $response['patient_count'] = $patient_count;
+            $response['male_patient_count'] = $male_patient_count;
+            $response['female_patient_count'] = $female_patient_count;
+            $response['transgender_patient_count'] = $transgender_patient_count;
+            $response['appointment_count'] = $appointment_count;
+            $response['diseases_count'] = $diseases_count;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
 }
 ?>

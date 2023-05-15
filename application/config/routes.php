@@ -56,6 +56,8 @@ $route['register'] = 'common_api/register_data';
 $route['login-data'] = 'common_api/login_data';
 $route['get-all-common-details'] = 'common_api/get_all_common_details';
 $route['get-city-data-on-state-id'] = 'common_api/get_city_data_on_state_id';
+// ===========================Superadmin Dashboard===============================
+$route['superadmin-dashboard'] = 'superadmin_api/superadmin_dashboard_count_data';
 // ============================ Doctor Details=================================
 $route['add-doctor'] = 'superadmin_api/add_doctor';
 $route['display-all-doctor-details'] = 'superadmin_api/display_all_doctor_details';
@@ -81,5 +83,5 @@ $route['get-patient-details-on-patient-id'] = 'doctor_api/get_patient_details_on
 
 $route['save-appointment-details'] = 'doctor_api/save_appointment_details';
 $route['get-all-appointment-details'] = 'doctor_api/get_all_appointment_details';
-
-
+// ===========================Doctor Dashboard===============================
+$route['doctor-dashboard'] = 'doctor_api/dashboard_count_data';
