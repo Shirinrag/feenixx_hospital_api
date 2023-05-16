@@ -399,6 +399,7 @@ class Superadmin_api extends REST_Controller {
                 $gender = $this->input->post('gender');              
                 $emergency_contact_name = $this->input->post('emergency_contact_name');
                 $emergency_contact_phone = $this->input->post('emergency_contact_phone');
+                $insurance_document = $this->input->post('insurance_document');
                 if(empty($first_name)){
                     $response['message'] = "First Name is required";
                     $response['code'] = 201;
@@ -473,6 +474,7 @@ class Superadmin_api extends REST_Controller {
                                 'fk_blood_group_id'=>$blood_group,
                                 'emergency_contact_phone'=>$emergency_contact_phone,
                                 'emergency_contact_name'=>$emergency_contact_name,
+                                'insurance_document'=>$insurance_document
                             );
                             $inserted_id = $this->model->insertData('tbl_patients',$curl_data);
                             $password = "Password1";
@@ -562,6 +564,7 @@ class Superadmin_api extends REST_Controller {
                 $gender = $this->input->post('gender');              
                 $emergency_contact_name = $this->input->post('emergency_contact_name');
                 $emergency_contact_phone = $this->input->post('emergency_contact_phone');
+                $insurance_document = $this->input->post('insurance_document');
                 if(empty($first_name)){
                     $response['message'] = "First Name is required";
                     $response['code'] = 201;
@@ -601,6 +604,7 @@ class Superadmin_api extends REST_Controller {
                                 'fk_blood_group_id'=>$blood_group,
                                 'emergency_contact_phone'=>$emergency_contact_phone,
                                 'emergency_contact_name'=>$emergency_contact_name,
+                                'insurance_document'=>$insurance_document,
                             );
                             $this->model->updateData('tbl_patients',$curl_data,array('id'=>$id));
                             $password = "Password1";

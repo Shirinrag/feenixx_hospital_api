@@ -19,3 +19,6 @@ ALTER TABLE `tbl_appointment_type` ADD INDEX(`id`, `type`);
 ALTER TABLE `tbl_patient_medical_documents` ADD INDEX(`id`, `fk_patient_id`);
 ALTER TABLE `tbl_patient_medical_documents` ADD `fk_appointment_id` INT NULL DEFAULT NULL AFTER `fk_patient_id`;
 ALTER TABLE `tbl_payment` ADD INDEX(`id`, `fk_patient_id`, `fk_appointment_id`, `payment_type`, `online_amount`, `cash_amount`, `mediclaim_amount`, `discount_amount`, `total_amount`);
+
+INSERT INTO `tbl_user_type` (`id`, `user_type`, `status`, `del_status`, `created_at`, `updated_at`) VALUES (NULL, 'Pharmacists', '1', '1', current_timestamp(), current_timestamp()), (NULL, 'Receptionists', '1', '1', current_timestamp(), current_timestamp());
+ALTER TABLE `tbl_appointment` ADD `admission_type` VARCHAR(100) NULL DEFAULT NULL AFTER `appointment_time`;

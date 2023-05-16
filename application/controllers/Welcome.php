@@ -26,4 +26,8 @@ class Welcome extends CI_Controller {
     {
         $this->load->view('new_email_template');
     }
+    public function invoice()
+    {
+        $this->load->view('invoice');
+    }
 }

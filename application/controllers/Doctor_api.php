@@ -72,6 +72,7 @@ class Doctor_api extends REST_Controller {
                 $image = $this->input->post('image');              
                 $document = $this->input->post('document');
                 $document = json_decode($document,true);
+                $admission_type = $this->input->post('admission_type');
                 if(empty($doctor_id)){
                     $response['message'] = "Doctor Id is required";
                     $response['code'] = 201;
@@ -109,8 +110,8 @@ class Doctor_api extends REST_Controller {
                 }else if(empty($total_amount)){
                     $response['message'] = "Total Amount is required";
                     $response['code'] = 201;
-                }else if(empty($total_amount)){
-                    $response['message'] = "Total Amount is required";
+                }else if(empty($admission_type)){
+                    $response['message'] = "Admission Type is required";
                     $response['code'] = 201;
                 }else{
                     $curl_data =  array(
@@ -121,6 +122,7 @@ class Doctor_api extends REST_Controller {
                         'appointment_time'=>$appointment_time,
                         'prescription'=>$image,
                         'description'=>$description,
+                        'admission_type'=>$admission_type,
                     );
                     $inserted_id = $this->model->insertData('tbl_appointment',$curl_data);
                     $insert_payment_details = array(
@@ -202,5 +204,7 @@ class Doctor_api extends REST_Controller {
         }
         echo json_encode($response);
     }
+
+
 }
 ?>
