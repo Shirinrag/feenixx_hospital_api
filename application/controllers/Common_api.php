@@ -131,6 +131,7 @@ class Common_api extends REST_Controller {
             $state_data = $this->model->selectWhereData('tbl_states',array(),array('id','name'),false);
             $designation_data = $this->model->selectWhereData('tbl_designation',array(),array('id','designation_name'),false);
             $blood_group_data = $this->model->selectWhereData('tbl_blood_group',array(),array('id','blood_group'),false);
+            $user_type = $this->model->selectWhereData('tbl_user_type',array('del_status'=>1),array('id','user_type'),false);
             $patient_id = random_strings();
             $response['code'] = REST_Controller::HTTP_OK;
             $response['status'] = true;
@@ -141,6 +142,7 @@ class Common_api extends REST_Controller {
             $response['designation_data'] = $designation_data;
             $response['blood_group_data'] = $blood_group_data;
             $response['patient_id'] = $patient_id;
+            $response['user_type'] = $user_type;
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';

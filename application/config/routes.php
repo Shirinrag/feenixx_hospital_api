@@ -77,11 +77,20 @@ $route['display-all-diesases-details'] = 'superadmin_api/display_all_diesases_de
 $route['update-diseases'] = 'superadmin_api/update_diseases';
 $route['delete-diseases'] = 'superadmin_api/delete_diseases';
 $route['update-diseases-status'] = 'superadmin_api/update_diseases_status';
-// ============================= Appointment Details=========================
+// ============================== Staff Details ==============================
+$route['add-staff'] = 'superadmin_api/add_staff';
+$route['display-all-staff-details'] = 'superadmin_api/display_all_staff_details';
+$route['get-all-staff-on-id'] = 'superadmin_api/get_all_staff_on_id';
+$route['update-staff'] = 'superadmin_api/update_staff';
+$route['delete-staff'] = 'superadmin_api/delete_staff';
+// ========================== Super admin Appoitment Details====================
+$route['superadmin-get-all-appointment-details'] = 'superadmin_api/get_all_appointment_details';
+
+// ============================= Doctor Appointment Details================
 $route['get-appointment-data'] = 'common_api/get_appointment_data';
 $route['get-patient-details-on-patient-id'] = 'doctor_api/get_patient_details_on_patient_id';
-
 $route['save-appointment-details'] = 'doctor_api/save_appointment_details';
 $route['get-all-appointment-details'] = 'doctor_api/get_all_appointment_details';
 // ===========================Doctor Dashboard===============================
 $route['doctor-dashboard'] = 'doctor_api/dashboard_count_data';
+

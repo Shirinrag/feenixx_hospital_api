@@ -157,21 +157,28 @@ class Doctor_api extends REST_Controller {
         }
         echo json_encode($response);
     }
-    public function get_all_appointment_details_get()
+    public function get_all_appointment_details_post()
     {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
         if ($validate) {
-            $this->load->model('superadmin_model');
-            $appointment_details = $this->superadmin_model->get_all_appointment_details();      
-            foreach ($appointment_details as $appointment_details_key => $appointment_details_row) {
-                $documents = $this->model->selectWhereData('tbl_patient_medical_documents',array('fk_appointment_id'=>$appointment_details_row['id']),array('documents'),false);
-                $appointment_details[$appointment_details_key]['documents'][] = $documents;
-            } 
-            $response['code'] = REST_Controller::HTTP_OK;
-            $response['status'] = true;
-            $response['message'] = 'success';
-            $response['appointment_details_data'] = $appointment_details;
+            $id = $this->input->post('id');
+            if(empty($id)){
+                $response['message'] = "Id is required";
+                $response['code'] = 201;
+            }else{
+                $this->load->model('superadmin_model');
+                $appointment_details = $this->superadmin_model->get_all_appointment_details_doctor($id);      
+                foreach ($appointment_details as $appointment_details_key => $appointment_details_row) {
+                    $documents = $this->model->selectWhereData('tbl_patient_medical_documents',array('fk_appointment_id'=>$appointment_details_row['id']),array('documents'),false);
+                    $appointment_details[$appointment_details_key]['documents'][] = $documents;
+                } 
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['appointment_details_data'] = $appointment_details;
+            }
+            
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';

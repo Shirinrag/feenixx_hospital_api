@@ -490,7 +490,7 @@ class Superadmin_api extends REST_Controller {
                             $this->model->insertData('tbl_users',$insert_data);
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
-                            $response['message'] = 'Doctor Details Added Successfully';
+                            $response['message'] = 'Patient Details Added Successfully';
                         }
                 }
         }else {
@@ -589,7 +589,14 @@ class Superadmin_api extends REST_Controller {
                 }else if(empty($pincode)){
                     $response['message'] = "Pincode is required";
                     $response['code'] = 201;
-                }else{                    
+                }else{         
+                $insurance_document_1 = $this->model->selectWhereData('tbl_patients',array('id'=>$id),array('insurance_document'));
+                $insurance_document_2 ='';
+                if(empty($insurance_document))   {
+                    $insurance_document_2 = $insurance_document_1['insurance_document'];
+                }else{
+                    $insurance_document_2 = $insurance_document;
+                }
                             $curl_data =  array(
                                 'first_name' => $first_name,
                                 'last_name' =>  $last_name,
@@ -604,7 +611,7 @@ class Superadmin_api extends REST_Controller {
                                 'fk_blood_group_id'=>$blood_group,
                                 'emergency_contact_phone'=>$emergency_contact_phone,
                                 'emergency_contact_name'=>$emergency_contact_name,
-                                'insurance_document'=>$insurance_document,
+                                'insurance_document'=>$insurance_document_2,
                             );
                             $this->model->updateData('tbl_patients',$curl_data,array('id'=>$id));
                             $password = "Password1";
@@ -615,7 +622,7 @@ class Superadmin_api extends REST_Controller {
                             $this->model->updateData('tbl_users',$update_data,array('fk_id'=>$id,'fk_user_type'=>4));
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
-                            $response['message'] = 'Doctor Details Updated Successfully';
+                            $response['message'] = 'Patient Details Updated Successfully';
                         }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -808,6 +815,294 @@ class Superadmin_api extends REST_Controller {
         }
         echo json_encode($response);
     }
-    
+    // ====================================Staff ==============================
+     // =============================== Add Patient =========================
+    public function add_staff_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $user_type = $this->input->post('user_type');
+                $first_name = $this->input->post('first_name');
+                $last_name = $this->input->post('last_name');
+                $phone_no = $this->input->post('phone_no');
+                $email = $this->input->post('email');
+                $address1 = $this->input->post('address1');
+                $address2 = $this->input->post('address2');
+                $state = $this->input->post('state');
+                $city = $this->input->post('city');
+                $pincode = $this->input->post('pincode');
+                $dob = $this->input->post('dob');
+                $gender = $this->input->post('gender');              
+                $pan_card = $this->input->post('pan_card');
+                $aadhar_card = $this->input->post('aadhar_card');
+                $password = $this->input->post('password');
+                if(empty($first_name)){
+                    $response['message'] = "First Name is required";
+                    $response['code'] = 201;
+                }else if(empty($last_name)){
+                    $response['message'] = "Last Name is required";
+                    $response['code'] = 201;
+                }else if(empty($phone_no)){
+                    $response['message'] = "Phone No is required";
+                    $response['code'] = 201;
+                }else if(empty($email)){
+                    $response['message'] = "Email is required";
+                    $response['code'] = 201; 
+                }else if(empty($dob)){
+                    $response['message'] = "DOB is required";
+                    $response['code'] = 201;
+                }else if(empty($address1)){
+                    $response['message'] = "Address 1 is required";
+                    $response['code'] = 201;
+                }else if(empty($state)){
+                    $response['message'] = "State is required";
+                    $response['code'] = 201;
+                }else if(empty($city)){
+                    $response['message'] = "City is required";
+                    $response['code'] = 201;
+                }else if(empty($pincode)){
+                    $response['message'] = "Pincode is required";
+                    $response['code'] = 201;
+                }else{                    
+                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_staff', array('contact_no'=>$phone_no,'status'=>1,'del_status'=>1));
+                        $check_contact_no_count_1 = $this->model->CountWhereRecord('tbl_users', array('contact_no'=>$phone_no,'login_status'=>1,'del_status'=>1));
+                        $check_email_count = $this->model->CountWhereRecord('tbl_staff', array('email'=>$email,'status'=>1,'del_status'=>1));
+                        $check_email_count_1 = $this->model->CountWhereRecord('tbl_users', array('email'=>$email,'login_status'=>1,'del_status'=>1));
+                        if($check_contact_no_count > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Contact No is Already exist.';
+                            $response['error_status'] = 'contact_no';                     
+                        }elseif($check_contact_no_count_1 > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Contact No is Already exist.';
+                            $response['error_status'] = 'contact_no';                     
+                        }elseif($check_email_count > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Email is Already exist.';
+                            $response['error_status'] = 'email';                     
+                        }elseif($check_email_count_1 > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Email is Already exist.';
+                            $response['error_status'] = 'email';                     
+                        }else{
+                            $curl_data =  array(
+                                'first_name' => $first_name,
+                                'last_name' =>  $last_name,
+                                'email' => $email,
+                                'contact_no' => $phone_no,
+                                'address1'=>$address1,
+                                'address2'=>$address2,
+                                'fk_state_id'=>$state,
+                                'fk_city_id'=>$city,
+                                'pincode'=>$pincode,
+                                'dob'=>$dob,
+                                'fk_gender_id'=>$gender,
+                                'pan_card'=>$pan_card,
+                                'aadhar_card'=>$aadhar_card,
+                            );
+                            $inserted_id = $this->model->insertData('tbl_staff',$curl_data);
+                            $insert_data=array(
+                                'fk_id'=>$inserted_id,
+                                'first_name' => $first_name,
+                                'last_name' =>  $last_name,
+                                'email' => $email,
+                                'contact_no' => $phone_no,
+                                'password' => dec_enc('encrypt',$password),
+                                'fk_user_type'=>$user_type,
+                            );
+                            $this->model->insertData('tbl_users',$insert_data);
+                            $this->load->model('email_model');
+                            $name = $first_name. " ".$last_name;
+                            $this->email_model->register_email($email,$email,$password,$name);
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Staff Details Added Successfully';
+                        }
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function display_all_staff_details_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $this->load->model('staff_model');
+                $staff_data = $this->staff_model->get_datatables();
+                $count = $this->staff_model->count_all();
+                $count_filtered = $this->staff_model->count_filtered(); 
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['staff_data'] = $staff_data;
+                $response['count'] = $count;
+                $response['count_filtered'] = $count_filtered;
+        } else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function get_all_staff_on_id_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                if(empty($id)){
+                    $response['message'] = "Id is required";
+                    $response['code'] = 201;
+                }else{
+                    $this->load->model('superadmin_model');
+                    $staff_details = $this->superadmin_model->get_all_staff_on_id($id);
+                    $city_data = $this->model->selectWhereData('tbl_cities',array('state_id'=>$staff_details['fk_state_id']),array('id','city'),false);
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'success';
+                    $response['staff_details_data'] = $staff_details;
+                    $response['city_data'] = $city_data;
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_staff_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                $first_name = $this->input->post('first_name');
+                $last_name = $this->input->post('last_name');
+                $address1 = $this->input->post('address1');
+                $address2 = $this->input->post('address2');
+                $state = $this->input->post('state');
+                $city = $this->input->post('city');
+                $pincode = $this->input->post('pincode');
+                $dob = $this->input->post('dob');
+                $gender = $this->input->post('gender');              
+                $pan_card = $this->input->post('pan_card');
+                $aadhar_card = $this->input->post('aadhar_card');
+                $user_type = $this->input->post('user_type');
+                if(empty($first_name)){
+                    $response['message'] = "First Name is required";
+                    $response['code'] = 201;
+                }else if(empty($last_name)){
+                    $response['message'] = "Last Name is required";
+                    $response['code'] = 201;
+                }else if(empty($dob)){
+                    $response['message'] = "DOB is required";
+                    $response['code'] = 201;
+                }else if(empty($address1)){
+                    $response['message'] = "Address 1 is required";
+                    $response['code'] = 201;
+                }else if(empty($state)){
+                    $response['message'] = "State is required";
+                    $response['code'] = 201;
+                }else if(empty($city)){
+                    $response['message'] = "City is required";
+                    $response['code'] = 201;
+                }else if(empty($pincode)){
+                    $response['message'] = "Pincode is required";
+                    $response['code'] = 201;
+                }else{    
+                $staff_detais = $this->model->selectWhereData('tbl_staff',array('id'=>$id),array('pan_card','aadhar_card'));
+                $pan_card_1 ='';
+                if(empty($pan_card))   {
+                    $pan_card_1 = $staff_detais['pan_card'];
+                }else{
+                    $pan_card_1 = $pan_card;
+                }    
+                $aadhar_card_1 ='';
+                if(empty($aadhar_card))   {
+                    $aadhar_card_1 = $staff_detais['aadhar_card'];
+                }else{
+                    $aadhar_card_1 = $aadhar_card;
+                }                
+                    $curl_data =  array(
+                        'first_name' => $first_name,
+                        'last_name' =>  $last_name,
+                        'address1'=>$address1,
+                        'address2'=>$address2,
+                        'fk_state_id'=>$state,
+                        'fk_city_id'=>$city,
+                        'pincode'=>$pincode,
+                        'dob'=>$dob,
+                        'fk_gender_id'=>$gender,
+                        'pan_card'=>$pan_card_1,
+                        'aadhar_card'=>$aadhar_card_1,
+                    );
+                    $this->model->updateData('tbl_staff',$curl_data,array('id'=>$id));
+                    $update_data=array(
+                        'first_name' => $first_name,
+                        'last_name' =>  $last_name,
+                    );
+                    $this->model->updateData('tbl_users',$update_data,array('fk_id'=>$id,'fk_user_type'=>$user_type));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Staff Details Updated Successfully';
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function delete_staff_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                if(empty($id)){
+                    $response['message'] = "Id is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data = array(
+                        'del_status' =>0,
+                    );
+                    $this->model->updateData('tbl_patients',$curl_data,array('id'=>$id));
+                    $this->model->updateData('tbl_users',$curl_data,array('fk_id'=>$id,'fk_user_type'=>4));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Patient Deleted Successfully';
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function get_all_appointment_details_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $this->load->model('superadmin_model');
+            $appointment_details = $this->superadmin_model->get_all_appointment_details();      
+            foreach ($appointment_details as $appointment_details_key => $appointment_details_row) {
+                $documents = $this->model->selectWhereData('tbl_patient_medical_documents',array('fk_appointment_id'=>$appointment_details_row['id']),array('documents'),false);
+                $appointment_details[$appointment_details_key]['documents'][] = $documents;
+            } 
+            $response['code'] = REST_Controller::HTTP_OK;
+            $response['status'] = true;
+            $response['message'] = 'success';
+            $response['appointment_details_data'] = $appointment_details;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
 }
 ?>

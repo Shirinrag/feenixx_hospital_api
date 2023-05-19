@@ -57,5 +57,35 @@ class Superadmin_model extends CI_Model {
         $result = $query->result_array();
         return $result;
 	}
+	public function get_all_staff_on_id($id='')
+	{
+		$this->db->select('tbl_staff.*,tbl_user_type.user_type,tbl_users.fk_user_type');
+        $this->db->from('tbl_staff');       
+        $this->db->join('tbl_users','tbl_users.fk_id=tbl_staff.id','left');
+        $this->db->join('tbl_user_type','tbl_user_type.id=tbl_users.fk_user_type','left');
+        $this->db->where('tbl_staff.id',$id);
+        $this->db->where('tbl_users.fk_user_type !=',1);
+        $this->db->where('tbl_users.fk_user_type !=',2);
+        $this->db->where('tbl_users.fk_user_type !=',4);
+        $query = $this->db->get();
+        $result = $query->row_array();
+        return $result;
+	}
+	public function get_all_appointment_details_doctor($id="")
+	{
+		$this->db->select('tbl_appointment.*,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_payment.payment_type,tbl_payment.online_amount,tbl_payment.cash_amount,tbl_payment.mediclaim_amount,tbl_payment.discount_amount,tbl_payment.total_amount,tbl_blood_group.blood_group,tbl_diseases.diseases_name,tbl_gender.gender');
+		$this->db->from('tbl_appointment');
+		$this->db->join('tbl_patients','tbl_patients.id=tbl_appointment.fk_patient_id','left');
+		$this->db->join('tbl_doctor','tbl_doctor.id=tbl_appointment.fk_doctor_id','left');
+		$this->db->join('tbl_payment','tbl_payment.fk_appointment_id=tbl_appointment.id','left');
+		$this->db->join('tbl_blood_group','tbl_patients.fk_blood_group_id=tbl_blood_group.id','left');
+		$this->db->join('tbl_diseases','tbl_appointment.fk_diseases_id=tbl_diseases.id','left');		
+		$this->db->join('tbl_gender','tbl_patients.fk_gender_id=tbl_gender.id','left');		
+		$this->db->where('tbl_appointment.fk_doctor_id',$id);
+		$this->db->order_by('tbl_appointment.id','DESC');
+		$query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+	}
 }
 
