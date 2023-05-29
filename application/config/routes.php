@@ -93,4 +93,8 @@ $route['save-appointment-details'] = 'doctor_api/save_appointment_details';
 $route['get-all-appointment-details'] = 'doctor_api/get_all_appointment_details';
 // ===========================Doctor Dashboard===============================
 $route['doctor-dashboard'] = 'doctor_api/dashboard_count_data';
+$route['get-user-type-on-id'] = 'common/get_user_type_on_id';
+// ============================== Location ================================
+
+$route['save-location'] = 'superadmin_api/save_location';
 

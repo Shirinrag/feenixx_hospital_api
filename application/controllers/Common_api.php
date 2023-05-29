@@ -173,11 +173,39 @@ class Common_api extends REST_Controller {
         if ($validate) {
             $patient_data = $this->model->selectWhereData('tbl_patients',array(),array('id','patient_id'),false);
             $diseases_data = $this->model->selectWhereData('tbl_diseases',array('status'=>1,'del_status'=>1),array('id','diseases_name'),false,array('id','DESC'));            
+            $doctor_data = $this->model->selectWhereData('tbl_doctor',array('status'=>1,'del_status'=>1),array('id','first_name','last_name'),false,array('id','DESC'));            
+            $appointment_type = $this->model->selectWhereData('tbl_appointment_type',array('status'=>1),array('id','type'),false,array('id','DESC'));              
             $response['code'] = REST_Controller::HTTP_OK;
             $response['status'] = true;
             $response['message'] = 'success';
             $response['patient_data'] = $patient_data;
             $response['diseases_data'] = $diseases_data;
+            $response['appointment_type'] = $appointment_type;
+            $response['doctor_data'] = $doctor_data;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function get_user_type_on_id()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $id = $this->input->post('id');
+            if(empty($id)){
+                $response['code'] = 201;
+                $response['message'] = "Id is required";
+            }else{
+               $patient_data = $this->model->selectWhereData('tbl_user_type',array(),array('id','patient_id'),false);          
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['patient_data'] = $patient_data;
+                $response['diseases_data'] = $diseases_data; 
+            }
+            
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';

@@ -49,6 +49,7 @@ class Superadmin_api extends REST_Controller {
                 $dob = $this->input->post('dob');
                 $gender = $this->input->post('gender');              
                 $profile_image = $this->input->post('image');
+                $added_by = $this->input->post('added_by');
                 if(empty($first_name)){
                     $response['message'] = "First Name is required";
                     $response['code'] = 201;
@@ -153,6 +154,7 @@ class Superadmin_api extends REST_Controller {
                                 'contact_no' => $phone_no,
                                 'password' => dec_enc('encrypt',$password),
                                 'fk_user_type'=>$user_type['id'],
+                                'added_by'=>$added_by
                             );
                             $this->model->insertData('tbl_users',$insert_data);
                             $this->load->model('email_model');
@@ -400,6 +402,7 @@ class Superadmin_api extends REST_Controller {
                 $emergency_contact_name = $this->input->post('emergency_contact_name');
                 $emergency_contact_phone = $this->input->post('emergency_contact_phone');
                 $insurance_document = $this->input->post('insurance_document');
+                $added_by = $this->input->post('added_by');
                 if(empty($first_name)){
                     $response['message'] = "First Name is required";
                     $response['code'] = 201;
@@ -409,14 +412,8 @@ class Superadmin_api extends REST_Controller {
                 }else if(empty($phone_no)){
                     $response['message'] = "Phone No is required";
                     $response['code'] = 201;
-                }else if(empty($email)){
-                    $response['message'] = "Email is required";
-                    $response['code'] = 201; 
                 }else if(empty($marital_status)){
                     $response['message'] = "Marital Status is required";
-                    $response['code'] = 201;
-                }else if(empty($dob)){
-                    $response['message'] = "DOB is required";
                     $response['code'] = 201;
                 }else if(empty($address1)){
                     $response['message'] = "Address 1 is required";
@@ -486,6 +483,7 @@ class Superadmin_api extends REST_Controller {
                                 'contact_no' => $phone_no,
                                 'password' => dec_enc('encrypt',$password),
                                 'fk_user_type'=>$user_type['id'],
+                                'added_by'=>$added_by
                             );
                             $this->model->insertData('tbl_users',$insert_data);
                             $response['code'] = REST_Controller::HTTP_OK;
@@ -1098,6 +1096,61 @@ class Superadmin_api extends REST_Controller {
             $response['status'] = true;
             $response['message'] = 'success';
             $response['appointment_details_data'] = $appointment_details;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
+    public function save_location()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $place_name = $this->input->post('place_name');        
+                $address1 = $this->input->post('address1');
+                $address2 = $this->input->post('address2');
+                $state = $this->input->post('state');
+                $city = $this->input->post('city');
+                $pincode = $this->input->post('pincode');
+                if(empty($place_name)){
+                    $response['message'] = "Place Name is required";
+                    $response['code'] = 201;
+                }else if(empty($address1)){
+                    $response['message'] = "Address 1 is required";
+                    $response['code'] = 201;
+                }else if(empty($state)){
+                    $response['message'] = "State is required";
+                    $response['code'] = 201;
+                }else if(empty($city)){
+                    $response['message'] = "City is required";
+                    $response['code'] = 201;
+                }else if(empty($pincode)){
+                    $response['message'] = "Pincode is required";
+                    $response['code'] = 201;
+                }else{                    
+                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_visit_location', array('place_name'=>$place_name,'status'=>1,'del_status'=>1));
+                        if($check_contact_no_count > 0){
+                            $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Place Already exist.';
+                            $response['error_status'] = 'contact_no';                     
+                        }else{
+                            $curl_data =  array(
+                                'place_name' => $place_name,              
+                                'address1'=>$address1,
+                                'address2'=>$address2,
+                                'fk_state_id'=>$state,
+                                'fk_city_id'=>$city,
+                                'pincode'=>$pincode,
+                            );
+                            $this->model->insertData('tbl_visit_location',$curl_data);
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Location Added Successfully';
+                        }
+                }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';
