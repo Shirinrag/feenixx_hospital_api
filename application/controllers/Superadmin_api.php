@@ -1103,7 +1103,7 @@ class Superadmin_api extends REST_Controller {
         echo json_encode($response);
     }
 
-    public function save_location()
+    public function save_location_post()
     {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
@@ -1130,26 +1130,101 @@ class Superadmin_api extends REST_Controller {
                     $response['message'] = "Pincode is required";
                     $response['code'] = 201;
                 }else{                    
-                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_visit_location', array('place_name'=>$place_name,'status'=>1,'del_status'=>1));
-                        if($check_contact_no_count > 0){
-                            $response['code'] = 201;
-                            $response['status'] = false;
-                            $response['message'] = 'Place Already exist.';
-                            $response['error_status'] = 'contact_no';                     
-                        }else{
-                            $curl_data =  array(
-                                'place_name' => $place_name,              
-                                'address1'=>$address1,
-                                'address2'=>$address2,
-                                'fk_state_id'=>$state,
-                                'fk_city_id'=>$city,
-                                'pincode'=>$pincode,
-                            );
-                            $this->model->insertData('tbl_visit_location',$curl_data);
-                            $response['code'] = REST_Controller::HTTP_OK;
-                            $response['status'] = true;
-                            $response['message'] = 'Location Added Successfully';
-                        }
+                    $check_contact_no_count = $this->model->CountWhereRecord('tbl_visit_location', array('place_name'=>$place_name,'status'=>1,'del_status'=>1));
+                    if($check_contact_no_count > 0){
+                        $response['code'] = 201;
+                        $response['status'] = false;
+                        $response['message'] = 'Place Already exist.';
+                    }else{
+                        $curl_data =  array(
+                            'place_name' => $place_name,              
+                            'address1'=>$address1,
+                            'address2'=>$address2,
+                            'fk_state_id'=>$state,
+                            'fk_city_id'=>$city,
+                            'pincode'=>$pincode,
+                        );
+                        $this->model->insertData('tbl_visit_location',$curl_data);
+                        $response['code'] = REST_Controller::HTTP_OK;
+                        $response['status'] = true;
+                        $response['message'] = 'Location Added Successfully';
+                    }
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
+    public function display_all_location_details_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $this->load->model('superadmin_model');
+            $location_details = $this->superadmin_model->get_all_location_details();      
+            foreach ($location_details as $location_details_key => $location_details_row) {
+                $location_details[$location_details_key]['city_data'] = $this->model->selectWhereData('tbl_cities',array('state_id'=>$location_details_row['fk_state_id']),array('id','city'),false);
+            }
+            $response['code'] = REST_Controller::HTTP_OK;
+            $response['status'] = true;
+            $response['message'] = 'success';
+            $response['location_details_data'] = $location_details;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
+    public function update_location_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $place_name = $this->input->post('place_name');        
+                $address1 = $this->input->post('address1');
+                $address2 = $this->input->post('address2');
+                $state = $this->input->post('state');
+                $city = $this->input->post('city');
+                $pincode = $this->input->post('pincode');
+                $id = $this->input->post('id');
+                if(empty($place_name)){
+                    $response['message'] = "Place Name is required";
+                    $response['code'] = 201;
+                }else if(empty($address1)){
+                    $response['message'] = "Address 1 is required";
+                    $response['code'] = 201;
+                }else if(empty($state)){
+                    $response['message'] = "State is required";
+                    $response['code'] = 201;
+                }else if(empty($city)){
+                    $response['message'] = "City is required";
+                    $response['code'] = 201;
+                }else if(empty($pincode)){
+                    $response['message'] = "Pincode is required";
+                    $response['code'] = 201;
+                }else{                    
+                    $check_contact_no_count = $this->model->CountWhereRecord('tbl_visit_location', array('place_name'=>$place_name,'status'=>1,'del_status'=>1,'id !='=> $id));
+                    if($check_contact_no_count > 0){
+                        $response['code'] = 201;
+                        $response['status'] = false;
+                        $response['message'] = 'Place Already exist.';
+                    }else{
+                        $curl_data =  array(
+                            'place_name' => $place_name,              
+                            'address1'=>$address1,
+                            'address2'=>$address2,
+                            'fk_state_id'=>$state,
+                            'fk_city_id'=>$city,
+                            'pincode'=>$pincode,
+                        );
+                        $this->model->updateData('tbl_visit_location',$curl_data,array('id'=>$id));
+                        $response['code'] = REST_Controller::HTTP_OK;
+                        $response['status'] = true;
+                        $response['message'] = 'Location Added Successfully';
+                    }
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

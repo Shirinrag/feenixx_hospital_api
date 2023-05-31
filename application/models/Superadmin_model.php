@@ -87,5 +87,16 @@ class Superadmin_model extends CI_Model {
         $result = $query->result_array();
         return $result;
 	}
+	public function get_all_location_details()
+	{
+		$this->db->select('tbl_visit_location.*,tbl_states.name,CONCAT(tbl_visit_location.status,",",tbl_visit_location.id) AS statusdata,tbl_cities.city as city_name');
+        $this->db->from('tbl_visit_location');
+        $this->db->join('tbl_states','tbl_states.id=tbl_visit_location.fk_state_id','left');
+        $this->db->join('tbl_cities','tbl_cities.id=tbl_visit_location.fk_city_id','left');
+        $this->db->order_by('tbl_visit_location.id','DESC');
+		$query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+	}
 }
 

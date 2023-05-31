@@ -97,4 +97,6 @@ $route['get-user-type-on-id'] = 'common/get_user_type_on_id';
 // ============================== Location ================================
 
 $route['save-location'] = 'superadmin_api/save_location';
+$route['display-all-location-details'] = 'superadmin_api/display_all_location_details';
+$route['update-location'] = 'superadmin_api/update_location';
 
