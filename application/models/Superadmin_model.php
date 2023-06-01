@@ -93,6 +93,7 @@ class Superadmin_model extends CI_Model {
         $this->db->from('tbl_visit_location');
         $this->db->join('tbl_states','tbl_states.id=tbl_visit_location.fk_state_id','left');
         $this->db->join('tbl_cities','tbl_cities.id=tbl_visit_location.fk_city_id','left');
+        $this->db->where('tbl_visit_location.del_status',1);
         $this->db->order_by('tbl_visit_location.id','DESC');
 		$query = $this->db->get();
         $result = $query->result_array();

@@ -99,4 +99,6 @@ $route['get-user-type-on-id'] = 'common/get_user_type_on_id';
 $route['save-location'] = 'superadmin_api/save_location';
 $route['display-all-location-details'] = 'superadmin_api/display_all_location_details';
 $route['update-location'] = 'superadmin_api/update_location';
+$route['delete-location'] = 'superadmin_api/delete_location';
+$route['get-sub-type-data-on-appoitment-id'] = 'common_api/get_sub_type_data_on_appoitment_id';
 

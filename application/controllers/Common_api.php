@@ -175,6 +175,7 @@ class Common_api extends REST_Controller {
             $diseases_data = $this->model->selectWhereData('tbl_diseases',array('status'=>1,'del_status'=>1),array('id','diseases_name'),false,array('id','DESC'));            
             $doctor_data = $this->model->selectWhereData('tbl_doctor',array('status'=>1,'del_status'=>1),array('id','first_name','last_name'),false,array('id','DESC'));            
             $appointment_type = $this->model->selectWhereData('tbl_appointment_type',array('status'=>1),array('id','type'),false,array('id','DESC'));              
+            $location_data = $this->model->selectWhereData('tbl_visit_location',array('del_status'=>1),array('id','place_name'),false,array('id','DESC'));              
             $response['code'] = REST_Controller::HTTP_OK;
             $response['status'] = true;
             $response['message'] = 'success';
@@ -182,13 +183,14 @@ class Common_api extends REST_Controller {
             $response['diseases_data'] = $diseases_data;
             $response['appointment_type'] = $appointment_type;
             $response['doctor_data'] = $doctor_data;
+            $response['location_data'] = $location_data;
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';
         }
         echo json_encode($response);
     }
-    public function get_user_type_on_id()
+    public function get_user_type_on_id_post()
     {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
@@ -204,6 +206,29 @@ class Common_api extends REST_Controller {
                 $response['message'] = 'success';
                 $response['patient_data'] = $patient_data;
                 $response['diseases_data'] = $diseases_data; 
+            }
+            
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function get_sub_type_data_on_appoitment_id_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $id = $this->input->post('id');
+            if(empty($id)){
+                $response['code'] = 201;
+                $response['message'] = "Id is required";
+            }else{
+               $appointment_sub_type = $this->model->selectWhereData('tbl_appointment_sub_type',array('fk_appointment_type_id'=>$id),array('id','sub_type'),false);          
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['appointment_sub_type'] = $appointment_sub_type;
             }
             
         }else {
