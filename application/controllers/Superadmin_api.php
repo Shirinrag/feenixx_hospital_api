@@ -1256,5 +1256,130 @@ class Superadmin_api extends REST_Controller {
         }
         echo json_encode($response);
     }
+
+       // =============================== Add Charges==========================
+    public function add_charges_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $charges_name = $this->input->post('charges_name');
+                if(empty($charges_name)){
+                    $response['message'] = "First Name is required";
+                    $response['code'] = 201;
+                }else{
+                        $check_charges_count = $this->model->CountWhereRecord('tbl_charges_type', array('charges_name'=>$charges_name,'del_status'=>1));
+                        if($check_charges_count > 0){
+                             $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Dieases is Already exist.';
+                        }else{                            
+                            $curl_data =  array(
+                                'charges_name' => $charges_name,
+                            );
+                            $inserted_id = $this->model->insertData('tbl_charges_type',$curl_data);                       
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Charges Added Successfully';
+                        }
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function display_all_charges_details_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                 $this->load->model('superadmin_model');
+                $charges_data = $this->superadmin_model->display_all_charges_details();
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['charges_data'] = $charges_data;
+        } else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_charges_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $charges_name = $this->input->post('charges_name');
+                $id = $this->input->post('id');
+                if(empty($charges_name)){
+                    $response['message'] = "charges_name is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data =  array(
+                        'charges_name' => $charges_name,                       
+                    );
+                    $this->model->updateData('tbl_charge',$curl_data,array('id'=>$id));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Charges Updated Successfully';
+
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_charges_status_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if($validate){
+            $id = $this->input->post('id');
+            $status=$this->input->post('status');
+            if (empty($id)) {
+                $response['message'] = 'id is required';
+                $response['code'] = 201;
+            } else {
+                $update_data = array(
+                    'status'=>$status,
+                );
+                $this->model->updateData('tbl_charges_type',$update_data, array('id'=>$id));
+                $response['message'] = 'Status Changed Successfully';
+                $response['code'] = 200;
+                $response['status'] = true;
+            }
+        } else {
+            $response['message'] = 'Invalid Request';
+            $response['code'] = 204;
+        }
+        echo json_encode($response);
+    }
+    public function delete_charges_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                if(empty($id)){
+                    $response['message'] = "Id is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data = array(
+                        'del_status' =>0,
+                    );
+                    $this->model->updateData('tbl_charges_type',$curl_data,array('id'=>$id));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Charges Deleted Successfully';
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
 }
 ?>

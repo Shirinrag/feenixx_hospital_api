@@ -85,15 +85,6 @@ $route['update-staff'] = 'superadmin_api/update_staff';
 $route['delete-staff'] = 'superadmin_api/delete_staff';
 // ========================== Super admin Appoitment Details====================
 $route['superadmin-get-all-appointment-details'] = 'superadmin_api/get_all_appointment_details';
-
-// ============================= Doctor Appointment Details================
-$route['get-appointment-data'] = 'common_api/get_appointment_data';
-$route['get-patient-details-on-patient-id'] = 'doctor_api/get_patient_details_on_patient_id';
-$route['save-appointment-details'] = 'doctor_api/save_appointment_details';
-$route['get-all-appointment-details'] = 'doctor_api/get_all_appointment_details';
-// ===========================Doctor Dashboard===============================
-$route['doctor-dashboard'] = 'doctor_api/dashboard_count_data';
-$route['get-user-type-on-id'] = 'common/get_user_type_on_id';
 // ============================== Location ================================
 
 $route['save-location'] = 'superadmin_api/save_location';
@@ -101,4 +92,22 @@ $route['display-all-location-details'] = 'superadmin_api/display_all_location_de
 $route['update-location'] = 'superadmin_api/update_location';
 $route['delete-location'] = 'superadmin_api/delete_location';
 $route['get-sub-type-data-on-appoitment-id'] = 'common_api/get_sub_type_data_on_appoitment_id';
+// ============================= Doctor Appointment Details================
+$route['get-appointment-data'] = 'common_api/get_appointment_data';
+$route['get-patient-details-on-patient-id'] = 'doctor_api/get_patient_details_on_patient_id';
+$route['save-appointment-details'] = 'reciption_api/save_appointment_details';
+$route['get-all-appointment-details-on-doctor-id'] = 'doctor_api/get_all_appointment_details_on_doctor_id';
+// ===========================Doctor Dashboard===============================
+$route['doctor-dashboard'] = 'doctor_api/dashboard_count_data';
+$route['get-user-type-on-id'] = 'common/get_user_type_on_id';
+
+// ==================== ADD Charges===================================
+$route['add-charges'] = 'superadmin_api/add_charges';
+$route['display-all-charges-details'] = 'superadmin_api/display_all_charges_details';
+$route['update-charges'] = 'superadmin_api/update_charges';
+$route['delete-charges'] = 'superadmin_api/delete_charges';
+$route['update-charges-status'] = 'superadmin_api/update_charges_status';
+
+// ================ Receiption Appointment Details=========================
+$route['get-all-appointment-details'] = 'reciption_api/get_all_appointment_details';
 
