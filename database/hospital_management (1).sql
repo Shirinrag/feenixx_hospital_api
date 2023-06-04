@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2023 at 02:58 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Generation Time: Jun 04, 2023 at 06:56 PM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.0.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -34,7 +34,7 @@ CREATE TABLE `email_template` (
   `type` varchar(100) NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '0 for deactive and 1 for active',
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `email_template`
@@ -54,23 +54,50 @@ CREATE TABLE `tbl_appointment` (
   `fk_doctor_id` int(11) DEFAULT NULL,
   `fk_patient_id` int(11) DEFAULT NULL,
   `fk_diseases_id` int(11) DEFAULT NULL,
+  `reference_doctor_name` varchar(100) DEFAULT NULL,
   `appointment_date` varchar(100) DEFAULT NULL,
   `appointment_time` varchar(100) DEFAULT NULL,
-  `admission_type` varchar(100) DEFAULT NULL,
+  `fk_admission_type_id` int(11) DEFAULT NULL,
+  `fk_admission_sub_type_id` int(11) DEFAULT NULL,
+  `fk_visit_location_id` int(11) DEFAULT NULL,
   `prescription` longtext DEFAULT NULL,
   `description` longtext DEFAULT NULL,
+  `added_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_appointment`
 --
 
-INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `appointment_date`, `appointment_time`, `admission_type`, `prescription`, `description`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 62, '09-05-2023', '18:30', NULL, 'uploads/pescription/LCT24609079/658964_images.png', 'Test Description', '2023-05-09 11:07:04', '2023-05-09 11:07:04'),
-(2, 1, 1, 85, '09-05-2023', '12:07', NULL, 'uploads/pescription/LCT24609079/746987_H7bede4ac0f624719bbsss78c6e4f7fb3763Q-copy.jpg', 'test', '2023-05-09 12:32:24', '2023-05-09 17:46:10'),
-(3, 1, 2, 32, '09-05-2023', '19:50', NULL, 'uploads/pescription/WZGL4297935/442064_download.jpg', 'Test description', '2023-05-09 17:44:30', '2023-05-09 17:46:13');
+INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `fk_admission_type_id`, `fk_admission_sub_type_id`, `fk_visit_location_id`, `prescription`, `description`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 62, NULL, '09-05-2023', '18:30', NULL, NULL, NULL, 'uploads/pescription/LCT24609079/658964_images.png', 'Test Description', NULL, '2023-05-09 11:07:04', '2023-05-09 11:07:04'),
+(2, 1, 1, 85, NULL, '09-05-2023', '12:07', NULL, NULL, NULL, 'uploads/pescription/LCT24609079/746987_H7bede4ac0f624719bbsss78c6e4f7fb3763Q-copy.jpg', 'test', NULL, '2023-05-09 12:32:24', '2023-05-09 17:46:10'),
+(3, 1, 2, 32, NULL, '09-05-2023', '19:50', NULL, NULL, NULL, 'uploads/pescription/WZGL4297935/442064_download.jpg', 'Test description', NULL, '2023-05-09 17:44:30', '2023-05-09 17:46:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_appointment_sub_type`
+--
+
+CREATE TABLE `tbl_appointment_sub_type` (
+  `id` bigint(20) NOT NULL,
+  `fk_appointment_type_id` int(11) DEFAULT NULL,
+  `sub_type` varchar(100) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_appointment_sub_type`
+--
+
+INSERT INTO `tbl_appointment_sub_type` (`id`, `fk_appointment_type_id`, `sub_type`, `status`, `created_at`, `updated_at`) VALUES
+(1, 3, 'Visit OPD', 1, '2023-05-29 11:37:16', '2023-05-29 11:37:16'),
+(2, 3, 'Visit IPD', 1, '2023-05-29 11:37:16', '2023-05-29 11:37:16');
 
 -- --------------------------------------------------------
 
@@ -84,7 +111,16 @@ CREATE TABLE `tbl_appointment_type` (
   `status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_appointment_type`
+--
+
+INSERT INTO `tbl_appointment_type` (`id`, `type`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'OPD', 1, '2023-05-29 11:31:52', '2023-05-29 11:31:52'),
+(2, 'IPD', 1, '2023-05-29 11:31:52', '2023-05-29 11:31:52'),
+(3, 'VISIT', 1, '2023-05-29 11:31:52', '2023-05-29 11:31:52');
 
 -- --------------------------------------------------------
 
@@ -98,7 +134,7 @@ CREATE TABLE `tbl_blood_group` (
   `status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_blood_group`
@@ -117,6 +153,35 @@ INSERT INTO `tbl_blood_group` (`id`, `blood_group`, `status`, `created_at`, `upd
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tbl_charges_type`
+--
+
+CREATE TABLE `tbl_charges_type` (
+  `id` int(11) NOT NULL,
+  `charges_name` varchar(100) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 1,
+  `del_status` int(11) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_charges_type`
+--
+
+INSERT INTO `tbl_charges_type` (`id`, `charges_name`, `status`, `del_status`, `created_at`, `updated_at`) VALUES
+(1, 'Registration Charges', 1, 1, '2023-06-03 16:58:19', '2023-06-03 16:58:19'),
+(2, 'Bed Charges', 1, 1, '2023-06-03 16:58:30', '2023-06-03 16:58:30'),
+(3, '1st Consultant Charges', 1, 1, '2023-06-03 16:58:48', '2023-06-03 16:58:48'),
+(4, 'Dr. Visit Charges', 1, 1, '2023-06-03 16:59:01', '2023-06-03 16:59:01'),
+(5, 'ECG Charges', 1, 1, '2023-06-03 17:00:03', '2023-06-03 17:00:03'),
+(6, 'HGT Charges', 1, 1, '2023-06-03 17:00:26', '2023-06-03 17:00:26'),
+(7, 'Lab Charges', 1, 1, '2023-06-03 17:01:38', '2023-06-03 17:01:38'),
+(8, 'Medicine Charges', 1, 1, '2023-06-03 17:01:51', '2023-06-03 17:01:51');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tbl_cities`
 --
 
@@ -125,7 +190,7 @@ CREATE TABLE `tbl_cities` (
   `city` varchar(30) NOT NULL,
   `state_id` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tbl_cities`
@@ -5889,7 +5954,7 @@ CREATE TABLE `tbl_designation` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_designation`
@@ -5913,7 +5978,7 @@ CREATE TABLE `tbl_diseases` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_diseases`
@@ -6156,7 +6221,7 @@ CREATE TABLE `tbl_doctor` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_doctor`
@@ -6178,7 +6243,7 @@ CREATE TABLE `tbl_gender` (
   `gender` varchar(100) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_gender`
@@ -6201,7 +6266,7 @@ CREATE TABLE `tbl_marital_status` (
   `status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_marital_status`
@@ -6243,7 +6308,7 @@ CREATE TABLE `tbl_patients` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_patients`
@@ -6268,7 +6333,7 @@ CREATE TABLE `tbl_patient_medical_documents` (
   `documents` longtext DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_patient_medical_documents`
@@ -6305,7 +6370,7 @@ CREATE TABLE `tbl_payment` (
   `total_amount` double DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_payment`
@@ -6341,14 +6406,15 @@ CREATE TABLE `tbl_staff` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_staff`
 --
 
 INSERT INTO `tbl_staff` (`id`, `first_name`, `last_name`, `email`, `contact_no`, `fk_gender_id`, `dob`, `address1`, `address2`, `fk_state_id`, `fk_city_id`, `pincode`, `pan_card`, `aadhar_card`, `status`, `del_status`, `created_at`, `updated_at`) VALUES
-(1, 'Mansi', 'Palkar', 'mansi.palkar@stzsoft.com', '8656555555', 2, '19-04-1995', 'Mumbai', 'Mumbai', 22, 2707, '400021', 'uploads/pan_card/180562_download_(3).jpg', 'uploads/aadhar_card/289677_download_(1).png', 1, 1, '2023-05-17 15:54:05', '2023-05-18 10:27:07');
+(1, 'Mansi', 'Palkar', 'mansi.palkar@stzsoft.com', '8656555555', 2, '19-04-1995', 'Mumbai', 'Mumbai', 22, 2707, '400021', 'uploads/pan_card/180562_download_(3).jpg', 'uploads/aadhar_card/289677_download_(1).png', 1, 1, '2023-05-17 15:54:05', '2023-05-18 10:27:07'),
+(2, 'Jayshree', 'Badal', 'jayshreebadal@gmail.com', '0427780044', 2, '21-05-1992', '68, Cyber City, Warangal', '', 22, 2875, '420222', 'uploads/pan_card/258935_download_(4).jpg', 'uploads/aadhar_card/633766_download_(1).png', 1, 1, '2023-05-22 11:13:00', '2023-05-22 11:13:00');
 
 -- --------------------------------------------------------
 
@@ -6361,7 +6427,7 @@ CREATE TABLE `tbl_states` (
   `name` varchar(30) NOT NULL,
   `country_id` int(11) NOT NULL DEFAULT 1,
   `status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tbl_states`
@@ -6426,25 +6492,27 @@ CREATE TABLE `tbl_users` (
   `password` longtext DEFAULT NULL,
   `fk_user_type` int(11) DEFAULT NULL,
   `login_status` int(11) NOT NULL DEFAULT 1,
+  `added_by` int(11) DEFAULT NULL,
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_users`
 --
 
-INSERT INTO `tbl_users` (`id`, `fk_id`, `first_name`, `last_name`, `email`, `contact_no`, `password`, `fk_user_type`, `login_status`, `del_status`, `created_at`, `updated_at`) VALUES
-(1, NULL, 'Shirin', 'Ragbansingh', 'shirin@stzsoft.com', '8010597075', 'VUNtZmhSZjkvS3JDUVJvQUllNWc2Zz09', 1, 1, 1, '2023-05-05 17:09:47', '2023-05-05 17:09:47'),
-(2, 1, 'DR. SWAPNIL', 'GANESHPURE', 'swapnilganeshpure@gmail.com', '8010597078', 'bFVOWmd2b0JaTE9McEE1NExNLzV5b2llWEJqWVJPOFJ5TWlkTFFDZ2E0QT0=', 2, 1, 1, '2023-05-05 17:12:48', '2023-05-05 17:12:48'),
-(3, 2, 'DR. DIPTI', 'GUPTA', 'diptigupta@gmail.com', '8010597077', 'ZXFNZzluRmZTK2pGRjRwQVZYeHN1dz09', 2, 1, 1, '2023-05-06 09:36:05', '2023-05-06 09:36:05'),
-(4, 3, 'DR. ARVIND', 'VATKAR', 'arvindvatkar@gmail.com', '8010597089', 'Y3FBM09oakRxV3pMd1Q3bm9kYlQ0Zz09', 2, 1, 1, '2023-05-06 09:40:01', '2023-05-06 13:55:56'),
-(5, 1, 'Shirin', 'Ragbansingh', 'ragbansinghshirin@gmail.com', '8010597070', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, 1, '2023-05-08 10:15:33', '2023-05-08 10:58:14'),
-(6, 2, 'Mansi', 'Palkar', 'mansipalkar@gmail.com', '8010594040', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, 1, '2023-05-09 17:41:41', '2023-05-09 17:41:41'),
-(7, 3, 'Sharon', 'Ragbansingh', 'sharonragbansingh@gmail.com', '8626565656', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, 1, '2023-05-16 10:47:33', '2023-05-16 10:47:33'),
-(8, 1, 'Mansi', 'Palkar', 'mansi.palkar@stzsoft.com', '8656555555', 'c2FUMklvMmwzWE9yOUF3OFVuRnM4Zz09', 3, 1, 1, '2023-05-17 15:54:05', '2023-05-17 15:54:05'),
-(9, 4, 'Akash', 'Patil', 'test@gmail.com', '9656522332', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, 1, '2023-05-18 10:14:44', '2023-05-18 10:14:44');
+INSERT INTO `tbl_users` (`id`, `fk_id`, `first_name`, `last_name`, `email`, `contact_no`, `password`, `fk_user_type`, `login_status`, `added_by`, `del_status`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'Shirin', 'Ragbansingh', 'shirin@stzsoft.com', '8010597075', 'VUNtZmhSZjkvS3JDUVJvQUllNWc2Zz09', 1, 1, NULL, 1, '2023-05-05 17:09:47', '2023-05-05 17:09:47'),
+(2, 1, 'DR. SWAPNIL', 'GANESHPURE', 'swapnilganeshpure@gmail.com', '8010597078', 'bFVOWmd2b0JaTE9McEE1NExNLzV5b2llWEJqWVJPOFJ5TWlkTFFDZ2E0QT0=', 2, 1, NULL, 1, '2023-05-05 17:12:48', '2023-05-05 17:12:48'),
+(3, 2, 'DR. DIPTI', 'GUPTA', 'diptigupta@gmail.com', '8010597077', 'ZXFNZzluRmZTK2pGRjRwQVZYeHN1dz09', 2, 1, NULL, 1, '2023-05-06 09:36:05', '2023-05-06 09:36:05'),
+(4, 3, 'DR. ARVIND', 'VATKAR', 'arvindvatkar@gmail.com', '8010597089', 'Y3FBM09oakRxV3pMd1Q3bm9kYlQ0Zz09', 2, 1, NULL, 1, '2023-05-06 09:40:01', '2023-05-06 13:55:56'),
+(5, 1, 'Shirin', 'Ragbansingh', 'ragbansinghshirin@gmail.com', '8010597070', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, NULL, 1, '2023-05-08 10:15:33', '2023-05-08 10:58:14'),
+(6, 2, 'Mansi', 'Palkar', 'mansipalkar@gmail.com', '8010594040', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, NULL, 1, '2023-05-09 17:41:41', '2023-05-09 17:41:41'),
+(7, 3, 'Sharon', 'Ragbansingh', 'sharonragbansingh@gmail.com', '8626565656', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, NULL, 1, '2023-05-16 10:47:33', '2023-05-16 10:47:33'),
+(8, 1, 'Mansi', 'Palkar', 'mansi.palkar@stzsoft.com', '8656555555', 'c2FUMklvMmwzWE9yOUF3OFVuRnM4Zz09', 3, 1, NULL, 1, '2023-05-17 15:54:05', '2023-05-17 15:54:05'),
+(9, 4, 'Akash', 'Patil', 'test@gmail.com', '9656522332', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, NULL, 1, '2023-05-18 10:14:44', '2023-05-18 10:14:44'),
+(10, 2, 'Jayshree', 'Badal', 'jayshreebadal@gmail.com', '0427780044', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 6, 1, NULL, 1, '2023-05-22 11:13:00', '2023-05-22 11:13:00');
 
 -- --------------------------------------------------------
 
@@ -6459,7 +6527,7 @@ CREATE TABLE `tbl_user_type` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_user_type`
@@ -6476,6 +6544,26 @@ INSERT INTO `tbl_user_type` (`id`, `user_type`, `status`, `del_status`, `created
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tbl_visit_location`
+--
+
+CREATE TABLE `tbl_visit_location` (
+  `id` bigint(20) NOT NULL,
+  `place_name` varchar(100) DEFAULT NULL,
+  `address1` longtext DEFAULT NULL,
+  `address2` longtext DEFAULT NULL,
+  `fk_state_id` int(11) DEFAULT NULL,
+  `fk_city_id` int(11) DEFAULT NULL,
+  `pincodee` varchar(10) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 1,
+  `del_status` int(11) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tbl_ward`
 --
 
@@ -6486,7 +6574,7 @@ CREATE TABLE `tbl_ward` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_ward`
@@ -6519,6 +6607,12 @@ ALTER TABLE `tbl_appointment`
   ADD KEY `fk_doctor_id` (`fk_doctor_id`,`fk_patient_id`,`appointment_date`,`appointment_time`);
 
 --
+-- Indexes for table `tbl_appointment_sub_type`
+--
+ALTER TABLE `tbl_appointment_sub_type`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tbl_appointment_type`
 --
 ALTER TABLE `tbl_appointment_type`
@@ -6529,6 +6623,12 @@ ALTER TABLE `tbl_appointment_type`
 -- Indexes for table `tbl_blood_group`
 --
 ALTER TABLE `tbl_blood_group`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tbl_charges_type`
+--
+ALTER TABLE `tbl_charges_type`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -6622,6 +6722,13 @@ ALTER TABLE `tbl_user_type`
   ADD KEY `id` (`id`,`user_type`);
 
 --
+-- Indexes for table `tbl_visit_location`
+--
+ALTER TABLE `tbl_visit_location`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id` (`id`,`place_name`,`fk_state_id`,`fk_city_id`,`pincodee`);
+
+--
 -- Indexes for table `tbl_ward`
 --
 ALTER TABLE `tbl_ward`
@@ -6645,15 +6752,27 @@ ALTER TABLE `tbl_appointment`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `tbl_appointment_sub_type`
+--
+ALTER TABLE `tbl_appointment_sub_type`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `tbl_appointment_type`
 --
 ALTER TABLE `tbl_appointment_type`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_blood_group`
 --
 ALTER TABLE `tbl_blood_group`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `tbl_charges_type`
+--
+ALTER TABLE `tbl_charges_type`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
@@ -6714,7 +6833,7 @@ ALTER TABLE `tbl_payment`
 -- AUTO_INCREMENT for table `tbl_staff`
 --
 ALTER TABLE `tbl_staff`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_states`
@@ -6726,13 +6845,19 @@ ALTER TABLE `tbl_states`
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tbl_user_type`
 --
 ALTER TABLE `tbl_user_type`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `tbl_visit_location`
+--
+ALTER TABLE `tbl_visit_location`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_ward`
