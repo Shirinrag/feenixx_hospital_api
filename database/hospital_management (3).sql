@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2023 at 03:09 PM
+-- Generation Time: Jun 02, 2023 at 03:16 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -58,6 +58,7 @@ CREATE TABLE `tbl_appointment` (
   `appointment_date` varchar(100) DEFAULT NULL,
   `appointment_time` varchar(100) DEFAULT NULL,
   `admission_type` varchar(100) DEFAULT NULL,
+  `fk_sub_type_appoitment` int(11) DEFAULT NULL,
   `prescription` longtext DEFAULT NULL,
   `description` longtext DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
@@ -69,10 +70,10 @@ CREATE TABLE `tbl_appointment` (
 -- Dumping data for table `tbl_appointment`
 --
 
-INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `admission_type`, `prescription`, `description`, `added_by`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 62, NULL, '09-05-2023', '18:30', NULL, 'uploads/pescription/LCT24609079/658964_images.png', 'Test Description', NULL, '2023-05-09 11:07:04', '2023-05-09 11:07:04'),
-(2, 1, 1, 85, NULL, '09-05-2023', '12:07', NULL, 'uploads/pescription/LCT24609079/746987_H7bede4ac0f624719bbsss78c6e4f7fb3763Q-copy.jpg', 'test', NULL, '2023-05-09 12:32:24', '2023-05-09 17:46:10'),
-(3, 1, 2, 32, NULL, '09-05-2023', '19:50', NULL, 'uploads/pescription/WZGL4297935/442064_download.jpg', 'Test description', NULL, '2023-05-09 17:44:30', '2023-05-09 17:46:13');
+INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `admission_type`, `fk_sub_type_appoitment`, `prescription`, `description`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 62, NULL, '09-05-2023', '18:30', NULL, NULL, 'uploads/pescription/LCT24609079/658964_images.png', 'Test Description', NULL, '2023-05-09 11:07:04', '2023-05-09 11:07:04'),
+(2, 1, 1, 85, NULL, '09-05-2023', '12:07', NULL, NULL, 'uploads/pescription/LCT24609079/746987_H7bede4ac0f624719bbsss78c6e4f7fb3763Q-copy.jpg', 'test', NULL, '2023-05-09 12:32:24', '2023-05-09 17:46:10'),
+(3, 1, 2, 32, NULL, '09-05-2023', '19:50', NULL, NULL, 'uploads/pescription/WZGL4297935/442064_download.jpg', 'Test description', NULL, '2023-05-09 17:44:30', '2023-05-09 17:46:13');
 
 -- --------------------------------------------------------
 
@@ -6523,12 +6524,19 @@ CREATE TABLE `tbl_visit_location` (
   `address2` longtext DEFAULT NULL,
   `fk_state_id` int(11) DEFAULT NULL,
   `fk_city_id` int(11) DEFAULT NULL,
-  `pincodee` varchar(10) DEFAULT NULL,
+  `pincode` varchar(10) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_visit_location`
+--
+
+INSERT INTO `tbl_visit_location` (`id`, `place_name`, `address1`, `address2`, `fk_state_id`, `fk_city_id`, `pincode`, `status`, `del_status`, `created_at`, `updated_at`) VALUES
+(1, 'Test Place', 'Uran', '', 22, 2851, '400051', 1, 1, '2023-05-30 10:44:16', '2023-06-01 11:37:37');
 
 -- --------------------------------------------------------
 
@@ -6689,7 +6697,7 @@ ALTER TABLE `tbl_user_type`
 --
 ALTER TABLE `tbl_visit_location`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`,`place_name`,`fk_state_id`,`fk_city_id`,`pincodee`);
+  ADD KEY `id` (`id`,`place_name`,`fk_state_id`,`fk_city_id`,`pincode`);
 
 --
 -- Indexes for table `tbl_ward`
@@ -6814,7 +6822,7 @@ ALTER TABLE `tbl_user_type`
 -- AUTO_INCREMENT for table `tbl_visit_location`
 --
 ALTER TABLE `tbl_visit_location`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_ward`
