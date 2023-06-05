@@ -40,7 +40,7 @@ class Superadmin_model extends CI_Model {
 		$this->db->join('tbl_payment','tbl_payment.fk_appointment_id=tbl_appointment.id','left');
 		$this->db->join('tbl_blood_group','tbl_patients.fk_blood_group_id=tbl_blood_group.id','left');
 		$this->db->join('tbl_diseases','tbl_appointment.fk_diseases_id=tbl_diseases.id','left');		
-		$this->db->join('tbl_gender','tbl_patients.fk_gender_id=tbl_gender.id','left');		
+		$this->db->join('tbl_gender','tbl_patients.fk_gender_id=tbl_gender.id','left');	
 		$this->db->order_by('tbl_appointment.id','DESC');
 		$query = $this->db->get();
         $result = $query->result_array();
@@ -95,6 +95,17 @@ class Superadmin_model extends CI_Model {
         $this->db->join('tbl_cities','tbl_cities.id=tbl_visit_location.fk_city_id','left');
         $this->db->where('tbl_visit_location.del_status',1);
         $this->db->order_by('tbl_visit_location.id','DESC');
+		$query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+	}
+	public function display_all_charges_details()
+	{
+		$this->db->select('tbl_charges_type.*,CONCAT(tbl_charges_type.status,",",tbl_charges_type.id) AS statusdata');
+		$this->db->from('tbl_charges_type');
+		$this->db->where('del_status',1);
+		$this->db->order_by('tbl_charges_type.id','DESC');
+		$this->db->group_by('tbl_charges_type.id');
 		$query = $this->db->get();
         $result = $query->result_array();
         return $result;
