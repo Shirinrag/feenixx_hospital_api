@@ -84,7 +84,36 @@ class Doctor_api extends REST_Controller {
         }
         echo json_encode($response);
     }
-
+    public function dr_update_appointment_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                $fk_diseases_id = $this->input->post('fk_diseases_id');
+                $image = $this->input->post('image');              
+                $description = $this->input->post('description');              
+                if(empty($id)){
+                    $response['message'] = "Id is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data =  array(
+                        'fk_diseases_id' => $fk_diseases_id,
+                        'prescription'=>$image,
+                        'description'=>$description,
+                        
+                    );
+                   $this->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));                          
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Appointment Details Added Successfully';
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
 
 }
 ?>
