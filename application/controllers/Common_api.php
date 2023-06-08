@@ -177,6 +177,7 @@ class Common_api extends REST_Controller {
             $appointment_type = $this->model->selectWhereData('tbl_appointment_type',array('status'=>1),array('id','type'),false,array('id','DESC'));              
             $location_data = $this->model->selectWhereData('tbl_visit_location',array('del_status'=>1),array('id','place_name'),false,array('id','DESC'));              
             $charges_data = $this->model->selectWhereData('tbl_charges_type',array('del_status'=>1,'status'=>1),array('id','charges_name'),false,array('id','DESC'));              
+            $payment_type = $this->model->selectWhereData('tbl_payment_type',array('del_status'=>1,'status'=>1),array('id','payment_type'),false,array('id','DESC'));              
             $response['code'] = REST_Controller::HTTP_OK;
             $response['status'] = true;
             $response['message'] = 'success';
@@ -186,6 +187,7 @@ class Common_api extends REST_Controller {
             $response['doctor_data'] = $doctor_data;
             $response['location_data'] = $location_data;
             $response['charges_data'] = $charges_data;
+            $response['payment_type'] = $payment_type;
 
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
