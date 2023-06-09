@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 02, 2023 at 03:16 PM
+-- Generation Time: Jun 09, 2023 at 03:03 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -73,7 +73,7 @@ CREATE TABLE `tbl_appointment` (
 INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `admission_type`, `fk_sub_type_appoitment`, `prescription`, `description`, `added_by`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, 62, NULL, '09-05-2023', '18:30', NULL, NULL, 'uploads/pescription/LCT24609079/658964_images.png', 'Test Description', NULL, '2023-05-09 11:07:04', '2023-05-09 11:07:04'),
 (2, 1, 1, 85, NULL, '09-05-2023', '12:07', NULL, NULL, 'uploads/pescription/LCT24609079/746987_H7bede4ac0f624719bbsss78c6e4f7fb3763Q-copy.jpg', 'test', NULL, '2023-05-09 12:32:24', '2023-05-09 17:46:10'),
-(3, 1, 2, 32, NULL, '09-05-2023', '19:50', NULL, NULL, 'uploads/pescription/WZGL4297935/442064_download.jpg', 'Test description', NULL, '2023-05-09 17:44:30', '2023-05-09 17:46:13');
+(3, 1, 2, 210, NULL, '10-06-2023', '21:58', NULL, NULL, 'uploads/pescription/WZGL4297935/555216_download_(2).jpg', 'test ', NULL, '2023-05-09 17:44:30', '2023-06-08 13:33:07');
 
 -- --------------------------------------------------------
 
@@ -148,6 +148,61 @@ INSERT INTO `tbl_blood_group` (`id`, `blood_group`, `status`, `created_at`, `upd
 (6, 'O-', 1, '2023-05-07 19:42:04', '2023-05-07 19:42:04'),
 (7, 'AB+', 1, '2023-05-07 19:42:04', '2023-05-07 19:42:04'),
 (8, 'AB-', 1, '2023-05-07 19:42:04', '2023-05-07 19:42:04');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_charges_type`
+--
+
+CREATE TABLE `tbl_charges_type` (
+  `id` int(11) NOT NULL,
+  `charges_name` varchar(100) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 1,
+  `del_status` int(11) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_charges_type`
+--
+
+INSERT INTO `tbl_charges_type` (`id`, `charges_name`, `status`, `del_status`, `created_at`, `updated_at`) VALUES
+(1, 'Registration Charges', 1, 1, '2023-06-03 16:58:19', '2023-06-03 16:58:19'),
+(2, 'Bed Charges', 1, 1, '2023-06-03 16:58:30', '2023-06-03 16:58:30'),
+(3, '1st Consultant Charges', 1, 1, '2023-06-03 16:58:48', '2023-06-03 16:58:48'),
+(4, 'Dr. Visit Charges', 1, 1, '2023-06-03 16:59:01', '2023-06-03 16:59:01'),
+(5, 'ECG Charges', 1, 1, '2023-06-03 17:00:03', '2023-06-03 17:00:03'),
+(6, 'HGT Charges', 1, 1, '2023-06-03 17:00:26', '2023-06-03 17:00:26'),
+(7, 'Lab Charges', 1, 1, '2023-06-03 17:01:38', '2023-06-03 17:01:38'),
+(8, 'Medicine Charges', 1, 1, '2023-06-03 17:01:51', '2023-06-03 17:01:51'),
+(9, 'Neurologist Charges', 1, 1, '2023-06-06 18:30:13', '2023-06-06 18:30:13'),
+(10, 'Pathology Charges', 1, 1, '2023-06-06 18:30:29', '2023-06-06 18:30:29'),
+(11, 'Radiology Charges', 1, 1, '2023-06-06 18:30:48', '2023-06-06 18:30:48'),
+(12, 'O2 Charges', 1, 1, '2023-06-06 18:30:59', '2023-06-06 18:30:59'),
+(13, 'OT Charges', 1, 1, '2023-06-06 18:31:09', '2023-06-06 18:31:09'),
+(14, 'Surgery Charges', 1, 1, '2023-06-06 18:31:20', '2023-06-06 18:31:20'),
+(15, 'Anesthetic Charges', 1, 1, '2023-06-06 18:31:36', '2023-06-06 18:31:36'),
+(16, 'Assistant Charges', 1, 1, '2023-06-06 18:31:52', '2023-06-06 18:31:52'),
+(17, 'Pediatriction Charges', 1, 1, '2023-06-06 18:32:08', '2023-06-06 18:32:08'),
+(18, 'ICU Bed Charges', 1, 1, '2023-06-06 18:32:20', '2023-06-06 18:32:20'),
+(19, 'ICU Nursing Charges', 1, 1, '2023-06-06 18:32:33', '2023-06-06 18:32:33'),
+(20, 'ICU Dr. Visit Charges', 1, 1, '2023-06-06 18:32:48', '2023-06-06 18:32:48'),
+(21, 'NEB Charges', 1, 1, '2023-06-06 18:33:03', '2023-06-06 18:33:03'),
+(22, 'USG Charges', 1, 1, '2023-06-06 18:33:15', '2023-06-06 18:33:15'),
+(23, 'Sonography Charges', 1, 1, '2023-06-06 18:33:28', '2023-06-06 18:33:28'),
+(24, 'Urologist Charges', 1, 1, '2023-06-06 18:33:39', '2023-06-06 18:33:39'),
+(25, 'ENT Dr. Charges', 1, 1, '2023-06-06 18:34:02', '2023-06-06 18:34:02'),
+(26, 'Phototheropy Charges', 1, 1, '2023-06-06 18:34:54', '2023-06-06 18:34:54'),
+(27, 'Procedure Charges', 1, 1, '2023-06-06 18:35:09', '2023-06-06 18:35:09'),
+(28, 'Blood Tranfusion Charges', 1, 1, '2023-06-06 18:35:25', '2023-06-06 18:35:25'),
+(29, 'Intubation Charges', 1, 1, '2023-06-06 18:35:49', '2023-06-06 18:35:49'),
+(30, 'Monitor Charges', 1, 1, '2023-06-06 18:36:00', '2023-06-06 18:36:00'),
+(31, 'Chest Physician Dr. Visit', 1, 1, '2023-06-06 18:36:21', '2023-06-06 18:36:21'),
+(32, 'CLW Charges', 1, 1, '2023-06-06 18:36:29', '2023-06-06 18:36:29'),
+(33, 'Other Dressing with TT Injection', 1, 1, '2023-06-06 18:36:50', '2023-06-06 18:36:50'),
+(34, 'Nursing Charges', 1, 1, '2023-06-06 18:37:19', '2023-06-06 18:37:19');
 
 -- --------------------------------------------------------
 
@@ -6332,12 +6387,8 @@ CREATE TABLE `tbl_payment` (
   `id` bigint(20) NOT NULL,
   `fk_patient_id` int(11) DEFAULT NULL,
   `fk_appointment_id` int(11) DEFAULT NULL,
-  `payment_type` varchar(10) DEFAULT NULL,
-  `online_amount` double DEFAULT NULL,
-  `cash_amount` double DEFAULT NULL,
-  `mediclaim_amount` double DEFAULT NULL,
-  `discount_amount` double DEFAULT NULL,
-  `total_amount` double DEFAULT NULL,
+  `payment_details` longtext DEFAULT NULL,
+  `added_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -6346,10 +6397,63 @@ CREATE TABLE `tbl_payment` (
 -- Dumping data for table `tbl_payment`
 --
 
-INSERT INTO `tbl_payment` (`id`, `fk_patient_id`, `fk_appointment_id`, `payment_type`, `online_amount`, `cash_amount`, `mediclaim_amount`, `discount_amount`, `total_amount`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'Cash', 1000, 200, 500, 20, 200, '2023-05-09 11:07:04', '2023-05-09 11:07:04'),
-(2, 1, 2, 'Cash', 100, 100, 100, 10, 290, '2023-05-09 12:32:24', '2023-05-09 12:32:24'),
-(3, 2, 3, 'Cash', 1000, 1000, 200, 100, 2100, '2023-05-09 17:44:30', '2023-05-09 17:44:30');
+INSERT INTO `tbl_payment` (`id`, `fk_patient_id`, `fk_appointment_id`, `payment_details`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 2, 3, '{\"payment_type\":\"2\",\"charges\":[\"1\",\"2\",\"3\",\"34\",\"4\"],\"amount\":[\"1000\",\"200\",\"1000\",\"1000\",\"800\"],\"online_amount\":\"1000\",\"cash_amount\":\"\",\"mediclaim_amount\":\"\",\"discount\":\"\",\"total_amount\":\"4000\",\"total_paid_amount\":\"1000\",\"remaining_amount\":\"3000\"}', 10, '2023-06-09 18:28:48', '2023-06-09 18:28:48');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_payment_history`
+--
+
+CREATE TABLE `tbl_payment_history` (
+  `id` int(11) NOT NULL,
+  `fk_patient_id` int(11) DEFAULT NULL,
+  `fk_appointment_id` int(11) DEFAULT NULL,
+  `fk_payment_id` int(11) DEFAULT NULL,
+  `online_amount` double DEFAULT NULL,
+  `cash_amount` double DEFAULT NULL,
+  `mediclaim_amount` double DEFAULT NULL,
+  `total_amount` double DEFAULT NULL,
+  `total_paid_amount` double DEFAULT NULL,
+  `remaining_amount` double DEFAULT NULL,
+  `date` varchar(100) DEFAULT NULL,
+  `used_status` int(11) NOT NULL DEFAULT 1,
+  `added_by` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_payment_history`
+--
+
+INSERT INTO `tbl_payment_history` (`id`, `fk_patient_id`, `fk_appointment_id`, `fk_payment_id`, `online_amount`, `cash_amount`, `mediclaim_amount`, `total_amount`, `total_paid_amount`, `remaining_amount`, `date`, `used_status`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 2, 3, 1, 1000, 0, 0, 4000, 1000, 3000, '09/06/2023', 0, 10, '2023-06-09 18:28:48', '2023-06-09 18:29:02'),
+(2, 2, 3, 1, 2000, 0, 0, 4000, 2000, 1000, '09/06/2023', 1, 10, '2023-06-09 18:29:02', '2023-06-09 18:29:02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_payment_type`
+--
+
+CREATE TABLE `tbl_payment_type` (
+  `id` bigint(20) NOT NULL,
+  `payment_type` varchar(100) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 1,
+  `del_status` int(11) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_payment_type`
+--
+
+INSERT INTO `tbl_payment_type` (`id`, `payment_type`, `status`, `del_status`, `created_at`, `updated_at`) VALUES
+(1, 'Online', 1, 1, '2023-06-08 10:28:37', '2023-06-08 10:28:37'),
+(2, 'Cash', 1, 1, '2023-06-08 10:28:37', '2023-06-08 10:28:37');
 
 -- --------------------------------------------------------
 
@@ -6603,6 +6707,12 @@ ALTER TABLE `tbl_blood_group`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `tbl_charges_type`
+--
+ALTER TABLE `tbl_charges_type`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tbl_cities`
 --
 ALTER TABLE `tbl_cities`
@@ -6663,7 +6773,20 @@ ALTER TABLE `tbl_patient_medical_documents`
 --
 ALTER TABLE `tbl_payment`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`,`payment_type`,`online_amount`,`cash_amount`,`mediclaim_amount`,`discount_amount`,`total_amount`);
+  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`);
+
+--
+-- Indexes for table `tbl_payment_history`
+--
+ALTER TABLE `tbl_payment_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`,`fk_payment_id`,`total_amount`,`total_paid_amount`,`remaining_amount`);
+
+--
+-- Indexes for table `tbl_payment_type`
+--
+ALTER TABLE `tbl_payment_type`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `tbl_staff`
@@ -6741,6 +6864,12 @@ ALTER TABLE `tbl_blood_group`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `tbl_charges_type`
+--
+ALTER TABLE `tbl_charges_type`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+--
 -- AUTO_INCREMENT for table `tbl_cities`
 --
 ALTER TABLE `tbl_cities`
@@ -6792,7 +6921,19 @@ ALTER TABLE `tbl_patient_medical_documents`
 -- AUTO_INCREMENT for table `tbl_payment`
 --
 ALTER TABLE `tbl_payment`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `tbl_payment_history`
+--
+ALTER TABLE `tbl_payment_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `tbl_payment_type`
+--
+ALTER TABLE `tbl_payment_type`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_staff`

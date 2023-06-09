@@ -197,7 +197,10 @@ class Reciption_api extends REST_Controller {
         if ($validate) {
                 $fk_patient_id = $this->input->post('fk_patient_id');
                 $fk_appointment_id = $this->input->post('fk_appointment_id');
-                $payment_details = $this->input->post('payment_details');               
+                $payment_details = $this->input->post('payment_details');
+                $online_amount = $this->input->post('online_amount');
+                $cash_amount = $this->input->post('cash_amount');
+                $mediclaim_amount = $this->input->post('mediclaim_amount');
                 $total_amount = $this->input->post('total_amount');
                 $total_paid_amount = $this->input->post('total_paid_amount');
                 $remaining_amount = $this->input->post('remaining_amount');
@@ -238,10 +241,14 @@ class Reciption_api extends REST_Controller {
                                 'fk_patient_id'=>$fk_patient_id,
                                 'fk_appointment_id'=>$fk_appointment_id,
                                 'fk_payment_id'=>$inserted_id,
+                                'online_amount'=>$online_amount,
+                                'cash_amount'=>$cash_amount,
+                                'mediclaim_amount'=>$mediclaim_amount,
                                 'total_amount'=>$total_amount,
                                 'total_paid_amount'=>$total_paid_amount,
                                 'remaining_amount'=>$remaining_amount,
                                 'date'=>date('d/m/Y'),
+                                'added_by'=> $added_by
                             );
                             $this->model->insertData('tbl_payment_history',$insert_payment_history_details);
                                                             
@@ -309,6 +316,7 @@ class Reciption_api extends REST_Controller {
                 }else{
                     $this->load->model('superadmin_model');
                     $appointment_details = $this->superadmin_model->get_payment_data_on_appointment_id($id);
+                    // echo '<pre>'; print_r($appointment_details); exit;
                     $payment_details = $appointment_details['payment_details'];
                     $payment_details_1 = json_decode($payment_details);
                     $payment_details_2 = json_decode(json_encode($payment_details_1), true);
@@ -316,10 +324,75 @@ class Reciption_api extends REST_Controller {
                        $charges_type = $this->model->selectWhereData('tbl_charges_type',array('id'=>$payment_details_2_row),array('charges_name'));                    
                        $payment_details_2['charges_name'][$payment_details_2_key] = $charges_type['charges_name'];
                     }
+                    $payment_mode = $this->model->selectWhereData('tbl_payment_type',array('id'=>$payment_details_2['payment_type']),array('payment_type'));
+                    $payment_history = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id']),array('online_amount','cash_amount','mediclaim_amount','total_amount','total_paid_amount','remaining_amount','date'),false);
+                    $appointment_details['payment_details'] =$payment_details_2;
+                    $appointment_details['payment_history'] =$payment_history;
+                    $appointment_details['payment_type'] =$payment_mode['payment_type'];
+
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'success';
-                    $response['payment_details'] = $payment_details_2;
+                    $response['payment_details'] = $appointment_details;
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
+    public function update_payment_details_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $fk_payment_id = $this->input->post('fk_payment_id');
+                $fk_patient_id = $this->input->post('fk_patient_id');
+                $fk_appointment_id = $this->input->post('fk_appointment_id');
+                $online_amount = $this->input->post('online_amount');
+                $cash_amount = $this->input->post('cash_amount');
+                $mediclaim_amount = $this->input->post('mediclaim_amount');
+                $total_amount = $this->input->post('total_amount');
+                $total_paid_amount = $this->input->post('total_paid_amount');
+                $remaining_amount = $this->input->post('remaining_amount');
+                $added_by = $this->input->post('added_by');
+                        
+                if(empty($fk_appointment_id)){
+                    $response['message'] = "Appointment Id is required";
+                    $response['code'] = 201;
+                }else if(empty($fk_patient_id)){
+                    $response['message'] = "Patient Id is required";
+                    $response['code'] = 201;
+                }else if(empty($total_amount)){
+                    $response['message'] = "Total Amount is required";
+                    $response['code'] = 201;
+                }else if(empty($total_paid_amount)){
+                    $response['message'] = "Total Paid Amount is required";
+                    $response['code'] = 201;
+                }else if(empty($remaining_amount)){
+                    $response['message'] = "Total Remaining Amount is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data = array('used_status'=>0);
+                    $this->model->updateData('tbl_payment_history',$curl_data,array('id'=>$fk_payment_id));
+                    $insert_payment_history_details = array(
+                        'fk_patient_id'=>$fk_patient_id,
+                        'fk_appointment_id'=>$fk_appointment_id,
+                        'fk_payment_id'=>$fk_payment_id,
+                        'online_amount'=>$online_amount,
+                        'cash_amount'=>$cash_amount,
+                        'mediclaim_amount'=>$mediclaim_amount,
+                        'total_amount'=>$total_amount,
+                        'total_paid_amount'=>$total_paid_amount,
+                        'remaining_amount'=>$remaining_amount,
+                        'date'=>date('d/m/Y'),
+                        'added_by'=> $added_by
+                    );
+                    $this->model->insertData('tbl_payment_history',$insert_payment_history_details);
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Payment Details Added Successfully';                  
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

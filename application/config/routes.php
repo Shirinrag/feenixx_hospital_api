@@ -114,4 +114,4 @@ $route['get-all-appointment-details'] = 'reciption_api/get_all_appointment_detai
 $route['add-appointment-payment-details'] = 'reciption_api/add_appointment_payment_details';
 $route['reschedule-appointment-details'] = 'reciption_api/reschedule_appointment_details';
 $route['get-payment-data-on-appointment-id'] = 'reciption_api/get_payment_data_on_appointment_id';
-
+$route['update-payment-details'] = 'reciption_api/update_payment_details';

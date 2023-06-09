@@ -43,6 +43,7 @@ class Superadmin_model extends CI_Model {
 		$this->db->join('tbl_diseases','tbl_appointment.fk_diseases_id=tbl_diseases.id','left');		
 		$this->db->join('tbl_gender','tbl_patients.fk_gender_id=tbl_gender.id','left');	
 		$this->db->order_by('tbl_appointment.id','DESC');
+		$this->db->group_by('tbl_appointment.id');
 		$query = $this->db->get();
         $result = $query->result_array();
         return $result;
@@ -113,7 +114,7 @@ class Superadmin_model extends CI_Model {
 	}
 	public function get_payment_data_on_appointment_id($id='')
 	{
-		$this->db->select('tbl_appointment.*,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_payment.payment_details,tbl_blood_group.blood_group,tbl_diseases.diseases_name,tbl_gender.gender');
+		$this->db->select('tbl_appointment.*,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_payment.payment_details,tbl_blood_group.blood_group,tbl_diseases.diseases_name,tbl_gender.gender,tbl_payment.id as payment_id');
 		$this->db->from('tbl_appointment');
 		$this->db->join('tbl_patients','tbl_patients.id=tbl_appointment.fk_patient_id','left');
 		$this->db->join('tbl_doctor','tbl_doctor.id=tbl_appointment.fk_doctor_id','left');
