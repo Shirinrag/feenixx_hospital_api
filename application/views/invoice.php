@@ -5,11 +5,13 @@
     <style>
         body {
             font-family: serif;
+            font-size: 14px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+
         }
 
         th, td {
@@ -31,12 +33,13 @@
             font-family: serif;
             text-align: center;
             font-weight: bold;
+/*            font-size: 1px;*/
         }
     </style>
 </head>
 <body>
     <div class="invoice-header">
-         <img src="<?php echo base_url();?>uploads/logo.png">
+         <img src="http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/logo.jpg">
         <!-- <h2>Feenixx Hospital</h2> -->
         <p>1st Floor, Above SBI,<br>
         Shyam Swastik, Plot No 4, Sector 19, Ulwe<br>
@@ -54,8 +57,8 @@
             <!-- <th>Due Date</th> -->
         </tr>
         <tr>
-            <td>[Unique Invoice Number]</td>
-            <td>[Invoice Date]</td>
+            <td><?= $data['payment_detail']['invoice_no']?></td>
+            <td><?= $data['payment_detail']['payment_history'][0]['date']?></td>
             <!-- <td>[Payment Due Date]</td> -->
         </tr>
     </table>
@@ -64,14 +67,16 @@
 
     <table>
         <tr>
+            <th>Customer ID</th>
             <th>Customer Name</th>
-            <th>Customer Address</th>
-            <th>City, State, ZIP</th>
+           <!--  <th>Customer Address</th>
+            <th>City, State, ZIP</th> -->
         </tr>
         <tr>
-            <td>[Customer Name]</td>
-            <td>[Customer Address]</td>
-            <td>[City, State, ZIP]</td>
+            <td><?= $data['payment_detail']['patient_id']?></td>
+            <td><?= $data['payment_detail']['first_name']." ".$data['payment_detail']['last_name']?></td>
+            <!-- <td>[Customer Address]</td>
+            <td>[City, State, ZIP]</td> -->
         </tr>
     </table>
 
@@ -80,25 +85,38 @@
     <table>
         <tr>
             <th>Description</th>
-            <th>Quantity</th>
+            <!-- <th>Quantity</th> -->
             <th>Unit Price</th>
-            <th>Total</th>
+            <!-- <th>Total</th> -->
         </tr>
+
+        <?php 
+        $info =  $data['payment_detail'];
+        foreach ($info['payment_details']['charges_name'] as $payment_details_key => $payment_details_row) { ?>
+       
         <tr>
-            <td>[Item 1]</td>
-            <td>[Quantity]</td>
-            <td>[Price]</td>
-            <td>[Total]</td>
+            <td><?= $payment_details_row?></td>
+            <!-- <td>[Quantity]</td> -->
+            <td><?= $info['payment_details']['amount'][$payment_details_key]?></td>
+            <!-- <td><?= $info['payment_details']['amount'][$payment_details_key]?></td> -->
+
         </tr>
+         <?php }?>
         <!-- Add more rows for additional items -->
     </table>
 
     <h2>Payment Summary</h2>
 
     <table>
-        <tr>
-            <td>Subtotal:</td>
-            <td>[Subtotal]</td>
+        <tr class="total-row">
+            <td>Discount:</td>
+            <td><?php 
+            if(empty($info['payment_details']['discount'])){
+                echo 0;
+            }else{
+                echo $info['payment_details']['discount'];
+            }
+             ?></td>
         </tr>
         <!-- <tr>
             <td>Tax:</td>
@@ -110,7 +128,7 @@
         </tr> -->
         <tr class="total-row">
             <td>Total:</td>
-            <td>[Total Amount]</td>
+            <td><?= $info['payment_details']['total_amount'] ?></td>
         </tr>
     </table>
 
@@ -119,7 +137,7 @@
     <table>
         <tr>
             <td>Payment Method:</td>
-            <td>[Payment Method Details]</td>
+            <td><?= $info['payment_type'] ?></td>
         </tr>
         <!-- <tr>
             <td>Bank Name:</td>

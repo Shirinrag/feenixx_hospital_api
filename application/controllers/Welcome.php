@@ -28,6 +28,25 @@ class Welcome extends CI_Controller {
     }
     public function invoice()
     {
-        $this->load->view('invoice');
+
+    	$curl_data=array('id'=>1);
+        $curl = $this->link->hits('get-payment-data-on-appointment-id',$curl_data);   
+        $curl = json_decode($curl, true);
+        $payment_data['payment_detail'] = $curl['payment_detail'];
+        ini_set('memory_limit', '256M');
+                                                
+        // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+        $this->load->library('m_pdf');
+        $data = $payment_data;
+                        // echo '<pre>'; print_r($data); exit;
+        $html = $this->load->view('invoice', array('data'=>$data),true);
+	    $mpdf = new mPDF();
+	    $mpdf->SetDisplayMode('fullpage');
+	    $mpdf->AddPage('P', 'A4');
+	   
+	    $mpdf->WriteHTML($html);
+	    ob_end_clean();
+	    $mpdf->Output($pdfFilePath, "I");               
+        // $this->load->view('invoice');
     }
 }

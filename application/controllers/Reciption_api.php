@@ -218,22 +218,41 @@ class Reciption_api extends REST_Controller {
                 }else if(empty($total_paid_amount)){
                     $response['message'] = "Total Paid Amount is required";
                     $response['code'] = 201;
-                }else if(empty($remaining_amount)){
-                    $response['message'] = "Total Remaining Amount is required";
-                    $response['code'] = 201;
                 }else{
 
-                    $check_contact_no_count = $this->model->CountWhereRecord('tbl_payment', array('fk_appointment_id'=>$fk_appointment_id));
-                    if($check_contact_no_count > 0){
+                    $check_payment_count = $this->model->CountWhereRecord('tbl_payment', array('fk_appointment_id'=>$fk_appointment_id));
+                    if($check_payment_count > 0){
                             $response['code'] = 201;
                             $response['status'] = false;
                             $response['message'] = 'Payment Details Already exist.';                  
                         }else{
+                            $payment_data = $this->model->selectWhereData('tbl_payment',array(),array('id'));
+                            $year = date('Y');
+                            if(empty($payment_data)){                
+                                    $new_invoice_id  = 'FXH'.$year.'001';
+                            }else{
+                                    $this->load->model('superadmin_model');
+                                    $payment_data = $this->superadmin_model->get_last_invoice_no();
+                                    $explode = explode("H",$payment_data['invoice_no']);
+                                    $count = 8-strlen($explode[1]+1);
+                                    $invoice_rep =$explode[1]+1;                                                          
+                                    for($i=0;$i<$count;$i++){
+                                        $invoice_rep= $invoice_rep;
+                                    }
+                                    $new_invoice_id = 'FXH'.$invoice_rep;
+
+                            }
+                            $patient_id = $this->model->selectWhereData('tbl_patients',array('id'=>$fk_patient_id),array('patient_id'));
+                            $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+
+                            $this->model->updateData('tbl_appointment',array('invoice_pdf'=>$invoice_pdf),array('id'=>$fk_appointment_id));
+
                             $insert_payment_details = array(
                                 'fk_patient_id'=>$fk_patient_id,
                                 'fk_appointment_id'=>$fk_appointment_id,
                                 'payment_details'=>$payment_details,
-                                'added_by'=> $added_by
+                                'added_by'=> $added_by,
+                                'invoice_no'=>$new_invoice_id,
                             );
                             $inserted_id = $this->model->insertData('tbl_payment',$insert_payment_details);
 
@@ -250,8 +269,27 @@ class Reciption_api extends REST_Controller {
                                 'date'=>date('d/m/Y'),
                                 'added_by'=> $added_by
                             );
-                            $this->model->insertData('tbl_payment_history',$insert_payment_history_details);
-                                                            
+                            $this->model->insertData('tbl_payment_history',$insert_payment_history_details); 
+                            error_reporting(0);
+                            
+                            $curl_data=array('id'=>$fk_appointment_id);
+                            $curl = $this->link->hits('get-payment-data-on-appointment-id',$curl_data);   
+                            $curl = json_decode($curl, true);
+                            $payment_data['payment_detail'] = $curl['payment_detail'];
+                            ini_set('memory_limit', '256M');
+                                                                    
+                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+                            $this->load->library('m_pdf');
+                            $data = $payment_data;
+                                            // echo '<pre>'; print_r($data); exit;
+                            $html = $this->load->view('invoice', array('data'=>$data),true);
+                            $mpdf = new mPDF();
+                            $mpdf->SetDisplayMode('fullpage');
+                            $mpdf->AddPage('P', 'A4');
+                           
+                            $mpdf->WriteHTML($html);
+                            ob_end_clean();
+                            $mpdf->Output($pdfFilePath, "F");                  
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
                             $response['message'] = 'Payment Details Added Successfully';
@@ -326,14 +364,16 @@ class Reciption_api extends REST_Controller {
                     }
                     $payment_mode = $this->model->selectWhereData('tbl_payment_type',array('id'=>$payment_details_2['payment_type']),array('payment_type'));
                     $payment_history = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id']),array('online_amount','cash_amount','mediclaim_amount','total_amount','total_paid_amount','remaining_amount','date'),false);
+                    $previous_remaining_amount = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id'],'used_status'=>1),array('remaining_amount'));
                     $appointment_details['payment_details'] =$payment_details_2;
                     $appointment_details['payment_history'] =$payment_history;
                     $appointment_details['payment_type'] =$payment_mode['payment_type'];
+                    $appointment_details['previous_remaining_amount'] =$previous_remaining_amount['remaining_amount'];
 
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'success';
-                    $response['payment_details'] = $appointment_details;
+                    $response['payment_detail'] = $appointment_details;
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -357,7 +397,6 @@ class Reciption_api extends REST_Controller {
                 $total_paid_amount = $this->input->post('total_paid_amount');
                 $remaining_amount = $this->input->post('remaining_amount');
                 $added_by = $this->input->post('added_by');
-                        
                 if(empty($fk_appointment_id)){
                     $response['message'] = "Appointment Id is required";
                     $response['code'] = 201;
@@ -370,12 +409,9 @@ class Reciption_api extends REST_Controller {
                 }else if(empty($total_paid_amount)){
                     $response['message'] = "Total Paid Amount is required";
                     $response['code'] = 201;
-                }else if(empty($remaining_amount)){
-                    $response['message'] = "Total Remaining Amount is required";
-                    $response['code'] = 201;
                 }else{
                     $curl_data = array('used_status'=>0);
-                    $this->model->updateData('tbl_payment_history',$curl_data,array('id'=>$fk_payment_id));
+                    $this->model->updateData('tbl_payment_history',$curl_data,array('fk_payment_id'=>$fk_payment_id));
                     $insert_payment_history_details = array(
                         'fk_patient_id'=>$fk_patient_id,
                         'fk_appointment_id'=>$fk_appointment_id,
@@ -399,5 +435,29 @@ class Reciption_api extends REST_Controller {
             $response['message'] = 'Unauthorised';
         }
         echo json_encode($response);
+    }
+
+    public function invoice_get()
+    {
+
+        $curl_data=array('id'=>1);
+                            $curl = $this->get_payment_data_on_appointment_id($curl_data);
+                            $payment_data['payment_detail'] = $curl['payment_detail'];
+
+                        ini_set('memory_limit', '256M');
+                                                
+                        $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+                        // $this->load->library('m_pdf');
+                        $data = $payment_data;
+                        echo '<pre>'; print_r($data); exit;
+                         $this->load->view('invoice', array('data'=>$data), true);
+                        // $mpdf = new mPDF();
+                        // $mpdf->SetDisplayMode('fullpage');
+                        // $mpdf->AddPage('P', 'A4');
+                       
+                        // $mpdf->WriteHTML($html);
+                        // ob_end_clean();
+                        // $mpdf->Output($pdfFilePath, "F");               
+        // $this->load->view('invoice');
     }
 }
