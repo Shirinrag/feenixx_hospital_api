@@ -1381,5 +1381,22 @@ class Superadmin_api extends REST_Controller {
         }
         echo json_encode($response);
     }
+    public function s_get_all_appointment_report_details_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $this->load->model('superadmin_model');
+            $appointment_details = $this->superadmin_model->s_get_all_appointment_details();      
+            $response['code'] = REST_Controller::HTTP_OK;
+            $response['status'] = true;
+            $response['message'] = 'success';
+            $response['appointment_details_data'] = $appointment_details;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
 }
 ?>

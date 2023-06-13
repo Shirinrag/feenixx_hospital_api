@@ -65,7 +65,7 @@ $route['get-all-doctor-on-id'] = 'superadmin_api/get_all_doctor_on_id';
 $route['update-doctor'] = 'superadmin_api/update_doctor';
 $route['update-doctor-status'] = 'superadmin_api/update_doctor_status';
 $route['delete-doctor'] = 'superadmin_api/delete_doctor';
-// =========================== Patient Details=================================
+// =========================== Patient Details========================
 $route['add-patient'] = 'superadmin_api/add_patient';
 $route['display-all-patient-details'] = 'superadmin_api/display_all_patient_details';
 $route['get-all-patient-on-id'] = 'superadmin_api/get_all_patient_on_id';
@@ -85,6 +85,7 @@ $route['update-staff'] = 'superadmin_api/update_staff';
 $route['delete-staff'] = 'superadmin_api/delete_staff';
 // ===================== Super admin Appoitment Details====================
 $route['superadmin-get-all-appointment-details'] = 'superadmin_api/get_all_appointment_details';
+$route['s-get-all-appointment-report-details']='superadmin_api/s_get_all_appointment_report_details';
 // ============================== Location ================================
 
 $route['save-location'] = 'superadmin_api/save_location';
