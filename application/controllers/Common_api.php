@@ -171,7 +171,7 @@ class Common_api extends REST_Controller {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
         if ($validate) {
-            $patient_data = $this->model->selectWhereData('tbl_patients',array(),array('id','patient_id'),false);
+            $patient_data = $this->model->selectWhereData('tbl_patients',array(),array('id','patient_id','contact_no'),false);
             $diseases_data = $this->model->selectWhereData('tbl_diseases',array('status'=>1,'del_status'=>1),array('id','diseases_name'),false,array('id','DESC'));            
             $doctor_data = $this->model->selectWhereData('tbl_doctor',array('status'=>1,'del_status'=>1),array('id','first_name','last_name'),false,array('id','DESC'));            
             $appointment_type = $this->model->selectWhereData('tbl_appointment_type',array('status'=>1),array('id','type'),false,array('id','DESC'));              
