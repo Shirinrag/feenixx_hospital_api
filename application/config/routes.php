@@ -95,7 +95,7 @@ $route['delete-location'] = 'superadmin_api/delete_location';
 $route['get-sub-type-data-on-appoitment-id'] = 'common_api/get_sub_type_data_on_appoitment_id';
 // ============================= Doctor Appointment Details================
 $route['get-appointment-data'] = 'common_api/get_appointment_data';
-$route['get-patient-details-on-patient-id'] = 'doctor_api/get_patient_details_on_patient_id';
+$route['get-patient-details-on-patient-id'] = 'reciption_api/get_patient_details_on_patient_id';
 $route['save-appointment-details'] = 'reciption_api/save_appointment_details';
 $route['get-all-appointment-details-on-doctor-id'] = 'doctor_api/get_all_appointment_details_on_doctor_id';
 $route['dr-update-appointment'] = 'doctor_api/dr_update_appointment';
