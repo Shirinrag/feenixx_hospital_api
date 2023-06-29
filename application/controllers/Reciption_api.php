@@ -122,44 +122,51 @@ class Reciption_api extends REST_Controller {
                     $response['message'] = "Admission Type is required";
                     $response['code'] = 201;
                 }else{
-                    $curl_data =  array(
-                        'fk_doctor_id' => $doctor_id,
-                        'fk_patient_id' =>  $patient_id,
-                        'fk_diseases_id' => $fk_diseases_id,
-                        'appointment_date' => $appointment_date,
-                        'appointment_time'=>$appointment_time,
-                        // 'prescription'=>$image,
-                        // 'description'=>$description,
-                        'admission_type'=>$admission_type,
-                        'reference_doctor_name'=>$reference_doctor_name,
-                        'fk_admission_sub_type_id'=>$admission_sub_type
-                    );
-                    $inserted_id = $this->model->insertData('tbl_appointment',$curl_data);
-                    // $insert_payment_details = array(
-                    //     'fk_patient_id'=>$patient_id,
-                    //     'fk_appointment_id'=>$inserted_id,
-                    //     'payment_type'=>$payment_type,
-                    //     'online_amount'=>$online_amount,
-                    //     'cash_amount'=>$cash_amount,
-                    //     'mediclaim_amount'=>$mediclaim_amount,
-                    //     'discount_amount'=>$discount,
-                    //     'total_amount'=>$total_amount,
-                    // );
-                    // $this->model->insertData('tbl_payment',$insert_payment_details);
+                    $appointment_count = $this->model->CountWhereInRecord('tbl_appointment',array('fk_patient_id'=>$patient_id,'appointment_date' => $appointment_date,'appointment_time'=>$appointment_time,));
+                    if($check_contact_no_count > 0){
+                        $response['code'] = 201;
+                        $response['status'] = false;
+                        $response['message'] = 'Place Already exist.';
+                    }else{
+                        $curl_data =  array(
+                            'fk_doctor_id' => $doctor_id,
+                            'fk_patient_id' =>  $patient_id,
+                            'fk_diseases_id' => $fk_diseases_id,
+                            'appointment_date' => $appointment_date,
+                            'appointment_time'=>$appointment_time,
+                            // 'prescription'=>$image,
+                            // 'description'=>$description,
+                            'admission_type'=>$admission_type,
+                            'reference_doctor_name'=>$reference_doctor_name,
+                            'fk_admission_sub_type_id'=>$admission_sub_type
+                        );
+                        $inserted_id = $this->model->insertData('tbl_appointment',$curl_data);
+                            // $insert_payment_details = array(
+                            //     'fk_patient_id'=>$patient_id,
+                            //     'fk_appointment_id'=>$inserted_id,
+                            //     'payment_type'=>$payment_type,
+                            //     'online_amount'=>$online_amount,
+                            //     'cash_amount'=>$cash_amount,
+                            //     'mediclaim_amount'=>$mediclaim_amount,
+                            //     'discount_amount'=>$discount,
+                            //     'total_amount'=>$total_amount,
+                            // );
+                            // $this->model->insertData('tbl_payment',$insert_payment_details);
 
-                    if(!empty($document[0])){
-                        foreach ($document as $document_key => $document_row) {
-                            $insert_patient_medical_documents_data=array(
-                                'fk_patient_id'=>$patient_id,
-                                'fk_appointment_id' => $inserted_id,
-                                'documents' =>  $document_row,
-                            );
-                            $this->model->insertData('tbl_patient_medical_documents',$insert_patient_medical_documents_data);
-                        } 
-                    }                                
-                    $response['code'] = REST_Controller::HTTP_OK;
-                    $response['status'] = true;
-                    $response['message'] = 'Appointment Details Added Successfully';
+                            if(!empty($document[0])){
+                                foreach ($document as $document_key => $document_row) {
+                                    $insert_patient_medical_documents_data=array(
+                                        'fk_patient_id'=>$patient_id,
+                                        'fk_appointment_id' => $inserted_id,
+                                        'documents' =>  $document_row,
+                                    );
+                                    $this->model->insertData('tbl_patient_medical_documents',$insert_patient_medical_documents_data);
+                                } 
+                            }                                
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Appointment Details Added Successfully';
+                        }
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

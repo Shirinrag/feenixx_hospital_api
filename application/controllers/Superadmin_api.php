@@ -1069,11 +1069,11 @@ class Superadmin_api extends REST_Controller {
                     $curl_data = array(
                         'del_status' =>0,
                     );
-                    $this->model->updateData('tbl_patients',$curl_data,array('id'=>$id));
+                    $this->model->updateData('tbl_staff',$curl_data,array('id'=>$id));
                     $this->model->updateData('tbl_users',$curl_data,array('fk_id'=>$id,'fk_user_type'=>4));
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
-                    $response['message'] = 'Patient Deleted Successfully';
+                    $response['message'] = 'Staff Deleted Successfully';
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -1320,7 +1320,7 @@ class Superadmin_api extends REST_Controller {
                     $curl_data =  array(
                         'charges_name' => $charges_name,                       
                     );
-                    $this->model->updateData('tbl_charge',$curl_data,array('id'=>$id));
+                    $this->model->updateData('tbl_charges_type',$curl_data,array('id'=>$id));
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Charges Updated Successfully';
