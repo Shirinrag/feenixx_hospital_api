@@ -76,6 +76,7 @@ class Reciption_api extends REST_Controller {
                 $admission_sub_type = $this->input->post('admission_sub_type');
                 $reference_doctor_name = $this->input->post('reference_doctor_name');
                 $admission_type = $this->input->post('admission_type');
+                $deposite_amount = $this->input->post('deposite_amount');
                 if(empty($doctor_id)){
                     $response['message'] = "Doctor Id is required";
                     $response['code'] = 201;
@@ -118,9 +119,6 @@ class Reciption_api extends REST_Controller {
                 else if(empty($admission_type)){
                     $response['message'] = "Admission Type is required";
                     $response['code'] = 201;
-                }else if(empty($admission_type)){
-                    $response['message'] = "Admission Type is required";
-                    $response['code'] = 201;
                 }else{
                     $appointment_count = $this->model->CountWhereInRecord('tbl_appointment',array('fk_patient_id'=>$patient_id,'appointment_date' => $appointment_date,'appointment_time'=>$appointment_time,));
                     if($check_contact_no_count > 0){
@@ -141,6 +139,12 @@ class Reciption_api extends REST_Controller {
                             'fk_admission_sub_type_id'=>$admission_sub_type
                         );
                         $inserted_id = $this->model->insertData('tbl_appointment',$curl_data);
+                        if(!empty($deposite_amount)){
+                            $insert_payment_details = array(
+                                'deposite_amount'=>$deposite_amount
+                            );
+                            $this->model->insertData('tbl_payment',$insert_payment_details);
+                        }
                             // $insert_payment_details = array(
                             //     'fk_patient_id'=>$patient_id,
                             //     'fk_appointment_id'=>$inserted_id,
