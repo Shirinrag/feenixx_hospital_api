@@ -156,5 +156,16 @@ class Superadmin_model extends CI_Model {
         $result = $query->result_array();
         return $result;
 	}
+
+	public function get_all_advance_payment_details_on_appointment_id($id='')
+	{
+		$this->db->select('tbl_advance_amount.*,tbl_payment_type.payment_type');
+		$this->db->from('tbl_advance_amount');
+		$this->db->join('tbl_payment_type','tbl_payment_type.id=tbl_advance_amount.fk_payment_type','left');
+		$this->db->where('tbl_advance_amount.fk_appointment_id',$id);
+		$query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+	}
 }
 

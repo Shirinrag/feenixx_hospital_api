@@ -189,6 +189,8 @@ class Reciption_api extends REST_Controller {
                 foreach ($appointment_details as $appointment_details_key => $appointment_details_row) {
                     $documents = $this->model->selectWhereData('tbl_patient_medical_documents',array('fk_appointment_id'=>$appointment_details_row['id']),array('documents'),false);
                     $appointment_details[$appointment_details_key]['documents'][] = $documents;
+                    $advance_payment_details = $this->superadmin_model->get_all_advance_payment_details_on_appointment_id($appointment_details_row['id']);
+                    $appointment_details[$appointment_details_key]['advance_payment_details'][] = $advance_payment_details;
                 } 
                 $response['code'] = REST_Controller::HTTP_OK;
                 $response['status'] = true;
@@ -376,6 +378,8 @@ class Reciption_api extends REST_Controller {
                     $payment_mode = $this->model->selectWhereData('tbl_payment_type',array('id'=>$payment_details_2['payment_type']),array('payment_type'));
                     $payment_history = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id']),array('online_amount','cash_amount','mediclaim_amount','total_amount','total_paid_amount','remaining_amount','date'),false);
                     $previous_remaining_amount = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id'],'used_status'=>1),array('remaining_amount'));
+
+                   $advance_payment_details = $this->superadmin_model->get_all_advance_payment_details_on_appointment_id($id);
                     $appointment_details['payment_details'] =$payment_details_2;
                     $appointment_details['payment_history'] =$payment_history;
                     $appointment_details['payment_type'] =$payment_mode['payment_type'];
@@ -385,6 +389,7 @@ class Reciption_api extends REST_Controller {
                     $response['status'] = true;
                     $response['message'] = 'success';
                     $response['payment_detail'] = $appointment_details;
+                    $response['advance_payment'] = $advance_payment_details;
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -440,6 +445,52 @@ class Reciption_api extends REST_Controller {
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Payment Details Added Successfully';                  
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
+    public function add_appointment_advance_payment_details_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $fk_patient_id = $this->input->post('fk_patient_id');
+                $fk_appointment_id = $this->input->post('fk_appointment_id');
+                $advance_amount = $this->input->post('advance_amount');
+                $advance_amount = json_decode($advance_amount,true);
+                $fk_payment_type = $this->input->post('fk_payment_type');
+                $fk_payment_type = json_decode($fk_payment_type,true);
+    
+                if(empty($fk_appointment_id)){
+                    $response['message'] = "Appointment Id is required";
+                    $response['code'] = 201;
+                }else if(empty($fk_patient_id)){
+                    $response['message'] = "Patient Id is required";
+                    $response['code'] = 201;
+                }else if(empty($advance_amount[0])){
+                    $response['message'] = "Amount is required";
+                    $response['code'] = 201;
+                }else if(empty($fk_payment_type[0])){
+                    $response['message'] = "Payment Type is required";
+                    $response['code'] = 201;
+                }else{
+                    foreach ($advance_amount as $advance_amount_key =>    $advance_amount_row) {
+                             $insert_advance_payment = array(
+                                'fk_patient_id'=>$fk_patient_id,
+                                'fk_appointment_id'=>$fk_appointment_id,
+                                'fk_payment_type'=>$fk_payment_type[$advance_amount_key],
+                                'advance_amount'=>$advance_amount_row,
+                                'date'=>date('d/m/Y'),
+                            );
+                            $this->model->insertData('tbl_advance_amount',$insert_advance_payment);
+                    }
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Advance Payment Added Successfully';                  
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

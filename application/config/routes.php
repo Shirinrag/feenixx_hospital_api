@@ -77,16 +77,16 @@ $route['display-all-diesases-details'] = 'superadmin_api/display_all_diesases_de
 $route['update-diseases'] = 'superadmin_api/update_diseases';
 $route['delete-diseases'] = 'superadmin_api/delete_diseases';
 $route['update-diseases-status'] = 'superadmin_api/update_diseases_status';
-// ========================= Staff Details ==============================
+// =================== Staff Details ==============================
 $route['add-staff'] = 'superadmin_api/add_staff';
 $route['display-all-staff-details'] = 'superadmin_api/display_all_staff_details';
 $route['get-all-staff-on-id'] = 'superadmin_api/get_all_staff_on_id';
 $route['update-staff'] = 'superadmin_api/update_staff';
 $route['delete-staff'] = 'superadmin_api/delete_staff';
-// ===================== Super admin Appoitment Details====================
+// ===================== Super admin Appoitment Details==============
 $route['superadmin-get-all-appointment-details'] = 'superadmin_api/get_all_appointment_details';
 $route['s-get-all-appointment-report-details']='superadmin_api/s_get_all_appointment_report_details';
-// ============================== Location ================================
+// ============================== Location ===========================
 
 $route['save-location'] = 'superadmin_api/save_location';
 $route['display-all-location-details'] = 'superadmin_api/display_all_location_details';
@@ -110,9 +110,10 @@ $route['update-charges'] = 'superadmin_api/update_charges';
 $route['delete-charges'] = 'superadmin_api/delete_charges';
 $route['update-charges-status'] = 'superadmin_api/update_charges_status';
 
-// ================ Receiption Appointment Details=========================
+// ================ Receiption Appointment Details=====================
 $route['get-all-appointment-details'] = 'reciption_api/get_all_appointment_details';
 $route['add-appointment-payment-details'] = 'reciption_api/add_appointment_payment_details';
 $route['reschedule-appointment-details'] = 'reciption_api/reschedule_appointment_details';
 $route['get-payment-data-on-appointment-id'] = 'reciption_api/get_payment_data_on_appointment_id';
 $route['update-payment-details'] = 'reciption_api/update_payment_details';
+$route['add-appointment-advance-payment-details'] = 'reciption_api/add_appointment_advance_payment_details';
