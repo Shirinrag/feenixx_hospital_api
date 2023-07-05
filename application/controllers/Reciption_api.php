@@ -380,6 +380,7 @@ class Reciption_api extends REST_Controller {
                     $previous_remaining_amount = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id'],'used_status'=>1),array('remaining_amount'));
 
                    $advance_payment_details = $this->superadmin_model->get_all_advance_payment_details_on_appointment_id($id);
+                   $charges_payment_details = $this->superadmin_model->get_all_charges_payment_details_on_appointment_id($id);
                     $appointment_details['payment_details'] =$payment_details_2;
                     $appointment_details['payment_history'] =$payment_history;
                     $appointment_details['payment_type'] =$payment_mode['payment_type'];
@@ -390,6 +391,7 @@ class Reciption_api extends REST_Controller {
                     $response['message'] = 'success';
                     $response['payment_detail'] = $appointment_details;
                     $response['advance_payment'] = $advance_payment_details;
+                    $response['charges_payment_details'] = $charges_payment_details;
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -491,6 +493,68 @@ class Reciption_api extends REST_Controller {
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Advance Payment Added Successfully';                  
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
+    public function add_appointment_charges_details_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $fk_patient_id = $this->input->post('fk_patient_id');
+                $fk_appointment_id = $this->input->post('fk_appointment_id');
+                $charges = $this->input->post('charges');
+                $charges = json_decode($charges,true);
+                $amount = $this->input->post('amount');
+                $amount = json_decode($amount,true);
+                $total_amount = $this->input->post('total_amount');
+                $total_amount = json_decode($total_amount,true);
+                $no_of_count = $this->input->post('no_of_count');
+                $no_of_count = json_decode($no_of_count,true);
+                $dr_name = $this->input->post('dr_name');
+                $dr_name = json_decode($dr_name,true);
+                $date = $this->input->post('date');
+                $date = json_decode($date,true);
+                if(empty($fk_appointment_id)){
+                    $response['message'] = "Appointment Id is required";
+                    $response['code'] = 201;
+                }else if(empty($fk_patient_id)){
+                    $response['message'] = "Patient Id is required";
+                    $response['code'] = 201;
+                }else if(empty($charges[0])){
+                    $response['message'] = "Amount is required";
+                    $response['code'] = 201;
+                }else if(empty($amount[0])){
+                    $response['message'] = "Payment Type is required";
+                    $response['code'] = 201;
+                }else if(empty($total_amount[0])){
+                    $response['message'] = "Payment Type is required";
+                    $response['code'] = 201;
+                }else if(empty($date[0])){
+                    $response['message'] = "Date is required";
+                    $response['code'] = 201;
+                }else{
+                    foreach ($charges as $charges_key => $charges_row) {
+                             $curl_data = array(
+                                'fk_patient_id'=>$fk_patient_id,
+                                'fk_appointment_id'=>$fk_appointment_id,
+                                'fk_charges_type_id'=>$charges_row,
+                                'date'=>$date[$charges_key],
+                                'amount'=>$amount[$charges_key],
+                                'no_of_count'=>$no_of_count[$charges_key],
+                                'total_amount'=>$total_amount[$charges_key],
+                                'dr_name'=>$dr_name[$charges_key],
+                            );
+                            $this->model->insertData('tbl_charges',$curl_data);
+                    }
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Charges Added Successfully';                  
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

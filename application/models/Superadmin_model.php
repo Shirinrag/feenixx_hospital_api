@@ -167,5 +167,17 @@ class Superadmin_model extends CI_Model {
         $result = $query->result_array();
         return $result;
 	}
+
+	public function get_all_charges_payment_details_on_appointment_id($id='')
+	{
+		$this->db->select('tbl_charges.*,tbl_charges_type.charges_name');
+		$this->db->from('tbl_charges');
+		$this->db->join('tbl_charges_type','tbl_charges.fk_charges_type_id=tbl_charges_type.id','left');
+		$this->db->where('tbl_charges.fk_appointment_id',$id);
+		$query = $this->db->get();
+        $result = $query->result_array();
+        return $result;
+
+	}
 }
 
