@@ -118,3 +118,4 @@ $route['get-payment-data-on-appointment-id'] = 'reciption_api/get_payment_data_o
 $route['update-payment-details'] = 'reciption_api/update_payment_details';
 $route['add-appointment-advance-payment-details'] = 'reciption_api/add_appointment_advance_payment_details';
 $route['add-appointment-charges-details']= 'reciption_api/add_appointment_charges_details';
+$route['update-discharge-date'] = 'reciption_api/update_discharge_date';

@@ -554,7 +554,35 @@ class Reciption_api extends REST_Controller {
                     }
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
-                    $response['message'] = 'Charges Added Successfully';                  
+                    $response['message'] = 'Charges Added Successfully';
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_discharge_date_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                $date_of_discharge = $this->input->post('date_of_discharge');
+                if(empty($id)){
+                    $response['message'] = "Appointment Id is required";
+                    $response['code'] = 201;
+                }else if(empty($date_of_discharge)){
+                    $response['message'] = "Date of Discharge is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data = array(
+                        'date_of_discharge'=>$date_of_discharge
+                    );
+                    $this->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Discharge Date is Updated Successfully';                  
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -586,4 +614,6 @@ class Reciption_api extends REST_Controller {
                         // $mpdf->Output($pdfFilePath, "F");               
         // $this->load->view('invoice');
     }
+
+
 }
