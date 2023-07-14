@@ -30,16 +30,16 @@ class Welcome extends CI_Controller {
     {
 
     	$curl_data=array('id'=>1);
-        $curl = $this->link->hits('get-payment-data-on-appointment-id',$curl_data);   
-        $curl = json_decode($curl, true);
-        $payment_data['payment_detail'] = $curl['payment_detail'];
+    	$this->load->model('superadmin_model');
+         $advance_payment_details = $this->superadmin_model->get_advanced_payment_data(1);   
+        
         ini_set('memory_limit', '256M');
                                                 
         // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
         $this->load->library('m_pdf');
-        $data = $payment_data;
+        $data = $advance_payment_details;
                         // echo '<pre>'; print_r($data); exit;
-        $html = $this->load->view('invoice', array('data'=>$data),true);
+        $html = $this->load->view('advance_invoice', array('data'=>$data),true);
 	    $mpdf = new mPDF();
 	    $mpdf->SetDisplayMode('fullpage');
 	    $mpdf->AddPage('P', 'A4');
@@ -47,6 +47,6 @@ class Welcome extends CI_Controller {
 	    $mpdf->WriteHTML($html);
 	    ob_end_clean();
 	    $mpdf->Output($pdfFilePath, "I");               
-        // $this->load->view('invoice');
+        // $this->load->view('advance_invoice');
     }
 }

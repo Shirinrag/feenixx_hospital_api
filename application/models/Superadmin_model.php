@@ -134,7 +134,7 @@ class Superadmin_model extends CI_Model {
 	public function get_last_invoice_no()
 	{
 		$this->db->select('invoice_no');
-        $this->db->from('tbl_payment');
+        $this->db->from('tbl_invoice_no');
         $this->db->like('invoice_no', "FXH");
         $this->db->order_by('id',"DESC");
         $this->db->limit(1);
@@ -178,6 +178,17 @@ class Superadmin_model extends CI_Model {
         $result = $query->result_array();
         return $result;
 
+	}
+	public function get_advanced_payment_data($id='')
+	{
+		$this->db->select('tbl_advance_amount.*,tbl_payment_type.payment_type,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
+		$this->db->from('tbl_advance_amount');
+		$this->db->join('tbl_payment_type','tbl_payment_type.id=tbl_advance_amount.fk_payment_type','left');
+		$this->db->join('tbl_patients','tbl_advance_amount.fk_patient_id=tbl_patients.id','left');
+		$this->db->where('tbl_advance_amount.id',$id);
+		$query = $this->db->get();
+        $result = $query->row_array();
+        return $result;
 	}
 }
 

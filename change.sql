@@ -23,3 +23,4 @@ ALTER TABLE `tbl_payment` ADD INDEX(`id`, `fk_patient_id`, `fk_appointment_id`, 
 INSERT INTO `tbl_user_type` (`id`, `user_type`, `status`, `del_status`, `created_at`, `updated_at`) VALUES (NULL, 'Pharmacists', '1', '1', current_timestamp(), current_timestamp()), (NULL, 'Receptionists', '1', '1', current_timestamp(), current_timestamp());
 ALTER TABLE `tbl_appointment` ADD `admission_type` VARCHAR(100) NULL DEFAULT NULL AFTER `appointment_time`;
 ALTER TABLE `tbl_staff` ADD INDEX(`id`, `first_name`, `last_name`, `email`, `contact_no`, `fk_gender_id`, `dob`, `fk_state_id`, `fk_city_id`, `pincode`);
+ALTER TABLE `tbl_advance_amount` ADD `advance_invoice` LONGTEXT NULL DEFAULT NULL AFTER `fk_payment_type`;

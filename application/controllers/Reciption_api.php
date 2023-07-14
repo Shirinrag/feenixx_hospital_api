@@ -239,7 +239,7 @@ class Reciption_api extends REST_Controller {
                             $response['status'] = false;
                             $response['message'] = 'Payment Details Already exist.';                  
                         }else{
-                            $payment_data = $this->model->selectWhereData('tbl_payment',array(),array('id'));
+                            $payment_data = $this->model->selectWhereData('tbl_invoice_no',array(),array('id'));
                             $year = date('Y');
                             if(empty($payment_data)){                
                                     $new_invoice_id  = 'FXH'.$year.'001';
@@ -289,20 +289,7 @@ class Reciption_api extends REST_Controller {
                             $curl = $this->link->hits('get-payment-data-on-appointment-id',$curl_data);   
                             $curl = json_decode($curl, true);
                             $payment_data['payment_detail'] = $curl['payment_detail'];
-                            ini_set('memory_limit', '256M');
-                                                                    
-                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
-                            $this->load->library('m_pdf');
-                            $data = $payment_data;
-                                            // echo '<pre>'; print_r($data); exit;
-                            $html = $this->load->view('invoice', array('data'=>$data),true);
-                            $mpdf = new mPDF();
-                            $mpdf->SetDisplayMode('fullpage');
-                            $mpdf->AddPage('P', 'A4');
-                           
-                            $mpdf->WriteHTML($html);
-                            ob_end_clean();
-                            $mpdf->Output($pdfFilePath, "F");                  
+                                             
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
                             $response['message'] = 'Payment Details Added Successfully';
@@ -466,6 +453,8 @@ class Reciption_api extends REST_Controller {
                 $advance_amount = json_decode($advance_amount,true);
                 $fk_payment_type = $this->input->post('fk_payment_type');
                 $fk_payment_type = json_decode($fk_payment_type,true);
+                $advance_payment_date = $this->input->post('advance_payment_date');
+                $advance_payment_date = json_decode($advance_payment_date,true);
     
                 if(empty($fk_appointment_id)){
                     $response['message'] = "Appointment Id is required";
@@ -479,16 +468,69 @@ class Reciption_api extends REST_Controller {
                 }else if(empty($fk_payment_type[0])){
                     $response['message'] = "Payment Type is required";
                     $response['code'] = 201;
+                }else if(empty($advance_payment_date[0])){
+                    $response['message'] = "Payment Date is required";
+                    $response['code'] = 201;
                 }else{
+                    $this->load->model('superadmin_model');
+                    $patient_id = $this->model->selectWhereData('tbl_patients',array('id'=>$fk_patient_id),array('patient_id'));
+                    
+
                     foreach ($advance_amount as $advance_amount_key =>    $advance_amount_row) {
+
+                           $invoice_date_1 = $advance_payment_date[$advance_amount_key];
+                           $invoice_date_11 = str_replace("-", "_", $invoice_date_1);
+                           $invoice_date_12 = $invoice_date_11."_".date("h_i_s");
+
+                        $payment_data = $this->model->selectWhereData('tbl_invoice_no',array(),array('id'));
+                            $year = date('Y');
+                            if(empty($payment_data)){                
+                                    $new_invoice_id  = 'FXH'.$year.'001';
+                            }else{
+                                    $this->load->model('superadmin_model');
+
+                                    $payment_data = $this->superadmin_model->get_last_invoice_no();
+                                    $explode = explode("H",$payment_data['invoice_no']);
+                                    $count = 8-strlen($explode[1]+1);
+                                    $invoice_rep =$explode[1]+1;                                                          
+                                    for($i=0;$i<$count;$i++){
+                                        $invoice_rep= $invoice_rep;
+                                    }
+                                    $new_invoice_id = 'FXH'.$invoice_rep;
+                            }
+                             $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
+
+                            $this->model->updateData('tbl_appointment',array('invoice_pdf'=>$invoice_pdf),array('id'=>$fk_appointment_id));
                              $insert_advance_payment = array(
                                 'fk_patient_id'=>$fk_patient_id,
                                 'fk_appointment_id'=>$fk_appointment_id,
                                 'fk_payment_type'=>$fk_payment_type[$advance_amount_key],
                                 'advance_amount'=>$advance_amount_row,
-                                'date'=>date('d/m/Y'),
+                                'date'=>$advance_payment_date[$advance_amount_key],
+                                'advance_invoice_no'=>$new_invoice_id,
+                                'advance_invoice'=>$invoice_pdf
                             );
-                            $this->model->insertData('tbl_advance_amount',$insert_advance_payment);
+                            $inserted_id = $this->model->insertData('tbl_advance_amount',$insert_advance_payment);
+                            
+                            $invoice_no_insert = array('invoice_no'=>$new_invoice_id);
+
+                            $this->model->insertData("tbl_invoice_no",$invoice_no_insert);
+
+                            $advance_payment_details = $this->superadmin_model->get_advanced_payment_data($inserted_id);
+                            error_reporting(0);
+                            ini_set('memory_limit', '256M');                  
+                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
+                            $this->load->library('m_pdf');
+                             $data = $advance_payment_details;
+                            $html = $this->load->view('advance_invoice', array('data'=>$data),true);
+                            $mpdf = new mPDF();
+                            $mpdf->SetDisplayMode('fullpage');
+                            $mpdf->AddPage('P', 'A4');
+                           
+                            $mpdf->WriteHTML($html);
+                            ob_end_clean();
+                            $mpdf->Output($pdfFilePath, "F");  
+                            
                     }
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
@@ -594,17 +636,17 @@ class Reciption_api extends REST_Controller {
     public function invoice_get()
     {
 
-        $curl_data=array('id'=>1);
-                            $curl = $this->get_payment_data_on_appointment_id($curl_data);
-                            $payment_data['payment_detail'] = $curl['payment_detail'];
+        // $curl_data=array('id'=>1);
+        //                     $curl = $this->get_payment_data_on_appointment_id($curl_data);
+        //                     $payment_data['payment_detail'] = $curl['payment_detail'];
 
-                        ini_set('memory_limit', '256M');
+                        // ini_set('memory_limit', '256M');
                                                 
-                        $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+                        // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
                         // $this->load->library('m_pdf');
-                        $data = $payment_data;
-                        echo '<pre>'; print_r($data); exit;
-                         $this->load->view('invoice', array('data'=>$data), true);
+                        // $data = $payment_data;
+                        // echo '<pre>'; print_r($data); exit;
+                         // $this->load->view('advance_invoice');
                         // $mpdf = new mPDF();
                         // $mpdf->SetDisplayMode('fullpage');
                         // $mpdf->AddPage('P', 'A4');
@@ -612,7 +654,7 @@ class Reciption_api extends REST_Controller {
                         // $mpdf->WriteHTML($html);
                         // ob_end_clean();
                         // $mpdf->Output($pdfFilePath, "F");               
-        // $this->load->view('invoice');
+        $this->load->view('welcome_message');
     }
 
 
