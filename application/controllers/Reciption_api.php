@@ -374,7 +374,7 @@ class Reciption_api extends REST_Controller {
                     $appointment_details['previous_remaining_amount'] =$previous_remaining_amount['remaining_amount'];
 
                     $advance_amount =$this->model->selectWhereData('tbl_payment_history',array('is_advance'=>1,'fk_appointment_id'=>$id,'used_status'=>1),array('total_amount'),false);
-
+                    $payment_info = $this->paymentcalculation->calculate_payment($id);
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'success';
@@ -382,6 +382,7 @@ class Reciption_api extends REST_Controller {
                     $response['advance_payment'] = $advance_payment_details;
                     $response['charges_payment_details'] = $charges_payment_details;
                     $response['advance_amount'] = $advance_amount;
+                    $response['payment_info'] = $payment_info;
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -525,19 +526,19 @@ class Reciption_api extends REST_Controller {
                             $this->model->insertData("tbl_invoice_no",$invoice_no_insert);
 
                             $advance_payment_details = $this->superadmin_model->get_advanced_payment_data($inserted_id);
-                            error_reporting(0);
-                            ini_set('memory_limit', '256M');                  
-                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
-                            $this->load->library('m_pdf');
-                             $data = $advance_payment_details;
-                            $html = $this->load->view('advance_invoice', array('data'=>$data),true);
-                            $mpdf = new mPDF();
-                            $mpdf->SetDisplayMode('fullpage');
-                            $mpdf->AddPage('P', 'A4');
+                            // error_reporting(0);
+                            // ini_set('memory_limit', '256M');                  
+                            // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
+                            // $this->load->library('m_pdf');
+                            //  $data = $advance_payment_details;
+                            // $html = $this->load->view('advance_invoice', array('data'=>$data),true);
+                            // $mpdf = new mPDF();
+                            // $mpdf->SetDisplayMode('fullpage');
+                            // $mpdf->AddPage('P', 'A4');
                            
-                            $mpdf->WriteHTML($html);
-                            ob_end_clean();
-                            $mpdf->Output($pdfFilePath, "F");  
+                            // $mpdf->WriteHTML($html);
+                            // ob_end_clean();
+                            // $mpdf->Output($pdfFilePath, "F");  
                             
                     }
                     $response['code'] = REST_Controller::HTTP_OK;
