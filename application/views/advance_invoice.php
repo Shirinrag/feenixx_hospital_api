@@ -56,7 +56,7 @@
             <!-- <th>Due Date</th> -->
         </tr>
         <tr>
-            <td><?= $data['advance_invoice_no']?></td>
+            <td><?= $data['invoice_no']?></td>
             <td><?= $data['date']?></td>
             <!-- <td>[Payment Due Date]</td> -->
         </tr>
@@ -86,7 +86,7 @@
         <tr>
             <td>Advance Payment</td>
             <!-- <td>[Quantity]</td> -->
-            <td><?=$data['advance_amount']?></td>
+            <td><?=$data['amount']?></td>
           
 
         </tr>
@@ -99,7 +99,7 @@
         
         <tr class="total-row">
             <td>Total:</td>
-            <td><?= $data['advance_amount'] ?></td>
+            <td><?= $data['total_amount'] ?></td>
         </tr>
     </table>
 

@@ -159,10 +159,10 @@ class Superadmin_model extends CI_Model {
 
 	public function get_all_advance_payment_details_on_appointment_id($id='')
 	{
-		$this->db->select('tbl_advance_amount.*,tbl_payment_type.payment_type');
-		$this->db->from('tbl_advance_amount');
-		$this->db->join('tbl_payment_type','tbl_payment_type.id=tbl_advance_amount.fk_payment_type','left');
-		$this->db->where('tbl_advance_amount.fk_appointment_id',$id);
+		$this->db->select('tbl_payment_history.*,tbl_payment_type.payment_type');
+		$this->db->from('tbl_payment_history');
+		$this->db->join('tbl_payment_type','tbl_payment_type.id=tbl_payment_history.fk_payment_id','left');
+		$this->db->where('tbl_payment_history.fk_appointment_id',$id);
 		$query = $this->db->get();
         $result = $query->result_array();
         return $result;
@@ -181,11 +181,11 @@ class Superadmin_model extends CI_Model {
 	}
 	public function get_advanced_payment_data($id='')
 	{
-		$this->db->select('tbl_advance_amount.*,tbl_payment_type.payment_type,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
-		$this->db->from('tbl_advance_amount');
-		$this->db->join('tbl_payment_type','tbl_payment_type.id=tbl_advance_amount.fk_payment_type','left');
-		$this->db->join('tbl_patients','tbl_advance_amount.fk_patient_id=tbl_patients.id','left');
-		$this->db->where('tbl_advance_amount.id',$id);
+		$this->db->select('tbl_payment_history.*,tbl_payment_type.payment_type,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
+		$this->db->from('tbl_payment_history');
+		$this->db->join('tbl_payment_type','tbl_payment_type.id=tbl_payment_history.fk_payment_id','left');
+		$this->db->join('tbl_patients','tbl_payment_history.fk_patient_id=tbl_patients.id','left');
+		$this->db->where('tbl_payment_history.id',$id);
 		$query = $this->db->get();
         $result = $query->row_array();
         return $result;

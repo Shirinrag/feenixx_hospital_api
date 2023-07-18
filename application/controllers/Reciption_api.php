@@ -349,7 +349,7 @@ class Reciption_api extends REST_Controller {
         if ($validate) {
                 $id = $this->input->post('id');               
                 if(empty($id)){
-                    $response['message'] = "Patient Id is required";
+                    $response['message'] = "Id is required";
                     $response['code'] = 201;
                 }else{
                     $this->load->model('superadmin_model');
@@ -363,7 +363,7 @@ class Reciption_api extends REST_Controller {
                        $payment_details_2['charges_name'][$payment_details_2_key] = $charges_type['charges_name'];
                     }
                     $payment_mode = $this->model->selectWhereData('tbl_payment_type',array('id'=>$payment_details_2['payment_type']),array('payment_type'));
-                    $payment_history = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id']),array('online_amount','cash_amount','mediclaim_amount','total_amount','total_paid_amount','remaining_amount','date'),false);
+                    $payment_history = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id']),array('amount','mediclaim_amount','total_amount','total_paid_amount','remaining_amount','date'),false);
                     $previous_remaining_amount = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id'],'used_status'=>1),array('remaining_amount'));
 
                    $advance_payment_details = $this->superadmin_model->get_all_advance_payment_details_on_appointment_id($id);
@@ -373,12 +373,15 @@ class Reciption_api extends REST_Controller {
                     $appointment_details['payment_type'] =$payment_mode['payment_type'];
                     $appointment_details['previous_remaining_amount'] =$previous_remaining_amount['remaining_amount'];
 
+                    $advance_amount =$this->model->selectWhereData('tbl_payment_history',array('is_advance'=>1,'fk_appointment_id'=>$id,'used_status'=>1),array('total_amount'),false);
+
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'success';
                     $response['payment_detail'] = $appointment_details;
                     $response['advance_payment'] = $advance_payment_details;
                     $response['charges_payment_details'] = $charges_payment_details;
+                    $response['advance_amount'] = $advance_amount;
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -447,6 +450,7 @@ class Reciption_api extends REST_Controller {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
         if ($validate) {
+                $added_by = $this->input->post('added_by');
                 $fk_patient_id = $this->input->post('fk_patient_id');
                 $fk_appointment_id = $this->input->post('fk_appointment_id');
                 $advance_amount = $this->input->post('advance_amount');
@@ -504,13 +508,17 @@ class Reciption_api extends REST_Controller {
                              $insert_advance_payment = array(
                                 'fk_patient_id'=>$fk_patient_id,
                                 'fk_appointment_id'=>$fk_appointment_id,
-                                'fk_payment_type'=>$fk_payment_type[$advance_amount_key],
-                                'advance_amount'=>$advance_amount_row,
+                                'fk_payment_id'=>$fk_payment_type[$advance_amount_key],
+                                'amount'=>$advance_amount_row,
+                                'total_amount'=>$advance_amount_row,
                                 'date'=>$advance_payment_date[$advance_amount_key],
-                                'advance_invoice_no'=>$new_invoice_id,
-                                'advance_invoice'=>$invoice_pdf
+                                'invoice_no'=>$new_invoice_id,
+                                'invoice_pdf'=>$invoice_pdf,
+                                'is_advance'=>1,
+                                'used_status'=>1,
+                                'added_by'=>$added_by,
                             );
-                            $inserted_id = $this->model->insertData('tbl_advance_amount',$insert_advance_payment);
+                            $inserted_id = $this->model->insertData('tbl_payment_history',$insert_advance_payment);
                             
                             $invoice_no_insert = array('invoice_no'=>$new_invoice_id);
 
