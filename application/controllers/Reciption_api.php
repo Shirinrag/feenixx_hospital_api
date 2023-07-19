@@ -354,7 +354,6 @@ class Reciption_api extends REST_Controller {
                 }else{
                     $this->load->model('superadmin_model');
                     $appointment_details = $this->superadmin_model->get_payment_data_on_appointment_id($id);
-                    // echo '<pre>'; print_r($appointment_details); exit;
                     $payment_details = $appointment_details['payment_details'];
                     $payment_details_1 = json_decode($payment_details);
                     $payment_details_2 = json_decode(json_encode($payment_details_1), true);
@@ -365,15 +364,12 @@ class Reciption_api extends REST_Controller {
                     $payment_mode = $this->model->selectWhereData('tbl_payment_type',array('id'=>$payment_details_2['payment_type']),array('payment_type'));
                     $payment_history = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id']),array('amount','mediclaim_amount','total_amount','total_paid_amount','remaining_amount','date'),false);
                     $previous_remaining_amount = $this->model->selectWhereData('tbl_payment_history',array('fk_payment_id'=>$appointment_details['payment_id'],'used_status'=>1),array('remaining_amount'));
-
                    $advance_payment_details = $this->superadmin_model->get_all_advance_payment_details_on_appointment_id($id);
                    $charges_payment_details = $this->superadmin_model->get_all_charges_payment_details_on_appointment_id($id);
                     $appointment_details['payment_details'] =$payment_details_2;
                     $appointment_details['payment_history'] =$payment_history;
                     $appointment_details['payment_type'] =$payment_mode['payment_type'];
-                    $appointment_details['previous_remaining_amount'] =$previous_remaining_amount['remaining_amount'];
-
-                    $advance_amount =$this->model->selectWhereData('tbl_payment_history',array('is_advance'=>1,'fk_appointment_id'=>$id,'used_status'=>1),array('total_amount'),false);
+                    $appointment_details['previous_remaining_amount'] =$previous_remaining_amount['remaining_amount'];                   
                     $payment_info = $this->paymentcalculation->calculate_payment($id);
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
@@ -381,7 +377,6 @@ class Reciption_api extends REST_Controller {
                     $response['payment_detail'] = $appointment_details;
                     $response['advance_payment'] = $advance_payment_details;
                     $response['charges_payment_details'] = $charges_payment_details;
-                    $response['advance_amount'] = $advance_amount;
                     $response['payment_info'] = $payment_info;
                 }
         }else {
@@ -526,19 +521,19 @@ class Reciption_api extends REST_Controller {
                             $this->model->insertData("tbl_invoice_no",$invoice_no_insert);
 
                             $advance_payment_details = $this->superadmin_model->get_advanced_payment_data($inserted_id);
-                            // error_reporting(0);
-                            // ini_set('memory_limit', '256M');                  
-                            // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
-                            // $this->load->library('m_pdf');
-                            //  $data = $advance_payment_details;
-                            // $html = $this->load->view('advance_invoice', array('data'=>$data),true);
-                            // $mpdf = new mPDF();
-                            // $mpdf->SetDisplayMode('fullpage');
-                            // $mpdf->AddPage('P', 'A4');
+                            error_reporting(0);
+                            ini_set('memory_limit', '256M');                  
+                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
+                            $this->load->library('m_pdf');
+                             $data = $advance_payment_details;
+                            $html = $this->load->view('advance_invoice', array('data'=>$data),true);
+                            $mpdf = new mPDF();
+                            $mpdf->SetDisplayMode('fullpage');
+                            $mpdf->AddPage('P', 'A4');
                            
-                            // $mpdf->WriteHTML($html);
-                            // ob_end_clean();
-                            // $mpdf->Output($pdfFilePath, "F");  
+                            $mpdf->WriteHTML($html);
+                            ob_end_clean();
+                            $mpdf->Output($pdfFilePath, "F");  
                             
                     }
                     $response['code'] = REST_Controller::HTTP_OK;
