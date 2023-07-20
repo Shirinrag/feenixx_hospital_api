@@ -16,8 +16,6 @@ class Paymentcalculation
         $return_array['remaining_amount']=$remaining_amount;
         return $return_array;
     }
-
-
     function get_total_charges($appointment_id=''){
     	$charges_info = $this->CI->model->selectWhereData('tbl_charges',array('fk_appointment_id'=>$appointment_id),array('total_amount'),false);
         $chargesSum = array_sum(array_column($charges_info, 'total_amount'));

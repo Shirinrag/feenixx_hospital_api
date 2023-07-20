@@ -524,16 +524,32 @@ class Reciption_api extends REST_Controller {
                             error_reporting(0);
                             ini_set('memory_limit', '256M');                  
                             $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
-                            $this->load->library('m_pdf');
-                             $data = $advance_payment_details;
-                            $html = $this->load->view('advance_invoice', array('data'=>$data),true);
-                            $mpdf = new mPDF();
-                            $mpdf->SetDisplayMode('fullpage');
-                            $mpdf->AddPage('P', 'A4');
+                            $this->load->library('Pdf');
+                            
+                            // $mpdf = new mPDF();
+                            // $mpdf->SetDisplayMode('fullpage');
+                            // $mpdf->AddPage('P', 'A4');
                            
-                            $mpdf->WriteHTML($html);
-                            ob_end_clean();
-                            $mpdf->Output($pdfFilePath, "F");  
+                            // $mpdf->WriteHTML($html);
+                            // ob_end_clean();
+                            // $mpdf->Output($pdfFilePath, "F");  
+
+
+
+$pdf = new Pdf();
+ $data = $advance_payment_details;
+                            $html = $this->load->view('advance_invoice', array('data'=>$data),true);
+// $pdf->SetTitle('Pdf Example');
+$pdf->SetHeaderMargin(30);
+$pdf->SetTopMargin(20);
+$pdf->setFooterMargin(20);
+$pdf->SetAutoPageBreak(true);
+// $pdf->SetAuthor('Author');
+$pdf->SetDisplayMode('real', 'default');
+$pdf->AddPage();
+$pdf->writeHTML($html, true, false, true, false, '');
+$pdf->Output($pdfFilePath, "F");
+
                             
                     }
                     $response['code'] = REST_Controller::HTTP_OK;

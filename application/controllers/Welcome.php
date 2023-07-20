@@ -28,25 +28,36 @@ class Welcome extends CI_Controller {
     }
     public function invoice()
     {
+//     	 $this->load->library('Pdf');
 
-    	$curl_data=array('id'=>1);
-    	$this->load->model('superadmin_model');
-         $advance_payment_details = $this->superadmin_model->get_advanced_payment_data(1);   
+//     	$pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
+// $pdf->SetTitle('Pdf Example');
+// $pdf->SetHeaderMargin(30);
+// $pdf->SetTopMargin(20);
+// $pdf->setFooterMargin(20);
+// $pdf->SetAutoPageBreak(true);
+// $pdf->SetAuthor('Author');
+// $pdf->SetDisplayMode('real', 'default');
+// $pdf->Write(5, 'CodeIgniter TCPDF Integration');
+// $pdf->Output('pdfexample.pdf', 'I');
+    	// $curl_data=array('id'=>1);
+    	// $this->load->model('superadmin_model');
+        //  $advance_payment_details = $this->superadmin_model->get_advanced_payment_data(1);   
         
-        ini_set('memory_limit', '256M');
+        // ini_set('memory_limit', '256M');
                                                 
-        // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
-        $this->load->library('m_pdf');
-        $data = $advance_payment_details;
-                        // echo '<pre>'; print_r($data); exit;
-        $html = $this->load->view('advance_invoice', array('data'=>$data),true);
-	    $mpdf = new mPDF();
-	    $mpdf->SetDisplayMode('fullpage');
-	    $mpdf->AddPage('P', 'A4');
+        // // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+        // $this->load->library('m_pdf');
+        // $data = $advance_payment_details;
+        //                 // echo '<pre>'; print_r($data); exit;
+        // $html = $this->load->view('advance_invoice', array('data'=>$data),true);
+	    // $mpdf = new mPDF();
+	    // $mpdf->SetDisplayMode('fullpage');
+	    // $mpdf->AddPage('P', 'A4');
 	   
-	    $mpdf->WriteHTML($html);
-	    ob_end_clean();
-	    $mpdf->Output($pdfFilePath, "I");               
+	    // $mpdf->WriteHTML($html);
+	    // ob_end_clean();
+	    // $mpdf->Output($pdfFilePath, "I");               
         // $this->load->view('advance_invoice');
     }
 }
