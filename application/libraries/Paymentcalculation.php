@@ -18,13 +18,13 @@ class Paymentcalculation
     }
     function get_total_charges($appointment_id=''){
     	$charges_info = $this->CI->model->selectWhereData('tbl_charges',array('fk_appointment_id'=>$appointment_id),array('total_amount'),false);
-        $chargesSum = array_sum(array_column($charges_info, 'total_amount'));
-        return $chargesSum;
+        $chargesSum = array_sum(array_column(@$charges_info, 'total_amount'));
+        return @$chargesSum;
     }
 
     function get_total_paid_amount($appointment_id=''){
-    	$charges_info = $this->CI->model->selectWhereData('tbl_payment_history',array('fk_appointment_id'=>$appointment_id),array('total_amount'),false);
-        $totalPaidAmount = array_sum(array_column($charges_info, 'total_amount'));
-        return $totalPaidAmount;
+    	$charges_info = $this->CI->model->selectWhereData('tbl_payment_history',array('fk_appointment_id'=> @$appointment_id),array('total_amount'),false);
+        $totalPaidAmount = array_sum(array_column(@$charges_info, 'total_amount'));
+        return @$totalPaidAmount;
     }
 }
