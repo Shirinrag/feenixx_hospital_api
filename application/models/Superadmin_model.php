@@ -143,7 +143,7 @@ class Superadmin_model extends CI_Model {
 	}
 	public function s_get_all_appointment_details()
 	{
-		$this->db->select('tbl_appointment.appointment_date,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_payment.payment_details,GROUP_CONCAT(tbl_payment_history.online_amount) as online_amount,GROUP_CONCAT(tbl_payment_history.cash_amount) as cash_amount,GROUP_CONCAT(tbl_payment_history.mediclaim_amount) as mediclaim_amount,GROUP_CONCAT(tbl_payment_history.total_amount) as total_amount,GROUP_CONCAT(tbl_payment_history.total_paid_amount) as total_paid_amount,GROUP_CONCAT(tbl_payment_history.remaining_amount) as remaining_amount,GROUP_CONCAT(tbl_payment_history.date) as date,tbl_gender.gender');
+		$this->db->select('tbl_appointment.appointment_date,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_payment.payment_details,GROUP_CONCAT(tbl_payment_history.amount) as amount,GROUP_CONCAT(tbl_payment_history.mediclaim_amount) as mediclaim_amount,GROUP_CONCAT(tbl_payment_history.total_amount) as total_amount,GROUP_CONCAT(tbl_payment_history.total_paid_amount) as total_paid_amount,GROUP_CONCAT(tbl_payment_history.remaining_amount) as remaining_amount,GROUP_CONCAT(tbl_payment_history.date) as date,tbl_gender.gender');
 		$this->db->from('tbl_appointment');
 		$this->db->join('tbl_patients','tbl_patients.id=tbl_appointment.fk_patient_id','left');
 		$this->db->join('tbl_doctor','tbl_doctor.id=tbl_appointment.fk_doctor_id','left');
@@ -188,6 +188,32 @@ class Superadmin_model extends CI_Model {
 		$this->db->where('tbl_payment_history.id',$id);
 		$query = $this->db->get();
         $result = $query->row_array();
+        return $result;
+	}
+
+
+	public function discharge_summary_details($id='')
+	{
+		$this->db->select('tbl_appointment.appointment_date,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_appointment.date_of_discharge,tbl_appointment.discharge_summary,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name');
+		$this->db->from('tbl_appointment');
+		$this->db->join('tbl_patients','tbl_patients.id=tbl_appointment.fk_patient_id','left');
+		$this->db->join('tbl_doctor','tbl_doctor.id=tbl_appointment.fk_doctor_id','left');
+		$this->db->where('tbl_appointment.id',$id);
+		$query = $this->db->get();
+        $result = $query->row_array();
+        return $result;
+	}
+
+	public function get_final_invoice_details($fk_patient_id='',$fk_appointment_id="")
+	{
+		$this->db->select('tbl_charges.*,tbl_charges_type.charges_name,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
+		$this->db->from('tbl_charges');
+		$this->db->join('tbl_charges_type','tbl_charges.fk_charges_type_id=tbl_charges_type.id','left');
+		$this->db->join('tbl_patients','tbl_charges.fk_patient_id=tbl_patients.id','left');
+		$this->db->where('tbl_charges.fk_appointment_id',$fk_appointment_id);
+		$this->db->where('tbl_charges.fk_patient_id',$fk_patient_id);
+		$query = $this->db->get();
+        $result = $query->result_array();
         return $result;
 	}
 }

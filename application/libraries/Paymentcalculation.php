@@ -28,7 +28,7 @@ class Paymentcalculation
     }
 
     function get_total_paid_amount($appointment_id=''){
-    	$charges_info = $this->CI->model->selectWhereData('tbl_payment_history',array('fk_appointment_id'=> @$appointment_id),array('total_amount'),false);
+    	$charges_info = $this->CI->model->selectWhereData('tbl_payment_history',array('fk_appointment_id'=> @$appointment_id,'is_advance'=>1),array('total_amount'),false);
         if(!empty($charges_info)){
             $charges_info_1 = array_sum(array_column(@$charges_info, 'total_amount'));
         }else{

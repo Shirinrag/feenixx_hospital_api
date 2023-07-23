@@ -119,3 +119,5 @@ $route['update-payment-details'] = 'reciption_api/update_payment_details';
 $route['add-appointment-advance-payment-details'] = 'reciption_api/add_appointment_advance_payment_details';
 $route['add-appointment-charges-details']= 'reciption_api/add_appointment_charges_details';
 $route['update-discharge-date'] = 'reciption_api/update_discharge_date';
+$route['update-discharge-summary'] = 'reciption_api/update_discharge_summary';
+

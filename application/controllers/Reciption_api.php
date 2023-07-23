@@ -656,6 +656,76 @@ class Reciption_api extends REST_Controller {
         echo json_encode($response);
     }
 
+    public function update_discharge_summary_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $update_appointment_id = $this->input->post('update_appointment_id');
+                $discharge_summary = $this->input->post('discharge_summary');
+                if(empty($update_appointment_id)){
+                    $response['message'] = "Appointment Id is required";
+                    $response['code'] = 201;
+                }else if(empty($discharge_summary)){
+                    $response['message'] = "Date of Discharge is required";
+                    $response['code'] = 201;
+                }else{
+                            $fk_patient_id = $this->model->selectWhereData('tbl_appointment',array('id'=>$update_appointment_id),array('fk_patient_id'));
+                            $patient_id = $this->model->selectWhereData('tbl_patients',array('id'=>$fk_patient_id['fk_patient_id']),array('patient_id'));
+                                    $invoice_date_1 = date('d-m-Y');
+                                   $invoice_date_11 = str_replace("-", "_", $invoice_date_1);
+                                   $invoice_date_12 = $invoice_date_11."_".date("h_i_s");
+
+                            $discharge_summary_pdf = base_url() . "uploads/".$patient_id['patient_id']."_discharge_summary_".$invoice_date_12.".pdf";
+                            $curl_data = array(
+                                'discharge_summary'=>$discharge_summary,
+                                'discharge_summary_pdf'=>$discharge_summary_pdf,
+                            );
+                            $this->model->updateData('tbl_appointment',$curl_data,array('id'=>$update_appointment_id));
+
+                            $pdfFilePath = FCPATH . "uploads/".$patient_id['patient_id']."_discharge_summary_".$invoice_date_12.".pdf";
+
+                            $this->load->model('superadmin_model');
+                            $discharge_summary_data = $this->superadmin_model->discharge_summary_details($update_appointment_id);
+                             error_reporting(0);
+                            ini_set('memory_limit', '256M'); 
+                            // $this->load->library('Pdf');
+                            // $pdf = new Pdf();
+                            // $data = $discharge_summary_data;
+                            // $html = $this->load->view('discharge_summary', array('data'=>$data),true);
+                            // $pdf->SetTitle('Pdf Example');
+                            // $pdf->SetHeaderMargin(30);
+                            // $pdf->SetTopMargin(20);
+                            // $pdf->setFooterMargin(20);
+                            // $pdf->SetAutoPageBreak(true);
+                            // // $pdf->SetAuthor('Author');
+                            // $pdf->SetDisplayMode('real', 'default');
+                            // $pdf->AddPage();
+                            // $pdf->writeHTML($html, true, false, true, false, '');
+                            // ob_clean();
+                            // $pdf->Output($pdfFilePath, "F");
+
+                            $this->load->library('m_pdf');
+                            $data = $discharge_summary_data;
+                            $html = $this->load->view('discharge_summary', array('data'=>$data),true);
+                            $mpdf = new mPDF();
+                            $mpdf->SetDisplayMode('fullpage');
+                            $mpdf->AddPage('P', 'A4');                           
+                            $mpdf->WriteHTML($html);
+                            ob_end_clean();
+                            $mpdf->Output($pdfFilePath, "F");
+
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Discharge Summary Added Successfully';                  
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
     public function invoice_get()
     {
 
