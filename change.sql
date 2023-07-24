@@ -27,3 +27,4 @@ ALTER TABLE `tbl_advance_amount` ADD `advance_invoice` LONGTEXT NULL DEFAULT NUL
 
 
 ALTER TABLE `tbl_payment_history` ADD `invoice_no` VARCHAR(100) NULL DEFAULT NULL AFTER `date`, ADD `invoice_pdf` LONGTEXT NULL DEFAULT NULL AFTER `invoice_no`;
+ALTER TABLE `tbl_appointment` ADD `discharge_summary` LONGTEXT NULL DEFAULT NULL AFTER `description`, ADD `discharge_summary_pdf` LONGTEXT NULL DEFAULT NULL AFTER `discharge_summary`;

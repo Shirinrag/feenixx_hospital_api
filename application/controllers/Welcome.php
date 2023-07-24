@@ -27,37 +27,40 @@ class Welcome extends CI_Controller {
         $this->load->view('new_email_template');
     }
     public function invoice()
-    {
-//     	 $this->load->library('Pdf');
+    {	
+    	// error_reporting(0);
+    				$this->load->model('superadmin_model');
+				 $discharge_summary_data = $this->superadmin_model->discharge_summary_details(3);
+                            $this->load->library('Pdf');
+                            $pdf = new Pdf();
+                            $data = $discharge_summary_data;
+                            $html = $this->load->view('discharge_summary', array('data'=>$data),true);
+                            // $pdf->SetTitle('Pdf Example');
+                            $pdf->SetHeaderMargin(30);
+                            $pdf->SetTopMargin(20);
+                            $pdf->setFooterMargin(20);
+                            $pdf->SetAutoPageBreak(true);
+                            // $pdf->SetAuthor('Author');
+                            $pdf->SetDisplayMode('real', 'default');
+                            $pdf->AddPage();
+                            $pdf->writeHTML($html, true, false, true, false, '');
+                            $pdf->Output($pdfFilePath, "I");
 
-//     	$pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
-// $pdf->SetTitle('Pdf Example');
-// $pdf->SetHeaderMargin(30);
-// $pdf->SetTopMargin(20);
-// $pdf->setFooterMargin(20);
-// $pdf->SetAutoPageBreak(true);
-// $pdf->SetAuthor('Author');
-// $pdf->SetDisplayMode('real', 'default');
-// $pdf->Write(5, 'CodeIgniter TCPDF Integration');
-// $pdf->Output('pdfexample.pdf', 'I');
-    	// $curl_data=array('id'=>1);
-    	// $this->load->model('superadmin_model');
-        //  $advance_payment_details = $this->superadmin_model->get_advanced_payment_data(1);   
         
-        // ini_set('memory_limit', '256M');
+      //   ini_set('memory_limit', '256M');
                                                 
-        // // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
-        // $this->load->library('m_pdf');
-        // $data = $advance_payment_details;
-        //                 // echo '<pre>'; print_r($data); exit;
-        // $html = $this->load->view('advance_invoice', array('data'=>$data),true);
-	    // $mpdf = new mPDF();
-	    // $mpdf->SetDisplayMode('fullpage');
-	    // $mpdf->AddPage('P', 'A4');
+      //   // $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+      //   $this->load->library('m_pdf');
+      //   $data = $discharge_summary_data;
+      //                   // echo '<pre>'; print_r($data); exit;
+      // $html = $this->load->view('discharge_summary', array('data'=>$data),true);
+	  //   $mpdf = new mPDF();
+	  //   $mpdf->SetDisplayMode('fullpage');
+	  //   $mpdf->AddPage('P', 'A4');
 	   
-	    // $mpdf->WriteHTML($html);
-	    // ob_end_clean();
-	    // $mpdf->Output($pdfFilePath, "I");               
-        // $this->load->view('advance_invoice');
+	  //   $mpdf->WriteHTML($html);
+	  //   ob_end_clean();
+	  //   $mpdf->Output($pdfFilePath, "I");               
+        // $this->load->view('discharge_summary');
     }
 }
