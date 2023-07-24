@@ -524,31 +524,33 @@ class Reciption_api extends REST_Controller {
                             error_reporting(0);
                             ini_set('memory_limit', '256M');                  
                             $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
-                            $this->load->library('Pdf');
-                            
-                            // $mpdf = new mPDF();
-                            // $mpdf->SetDisplayMode('fullpage');
-                            // $mpdf->AddPage('P', 'A4');
-                           
-                            // $mpdf->WriteHTML($html);
-                            // ob_end_clean();
-                            // $mpdf->Output($pdfFilePath, "F");  
-
-
-
-$pdf = new Pdf();
- $data = $advance_payment_details;
+                            $data = $advance_payment_details;
                             $html = $this->load->view('advance_invoice', array('data'=>$data),true);
-// $pdf->SetTitle('Pdf Example');
-$pdf->SetHeaderMargin(30);
-$pdf->SetTopMargin(20);
-$pdf->setFooterMargin(20);
-$pdf->SetAutoPageBreak(true);
-// $pdf->SetAuthor('Author');
-$pdf->SetDisplayMode('real', 'default');
-$pdf->AddPage();
-$pdf->writeHTML($html, true, false, true, false, '');
-$pdf->Output($pdfFilePath, "F");
+                             $this->load->library('m_pdf');
+                            $mpdf = new mPDF();
+                            
+                            $mpdf->SetDisplayMode('fullpage');
+                            $mpdf->AddPage('P', 'A4');
+                           
+                            $mpdf->WriteHTML($html);
+                            ob_end_clean();
+                            $mpdf->Output($pdfFilePath, "F");  
+
+
+
+                            // $pdf = new Pdf();
+                            //  $data = $advance_payment_details;
+                            //                             $html = $this->load->view('advance_invoice', array('data'=>$data),true);
+                            // // $pdf->SetTitle('Pdf Example');
+                            // $pdf->SetHeaderMargin(30);
+                            // $pdf->SetTopMargin(20);
+                            // $pdf->setFooterMargin(20);
+                            // $pdf->SetAutoPageBreak(true);
+                            // // $pdf->SetAuthor('Author');
+                            // $pdf->SetDisplayMode('real', 'default');
+                            // $pdf->AddPage();
+                            // $pdf->writeHTML($html, true, false, true, false, '');
+                            // $pdf->Output($pdfFilePath, "F");
 
                             
                     }
@@ -602,17 +604,17 @@ $pdf->Output($pdfFilePath, "F");
                     $response['code'] = 201;
                 }else{
                     foreach ($charges as $charges_key => $charges_row) {
-                             $curl_data = array(
-                                'fk_patient_id'=>$fk_patient_id,
-                                'fk_appointment_id'=>$fk_appointment_id,
-                                'fk_charges_type_id'=>$charges_row,
-                                'date'=>$date[$charges_key],
-                                'amount'=>$amount[$charges_key],
-                                'no_of_count'=>$no_of_count[$charges_key],
-                                'total_amount'=>$total_amount[$charges_key],
-                                'dr_name'=>$dr_name[$charges_key],
-                            );
-                            $this->model->insertData('tbl_charges',$curl_data);
+                         $curl_data = array(
+                            'fk_patient_id'=>$fk_patient_id,
+                            'fk_appointment_id'=>$fk_appointment_id,
+                            'fk_charges_type_id'=>$charges_row,
+                            'date'=>$date[$charges_key],
+                            'amount'=>$amount[$charges_key],
+                            'no_of_count'=>$no_of_count[$charges_key],
+                            'total_amount'=>$total_amount[$charges_key],
+                            'dr_name'=>$dr_name[$charges_key],
+                        );
+                        $this->model->insertData('tbl_charges',$curl_data);
                     }
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
