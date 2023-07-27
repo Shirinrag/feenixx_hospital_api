@@ -107,13 +107,12 @@ function generate_request_id($tbl_name='',$column_name='')
         $CI->email->from($from);
         $CI->email->to($to);
         $CI->email->subject($subject);
-         $CI->email->message($message);
+        $CI->email->message($message);
         $CI->email->attach($attach);
         $CI->email->send();
 }
 
-// function generate_final_invoice_pdf($id='')
-// {
-//    $CI = get_instance();
-//    $get_data = 
-// }
+function generate_final_invoice_pdf($id='')
+{
+   
+}
