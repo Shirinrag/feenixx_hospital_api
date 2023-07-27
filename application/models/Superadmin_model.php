@@ -33,12 +33,13 @@ class Superadmin_model extends CI_Model {
 	}
 	public function get_all_appointment_details()
 	{
-		$this->db->select('tbl_appointment.*,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_payment.payment_details,tbl_blood_group.blood_group,tbl_diseases.diseases_name,tbl_gender.gender,tbl_payment_history.fk_payment_id,tbl_appointment_type.type,tbl_appointment_sub_type.sub_type,tbl_payment.deposite_amount');
+		$this->db->select('tbl_appointment.*,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_payment.payment_details,tbl_blood_group.blood_group,tbl_diseases.diseases_name,tbl_gender.gender,tbl_appointment_type.type,tbl_appointment_sub_type.sub_type,tbl_payment.deposite_amount');
+		// tbl_payment_history.fk_payment_id,
 		$this->db->from('tbl_appointment');
 		$this->db->join('tbl_patients','tbl_patients.id=tbl_appointment.fk_patient_id','left');
 		$this->db->join('tbl_doctor','tbl_doctor.id=tbl_appointment.fk_doctor_id','left');
 		$this->db->join('tbl_payment','tbl_payment.fk_appointment_id=tbl_appointment.id','left');
-		$this->db->join('tbl_payment_history','tbl_payment_history.fk_payment_id=tbl_payment.id','left');
+		// $this->db->join('tbl_payment_history','tbl_payment_history.fk_payment_id=tbl_payment.id','left');
 		$this->db->join('tbl_blood_group','tbl_patients.fk_blood_group_id=tbl_blood_group.id','left');
 		$this->db->join('tbl_diseases','tbl_appointment.fk_diseases_id=tbl_diseases.id','left');		
 		$this->db->join('tbl_gender','tbl_patients.fk_gender_id=tbl_gender.id','left');	
@@ -204,14 +205,14 @@ class Superadmin_model extends CI_Model {
         return $result;
 	}
 
-	public function get_final_invoice_details($fk_patient_id='',$fk_appointment_id="")
+	public function get_final_invoice_details($fk_appointment_id="",$fk_patient_id='')
 	{
 		$this->db->select('tbl_charges.*,tbl_charges_type.charges_name,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
 		$this->db->from('tbl_charges');
 		$this->db->join('tbl_charges_type','tbl_charges.fk_charges_type_id=tbl_charges_type.id','left');
 		$this->db->join('tbl_patients','tbl_charges.fk_patient_id=tbl_patients.id','left');
 		$this->db->where('tbl_charges.fk_appointment_id',$fk_appointment_id);
-		$this->db->where('tbl_charges.fk_patient_id',$fk_patient_id);
+		// $this->db->where('tbl_charges.fk_patient_id',$fk_patient_id);
 		$query = $this->db->get();
         $result = $query->result_array();
         return $result;

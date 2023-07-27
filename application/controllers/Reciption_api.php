@@ -62,14 +62,7 @@ class Reciption_api extends REST_Controller {
                 $appointment_time = $this->input->post('appointment_time');
                 $appointment_date = $this->input->post('appointment_date');
                 $fk_diseases_id = $this->input->post('fk_diseases_id');
-                $payment_type = $this->input->post('payment_type');
-                // $description = $this->input->post('description');
-                // $cash_amount = $this->input->post('cash_amount');
-                // $online_amount = $this->input->post('online_amount');
-                // $mediclaim_amount = $this->input->post('mediclaim_amount');
-                // $discount = $this->input->post('discount');
-                // $total_amount = $this->input->post('total_amount');
-                // $image = $this->input->post('image');              
+                $payment_type = $this->input->post('payment_type');       
                 $document = $this->input->post('document');
                 $document = json_decode($document,true);
                 $admission_type = $this->input->post('admission_type');
@@ -91,31 +84,6 @@ class Reciption_api extends REST_Controller {
                     $response['code'] = 201;
 
                 }
-                // else if(empty($fk_diseases_id)){
-                //     $response['message'] = "Diseases is required";
-                //     $response['code'] = 201;
-                // }else if(empty($payment_type)){
-                //     $response['message'] = "Payment Type is required";
-                //     $response['code'] = 201;
-                // }else if(empty($description)){
-                //     $response['message'] = "Description is required";
-                //     $response['code'] = 201;
-                // }else if(empty($cash_amount)){
-                //     $response['message'] = "Cash Amount is required";
-                //     $response['code'] = 201;
-                // }else if(empty($online_amount)){
-                //     $response['message'] = "Online Amount is required";
-                //     $response['code'] = 201;
-                // }else if(empty($mediclaim_amount)){
-                //     $response['message'] = "Mediclaim Amount is required";
-                //     $response['code'] = 201;
-                // }else if(empty($discount)){
-                //     $response['message'] = "Discount Amount is required";
-                //     $response['code'] = 201;
-                // }else if(empty($total_amount)){
-                //     $response['message'] = "Total Amount is required";
-                //     $response['code'] = 201;
-                // }
                 else if(empty($admission_type)){
                     $response['message'] = "Admission Type is required";
                     $response['code'] = 201;
@@ -132,8 +100,6 @@ class Reciption_api extends REST_Controller {
                             'fk_diseases_id' => $fk_diseases_id,
                             'appointment_date' => $appointment_date,
                             'appointment_time'=>$appointment_time,
-                            // 'prescription'=>$image,
-                            // 'description'=>$description,
                             'admission_type'=>$admission_type,
                             'reference_doctor_name'=>$reference_doctor_name,
                             'fk_admission_sub_type_id'=>$admission_sub_type
@@ -253,7 +219,6 @@ class Reciption_api extends REST_Controller {
                                         $invoice_rep= $invoice_rep;
                                     }
                                     $new_invoice_id = 'FXH'.$invoice_rep;
-
                             }
                             $patient_id = $this->model->selectWhereData('tbl_patients',array('id'=>$fk_patient_id),array('patient_id'));
                             $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
@@ -289,6 +254,19 @@ class Reciption_api extends REST_Controller {
                             $curl = $this->link->hits('get-payment-data-on-appointment-id',$curl_data);   
                             $curl = json_decode($curl, true);
                             $payment_data['payment_detail'] = $curl['payment_detail'];
+                            ini_set('memory_limit', '256M');
+                                                                    
+                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+                            $this->load->library('m_pdf');
+                            $data = $payment_data;
+                            $html = $this->load->view('invoice', array('data'=>$data),true);
+                            $mpdf = new mPDF();
+                            $mpdf->SetDisplayMode('fullpage');
+                            $mpdf->AddPage('P', 'A4');
+                           
+                            $mpdf->WriteHTML($html);
+                            ob_end_clean();
+                            $mpdf->Output($pdfFilePath, "F");     
                                              
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
@@ -617,6 +595,8 @@ class Reciption_api extends REST_Controller {
                         );
                         $this->model->insertData('tbl_charges',$curl_data);
                     }
+                    $final_invoice = generate_final_invoice_pdf($fk_appointment_id);
+
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Charges Added Successfully';
@@ -645,6 +625,8 @@ class Reciption_api extends REST_Controller {
                         'date_of_discharge'=>$date_of_discharge
                     );
                     $this->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
+
+                    $final_invoice = generate_final_invoice_pdf($id);                    
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Discharge Date is Updated Successfully';                  
