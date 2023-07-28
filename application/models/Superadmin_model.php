@@ -43,7 +43,7 @@ class Superadmin_model extends CI_Model {
 		$this->db->join('tbl_blood_group','tbl_patients.fk_blood_group_id=tbl_blood_group.id','left');
 		$this->db->join('tbl_diseases','tbl_appointment.fk_diseases_id=tbl_diseases.id','left');		
 		$this->db->join('tbl_gender','tbl_patients.fk_gender_id=tbl_gender.id','left');	
-		$this->db->join('tbl_appointment_type','tbl_appointment.admission_type=tbl_appointment_type.id','left');	
+		$this->db->join('tbl_appointment_type','tbl_appointment.admission_type=tbl_appointment_type.id','left');
 		$this->db->join('tbl_appointment_sub_type','tbl_appointment.fk_admission_sub_type_id=tbl_appointment_sub_type.id','left');	
 		$this->db->order_by('tbl_appointment.id','DESC');
 		$this->db->group_by('tbl_appointment.id');

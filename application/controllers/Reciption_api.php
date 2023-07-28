@@ -176,13 +176,11 @@ class Reciption_api extends REST_Controller {
         if ($validate) {
                 $fk_patient_id = $this->input->post('fk_patient_id');
                 $fk_appointment_id = $this->input->post('fk_appointment_id');
-                $payment_details = $this->input->post('payment_details');
-                $online_amount = $this->input->post('online_amount');
-                $cash_amount = $this->input->post('cash_amount');
+                $payment_type = $this->input->post('payment_type');
                 $mediclaim_amount = $this->input->post('mediclaim_amount');
-                $total_amount = $this->input->post('total_amount');
+                $amount = $this->input->post('amount');
                 $total_paid_amount = $this->input->post('total_paid_amount');
-                $remaining_amount = $this->input->post('remaining_amount');
+                $discount = $this->input->post('discount');
                 $added_by = $this->input->post('added_by');
                         
                 if(empty($fk_appointment_id)){
@@ -191,63 +189,54 @@ class Reciption_api extends REST_Controller {
                 }else if(empty($fk_patient_id)){
                     $response['message'] = "Patient Id is required";
                     $response['code'] = 201;
-                }else if(empty($total_amount)){
-                    $response['message'] = "Total Amount is required";
+                }else if(empty($amount)){
+                    $response['message'] = "Amount is required";
                     $response['code'] = 201;
                 }else if(empty($total_paid_amount)){
                     $response['message'] = "Total Paid Amount is required";
                     $response['code'] = 201;
                 }else{
-
-                    $check_payment_count = $this->model->CountWhereRecord('tbl_payment', array('fk_appointment_id'=>$fk_appointment_id));
-                    if($check_payment_count > 0){
-                            $response['code'] = 201;
-                            $response['status'] = false;
-                            $response['message'] = 'Payment Details Already exist.';                  
-                        }else{
-                            $payment_data = $this->model->selectWhereData('tbl_invoice_no',array(),array('id'));
-                            $year = date('Y');
-                            if(empty($payment_data)){                
-                                    $new_invoice_id  = 'FXH'.$year.'001';
-                            }else{
-                                    $this->load->model('superadmin_model');
-                                    $payment_data = $this->superadmin_model->get_last_invoice_no();
-                                    $explode = explode("H",$payment_data['invoice_no']);
-                                    $count = 8-strlen($explode[1]+1);
-                                    $invoice_rep =$explode[1]+1;                                                          
-                                    for($i=0;$i<$count;$i++){
-                                        $invoice_rep= $invoice_rep;
-                                    }
-                                    $new_invoice_id = 'FXH'.$invoice_rep;
-                            }
+                            // $payment_data = $this->model->selectWhereData('tbl_invoice_no',array(),array('id'));
+                            // $year = date('Y');
+                            // if(empty($payment_data)){                
+                            //         $new_invoice_id  = 'FXH'.$year.'001';
+                            // }else{
+                            //         $this->load->model('superadmin_model');
+                            //         $payment_data = $this->superadmin_model->get_last_invoice_no();
+                            //         $explode = explode("H",$payment_data['invoice_no']);
+                            //         $count = 8-strlen($explode[1]+1);
+                            //         $invoice_rep =$explode[1]+1;                                                          
+                            //         for($i=0;$i<$count;$i++){
+                            //             $invoice_rep= $invoice_rep;
+                            //         }
+                            //         $new_invoice_id = 'FXH'.$invoice_rep;
+                            // }
+                            $new_invoice_no = generate_invoice_no();
                             $patient_id = $this->model->selectWhereData('tbl_patients',array('id'=>$fk_patient_id),array('patient_id'));
-                            $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
+                            $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_final_invoice.pdf";
 
-                            $this->model->updateData('tbl_appointment',array('invoice_pdf'=>$invoice_pdf),array('id'=>$fk_appointment_id));
+                            $payment_info = $this->paymentcalculation->calculate_payment($fk_appointment_id);
 
-                            $insert_payment_details = array(
-                                'fk_patient_id'=>$fk_patient_id,
-                                'fk_appointment_id'=>$fk_appointment_id,
-                                'payment_details'=>$payment_details,
-                                'added_by'=> $added_by,
-                                'invoice_no'=>$new_invoice_id,
-                            );
-                            $inserted_id = $this->model->insertData('tbl_payment',$insert_payment_details);
+                            $remaining_amount = $payment_info['remaining_amount'] - $total_paid_amount;
 
                             $insert_payment_history_details = array(
                                 'fk_patient_id'=>$fk_patient_id,
                                 'fk_appointment_id'=>$fk_appointment_id,
-                                'fk_payment_id'=>$inserted_id,
-                                'online_amount'=>$online_amount,
-                                'cash_amount'=>$cash_amount,
+                                'amount'=>$amount,
                                 'mediclaim_amount'=>$mediclaim_amount,
-                                'total_amount'=>$total_amount,
+                                'total_amount'=>$total_paid_amount,
                                 'total_paid_amount'=>$total_paid_amount,
                                 'remaining_amount'=>$remaining_amount,
-                                'date'=>date('d/m/Y'),
-                                'added_by'=> $added_by
+                                'date'=>date('d-m-Y'),
+                                'added_by'=> $added_by,
+                                'invoice_no'=>$new_invoice_no,
+                                'invoice_pdf'=>$invoice_pdf
                             );
                             $this->model->insertData('tbl_payment_history',$insert_payment_history_details); 
+
+                            $insert_invoice_no = array('invoice_no'=>$new_invoice_no);
+                            $this->model->insertData('tbl_invoice_no',$insert_invoice_no);
+
                             error_reporting(0);
                             
                             $curl_data=array('id'=>$fk_appointment_id);
@@ -259,7 +248,7 @@ class Reciption_api extends REST_Controller {
                             $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_invoice.pdf";
                             $this->load->library('m_pdf');
                             $data = $payment_data;
-                            $html = $this->load->view('invoice', array('data'=>$data),true);
+                            $html = $this->load->view('payment_invoice', array('data'=>$data),true);
                             $mpdf = new mPDF();
                             $mpdf->SetDisplayMode('fullpage');
                             $mpdf->AddPage('P', 'A4');
@@ -271,7 +260,7 @@ class Reciption_api extends REST_Controller {
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
                             $response['message'] = 'Payment Details Added Successfully';
-                        }                    
+                                            
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
