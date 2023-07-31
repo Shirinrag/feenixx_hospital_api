@@ -140,7 +140,10 @@ function generate_final_invoice_pdf($id='')
      $date_of_discharge = $CI->model->selectWhereData('tbl_appointment',array('id'=>$id),array('*'));
      $charges_data = $CI->superadmin_model->get_final_invoice_details($id);
      $final_charges_draft = [];
-     $is_discharge_done = true;
+     $is_discharge_done = false;
+     $invoice_date_1 = date('d-m-Y');
+     $invoice_date_11 = str_replace("-", "_", $invoice_date_1);
+     $invoice_date_12 = $invoice_date_11."_".date("h_i_s");
      foreach ($charges_data as $charges_data_key => $charges_data_row) {
         $final_charges_amount = 0;
         $final_charges_count = 0;
@@ -188,7 +191,7 @@ function generate_final_invoice_pdf($id='')
         // }
         if($date_of_discharge['admission_type']==2 && $is_discharge_done){          
                  
-                $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_invoice.pdf";
+                $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
                 $CI->load->library('m_pdf');
                 $html = $CI->load->view('invoice', array('data'=>$details),true);
                 $mpdf = new mPDF();
@@ -197,7 +200,12 @@ function generate_final_invoice_pdf($id='')
                 $mpdf->WriteHTML($html);
                 ob_end_clean();
                 $mpdf->Output($pdfFilePath, "F");  
-
+                $pdf = base_url()."uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
+                 $curl_data = array('invoice_pdf'=>$pdf);
+                 $CI->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
+                 $invoice_no = $details['invoice_no'];
+                 $insert_invoice_no = array('invoice_no'=>$invoice_no);
+                 $CI->model->insertData('tbl_invoice_no',$insert_invoice_no);
             // $CI->load->library('Pdf');
             //     $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_invoice.pdf";
             //     $pdf = new Pdf();
@@ -214,7 +222,7 @@ function generate_final_invoice_pdf($id='')
             //     $pdf->Output($pdfFilePath, "F");
         }
         else if($date_of_discharge['admission_type']== 1){             
-                $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_invoice.pdf";
+                $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
                 $CI->load->library('m_pdf');
                 $data = $details;
                 $html = $CI->load->view('invoice', array('data'=>$data),true);
@@ -225,6 +233,12 @@ function generate_final_invoice_pdf($id='')
                 ob_end_clean();
                 $mpdf->Output($pdfFilePath, "F");
 
+                $pdf = base_url()."uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
+                 $curl_data = array('invoice_pdf'=>$pdf);
+                 $CI->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
+                 $invoice_no = $details['invoice_no'];
+                 $insert_invoice_no = array('invoice_no'=>$invoice_no);
+                 $CI->model->insertData('tbl_invoice_no',$insert_invoice_no);
                 // $CI->load->library('Pdf');
                 // $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_invoice.pdf";
                 // $pdf = new Pdf();
@@ -241,10 +255,5 @@ function generate_final_invoice_pdf($id='')
                 // $pdf->Output($pdfFilePath, "F"); 
             }
      // }
-     $pdf = base_url()."uploads/invoice/".@$charges_data[0]['patient_id']."_invoice.pdf";
-     $curl_data = array('invoice_pdf'=>$pdf);
-     $CI->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
-     $invoice_no = $details['invoice_no'];
-     $insert_invoice_no = array('invoice_no'=>$invoice_no);
-     $CI->model->insertData('tbl_invoice_no',$insert_invoice_no);
+     
 }

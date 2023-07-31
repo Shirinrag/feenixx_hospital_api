@@ -267,6 +267,7 @@ class Reciption_api extends REST_Controller {
                             ini_set('memory_limit', '256M');
                             $pdfFilePath = FCPATH . "uploads/invoice/".$payment_details['patient_id'].$invoice_date_12."_final_invoice.pdf";
                             $this->load->library('m_pdf');
+                            $details = $payment_details;
                             $html = $this->load->view('payment_invoice', array('data'=>$details),true);
                             $mpdf = new mPDF();
                             $mpdf->SetDisplayMode('fullpage');
@@ -631,7 +632,8 @@ class Reciption_api extends REST_Controller {
                     $response['code'] = 201;
                 }else{
                     $curl_data = array(
-                        'date_of_discharge'=>$date_of_discharge
+                        'date_of_discharge'=>$date_of_discharge,
+                        'time_of_discharge'=>date('h:i:s'),
                     );
                     $this->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
                     $final_invoice = generate_final_invoice_pdf($id);                    

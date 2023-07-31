@@ -11,7 +11,6 @@
         table {
             width: 100%;
             border-collapse: collapse;
-
         }
 
         th, td {
@@ -78,11 +77,11 @@
         </tr>
         <tr>  
             <th>Date of Addmission</th>
-            <td><?= $data['date_of_discharge']['appointment_date']?></td>
+            <td><?= $data['date_of_discharge']['appointment_date']." ".$data['date_of_discharge']['appointment_time'];?></td>
         </tr>
         <tr>  
             <th>Date of Discharge</th>
-            <td><?= $data['date_of_discharge']['date_of_discharge']?></td>
+            <td><?= $data['date_of_discharge']['date_of_discharge']." ".$data['date_of_discharge']['time_of_discharge']?></td>
         </tr>
         <tr>  
              <th>Consultant</th>
