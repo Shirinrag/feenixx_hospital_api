@@ -68,13 +68,13 @@
     <table>
         <tr>
             <th>Patient ID</th>
-            <td><?= $data['patient_data']['patient_id']?></td>
+            <td><?= $data['charges_data']['0']['patient_id']?></td>
            
            
         </tr>
         <tr>  
             <th>Patient Name</th>
-            <td><?= $data['patient_data']['first_name']." ".$data['patient_data']['last_name']?></td>
+            <td><?= $data['charges_data']['0']['first_name']." ".$data['charges_data']['0']['last_name']?></td>
         </tr>
         <tr>  
             <th>Date of Addmission</th>
@@ -94,7 +94,6 @@
 
     <table>
         <tr>
-            <th>Date</th>
             <th>Description</th>
             <th>Price</th>
             <th>Unit</th>
@@ -107,11 +106,10 @@
         foreach ($charges_data as $charges_data_key => $charges_data_row) { ?>
        
         <tr>
-            <td><?= $charges_data_row['date']?></td>
             <td><?= $charges_data_row['charges_name']?></td>
-            <td><?= $charges_data_row['amount']?></td>
-            <td><?= $charges_data_row['no_of_count']?></td>
-            <td><?= $charges_data_row['total_amount']?></td>
+            <td><?= $charges_data_row['single_price_unit']?></td>
+            <td><?= $charges_data_row['final_count']?></td>
+            <td><?= $charges_data_row['final_amount']?></td>
 
         </tr>
          <?php }?>

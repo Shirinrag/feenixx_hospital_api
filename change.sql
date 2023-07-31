@@ -28,3 +28,7 @@ ALTER TABLE `tbl_advance_amount` ADD `advance_invoice` LONGTEXT NULL DEFAULT NUL
 
 ALTER TABLE `tbl_payment_history` ADD `invoice_no` VARCHAR(100) NULL DEFAULT NULL AFTER `date`, ADD `invoice_pdf` LONGTEXT NULL DEFAULT NULL AFTER `invoice_no`;
 ALTER TABLE `tbl_appointment` ADD `discharge_summary` LONGTEXT NULL DEFAULT NULL AFTER `description`, ADD `discharge_summary_pdf` LONGTEXT NULL DEFAULT NULL AFTER `discharge_summary`;
+
+
+ALTER TABLE `tbl_appointment` ADD `discount_amount` DOUBLE NULL DEFAULT NULL AFTER `fk_admission_sub_type_id`;
+ALTER TABLE `tbl_payment` CHANGE `deposite_amount` `grand_total` DOUBLE NULL DEFAULT NULL;

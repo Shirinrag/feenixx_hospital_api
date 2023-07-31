@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 07, 2023 at 03:09 PM
+-- Generation Time: Jul 18, 2023 at 06:33 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -56,6 +56,8 @@ CREATE TABLE `tbl_advance_amount` (
   `advance_amount` double DEFAULT NULL,
   `date` varchar(100) DEFAULT NULL,
   `fk_payment_type` int(11) DEFAULT NULL,
+  `advance_invoice_no` varchar(100) DEFAULT NULL,
+  `advance_invoice` longtext DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -64,9 +66,9 @@ CREATE TABLE `tbl_advance_amount` (
 -- Dumping data for table `tbl_advance_amount`
 --
 
-INSERT INTO `tbl_advance_amount` (`id`, `fk_appointment_id`, `fk_patient_id`, `advance_amount`, `date`, `fk_payment_type`, `created_at`, `updated_at`) VALUES
-(1, 3, 1, 1000, '04/07/2023', 1, '2023-07-04 12:50:22', '2023-07-04 12:50:22'),
-(2, 3, 1, 500, '04/07/2023', 2, '2023-07-04 12:50:22', '2023-07-04 12:50:22');
+INSERT INTO `tbl_advance_amount` (`id`, `fk_appointment_id`, `fk_patient_id`, `advance_amount`, `date`, `fk_payment_type`, `advance_invoice_no`, `advance_invoice`, `created_at`, `updated_at`) VALUES
+(1, 3, 1, 1000, '12-07-2023', 2, 'FXH2023001', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_12_07_2023_03_43_38.pdf', '2023-07-12 15:43:38', '2023-07-12 15:43:38'),
+(2, 3, 1, 1000, '13-07-2023', 1, 'FXH2023002', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_13_07_2023_03_43_38.pdf', '2023-07-12 15:43:38', '2023-07-12 15:43:38');
 
 -- --------------------------------------------------------
 
@@ -100,7 +102,7 @@ CREATE TABLE `tbl_appointment` (
 INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `date_of_discharge`, `admission_type`, `fk_admission_sub_type_id`, `prescription`, `description`, `added_by`, `invoice_pdf`, `created_at`, `updated_at`) VALUES
 (1, 1, 1, 210, '', '28-06-2023', '16:30', NULL, '1', 0, 'uploads/pescription/LCT24609079/669939_download_(2).jpg', 'test', NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_invoice.pdf', '2023-06-27 11:57:32', '2023-06-27 12:33:53'),
 (2, 1, 1, NULL, '', '05-07-2023', '19:30', NULL, '1', 0, 'uploads/pescription/LCT24609079/325919_download_(2).jpg', 'test', NULL, NULL, '2023-06-29 15:24:23', '2023-06-30 12:45:20'),
-(3, 1, 1, 210, '', '20-07-2023', '19:00', '06-07-2023', '2', 0, 'uploads/pescription/LCT24609079/442993_download.jpg', 'test', NULL, NULL, '2023-06-29 19:00:29', '2023-07-06 11:22:53');
+(3, 1, 1, 210, '', '20-07-2023', '19:00', NULL, '2', 0, 'uploads/pescription/LCT24609079/442993_download.jpg', 'test', NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_17_07_2023_10_49_59.pdf', '2023-06-29 19:00:29', '2023-07-17 11:02:22');
 
 -- --------------------------------------------------------
 
@@ -201,11 +203,9 @@ CREATE TABLE `tbl_charges` (
 --
 
 INSERT INTO `tbl_charges` (`id`, `fk_appointment_id`, `fk_patient_id`, `fk_charges_type_id`, `amount`, `no_of_count`, `total_amount`, `dr_name`, `date`, `created_at`, `updated_at`) VALUES
-(1, 3, 1, 1, 1000, 1, 1000, '', '05-07-2023', '2023-07-05 11:44:37', '2023-07-05 12:26:43'),
-(2, 3, 1, 34, 2000, 2, 4000, '', '05-07-2023', '2023-07-05 11:44:37', '2023-07-05 11:44:37'),
-(3, 3, 1, 4, 20000, 1, 20000, 'Dr. Swapnil', '05-07-2023', '2023-07-05 14:47:47', '2023-07-05 14:47:47'),
-(4, 3, 1, 34, 2000, 2, 4000, '', '06-07-2023', '2023-07-06 11:53:15', '2023-07-06 11:53:15'),
-(5, 3, 1, 4, 5000, 2, 10000, 'Swapnil', '06-07-2023', '2023-07-06 11:53:15', '2023-07-06 11:53:15');
+(1, 3, 1, 1, 1000, 1, 1000, '', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24'),
+(2, 3, 1, 34, 5000, 2, 10000, '', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24'),
+(3, 3, 1, 4, 10000, 2, 20000, 'Dr. Swapnil', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24');
 
 -- --------------------------------------------------------
 
@@ -6342,6 +6342,29 @@ INSERT INTO `tbl_gender` (`id`, `gender`, `created_at`, `updated_at`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tbl_invoice_no`
+--
+
+CREATE TABLE `tbl_invoice_no` (
+  `id` bigint(20) NOT NULL,
+  `invoice_no` varchar(100) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_invoice_no`
+--
+
+INSERT INTO `tbl_invoice_no` (`id`, `invoice_no`, `created_at`, `updated_at`) VALUES
+(1, 'FXH2023001', '2023-07-12 15:43:38', '2023-07-12 15:43:38'),
+(2, 'FXH2023002', '2023-07-12 15:43:38', '2023-07-12 15:43:38'),
+(3, 'FXH2023003', '2023-07-17 10:48:11', '2023-07-17 10:48:11'),
+(4, 'FXH2023004', '2023-07-17 10:49:59', '2023-07-17 10:49:59');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tbl_marital_status`
 --
 
@@ -6438,13 +6461,6 @@ CREATE TABLE `tbl_payment` (
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `tbl_payment`
---
-
-INSERT INTO `tbl_payment` (`id`, `fk_patient_id`, `fk_appointment_id`, `payment_details`, `deposite_amount`, `invoice_no`, `added_by`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '{\"payment_type\":\"1\",\"charges\":[\"8\"],\"amount\":[\"500\"],\"online_amount\":\"500\",\"cash_amount\":\"\",\"mediclaim_amount\":\"\",\"discount\":\"0\",\"total_amount\":\"500\",\"total_paid_amount\":\"500\",\"remaining_amount\":\"0\"}', NULL, 'FXH2023001', 10, '2023-06-27 12:33:53', '2023-06-27 12:33:53');
-
 -- --------------------------------------------------------
 
 --
@@ -6456,14 +6472,16 @@ CREATE TABLE `tbl_payment_history` (
   `fk_patient_id` int(11) DEFAULT NULL,
   `fk_appointment_id` int(11) DEFAULT NULL,
   `fk_payment_id` int(11) DEFAULT NULL,
-  `online_amount` double DEFAULT NULL,
-  `cash_amount` double DEFAULT NULL,
+  `amount` double DEFAULT NULL,
   `mediclaim_amount` double DEFAULT NULL,
   `total_amount` double DEFAULT NULL,
   `total_paid_amount` double DEFAULT NULL,
   `remaining_amount` double DEFAULT NULL,
   `date` varchar(100) DEFAULT NULL,
+  `invoice_no` varchar(100) DEFAULT NULL,
+  `invoice_pdf` longtext DEFAULT NULL,
   `used_status` int(11) NOT NULL DEFAULT 1,
+  `is_advance` int(11) DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -6473,8 +6491,8 @@ CREATE TABLE `tbl_payment_history` (
 -- Dumping data for table `tbl_payment_history`
 --
 
-INSERT INTO `tbl_payment_history` (`id`, `fk_patient_id`, `fk_appointment_id`, `fk_payment_id`, `online_amount`, `cash_amount`, `mediclaim_amount`, `total_amount`, `total_paid_amount`, `remaining_amount`, `date`, `used_status`, `added_by`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 1, 500, 0, 0, 500, 500, 0, '27/06/2023', 1, 10, '2023-06-27 12:33:53', '2023-06-27 12:33:53');
+INSERT INTO `tbl_payment_history` (`id`, `fk_patient_id`, `fk_appointment_id`, `fk_payment_id`, `amount`, `mediclaim_amount`, `total_amount`, `total_paid_amount`, `remaining_amount`, `date`, `invoice_no`, `invoice_pdf`, `used_status`, `is_advance`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 3, 1, 2000, NULL, 2000, NULL, NULL, '17-07-2023', 'FXH2023004', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_17_07_2023_10_49_59.pdf', 1, 1, 10, '2023-07-17 10:49:59', '2023-07-17 10:49:59');
 
 -- --------------------------------------------------------
 
@@ -6809,6 +6827,12 @@ ALTER TABLE `tbl_gender`
   ADD KEY `id` (`id`,`gender`);
 
 --
+-- Indexes for table `tbl_invoice_no`
+--
+ALTER TABLE `tbl_invoice_no`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tbl_marital_status`
 --
 ALTER TABLE `tbl_marital_status`
@@ -6841,7 +6865,9 @@ ALTER TABLE `tbl_payment`
 --
 ALTER TABLE `tbl_payment_history`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`,`fk_payment_id`,`total_amount`,`total_paid_amount`,`remaining_amount`);
+  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`,`fk_payment_id`,`total_amount`,`total_paid_amount`,`remaining_amount`),
+  ADD KEY `amount` (`amount`,`mediclaim_amount`,`invoice_no`,`used_status`,`is_advance`,`added_by`),
+  ADD KEY `date` (`date`);
 
 --
 -- Indexes for table `tbl_payment_type`
@@ -6934,7 +6960,7 @@ ALTER TABLE `tbl_blood_group`
 -- AUTO_INCREMENT for table `tbl_charges`
 --
 ALTER TABLE `tbl_charges`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_charges_type`
@@ -6973,6 +6999,12 @@ ALTER TABLE `tbl_gender`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `tbl_invoice_no`
+--
+ALTER TABLE `tbl_invoice_no`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `tbl_marital_status`
 --
 ALTER TABLE `tbl_marital_status`
@@ -6994,7 +7026,7 @@ ALTER TABLE `tbl_patient_medical_documents`
 -- AUTO_INCREMENT for table `tbl_payment`
 --
 ALTER TABLE `tbl_payment`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_payment_history`

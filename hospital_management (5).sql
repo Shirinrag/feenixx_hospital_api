@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2023 at 06:33 AM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Generation Time: Jul 30, 2023 at 05:57 PM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.0.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -34,7 +34,7 @@ CREATE TABLE `email_template` (
   `type` varchar(100) NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '0 for deactive and 1 for active',
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `email_template`
@@ -60,7 +60,7 @@ CREATE TABLE `tbl_advance_amount` (
   `advance_invoice` longtext DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_advance_amount`
@@ -87,22 +87,24 @@ CREATE TABLE `tbl_appointment` (
   `date_of_discharge` varchar(100) DEFAULT NULL,
   `admission_type` varchar(100) DEFAULT NULL,
   `fk_admission_sub_type_id` int(11) DEFAULT NULL,
+  `discount_amount` double DEFAULT NULL,
   `prescription` longtext DEFAULT NULL,
   `description` longtext DEFAULT NULL,
+  `discharge_summary` longtext DEFAULT NULL,
+  `discharge_summary_pdf` longtext DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
   `invoice_pdf` longtext DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_appointment`
 --
 
-INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `date_of_discharge`, `admission_type`, `fk_admission_sub_type_id`, `prescription`, `description`, `added_by`, `invoice_pdf`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 210, '', '28-06-2023', '16:30', NULL, '1', 0, 'uploads/pescription/LCT24609079/669939_download_(2).jpg', 'test', NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_invoice.pdf', '2023-06-27 11:57:32', '2023-06-27 12:33:53'),
-(2, 1, 1, NULL, '', '05-07-2023', '19:30', NULL, '1', 0, 'uploads/pescription/LCT24609079/325919_download_(2).jpg', 'test', NULL, NULL, '2023-06-29 15:24:23', '2023-06-30 12:45:20'),
-(3, 1, 1, 210, '', '20-07-2023', '19:00', NULL, '2', 0, 'uploads/pescription/LCT24609079/442993_download.jpg', 'test', NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_17_07_2023_10_49_59.pdf', '2023-06-29 19:00:29', '2023-07-17 11:02:22');
+INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `date_of_discharge`, `admission_type`, `fk_admission_sub_type_id`, `discount_amount`, `prescription`, `description`, `discharge_summary`, `discharge_summary_pdf`, `added_by`, `invoice_pdf`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 209, '', '29-07-2023', '20:41', NULL, '1', 0, 0, NULL, 'Viral Fever', NULL, NULL, NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_invoice.pdf', '2023-07-29 19:41:39', '2023-07-29 20:59:07'),
+(2, 1, 1, 7, '', '30-07-2023', '11:08', NULL, '2', 0, NULL, NULL, 'Appendix Opertaion ', NULL, NULL, NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_31_07_2023_11_25_40.pdf', '2023-07-29 22:09:18', '2023-07-29 23:25:40');
 
 -- --------------------------------------------------------
 
@@ -117,7 +119,7 @@ CREATE TABLE `tbl_appointment_sub_type` (
   `status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_appointment_sub_type`
@@ -139,7 +141,7 @@ CREATE TABLE `tbl_appointment_type` (
   `status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_appointment_type`
@@ -162,7 +164,7 @@ CREATE TABLE `tbl_blood_group` (
   `status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_blood_group`
@@ -196,16 +198,17 @@ CREATE TABLE `tbl_charges` (
   `date` varchar(100) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_charges`
 --
 
 INSERT INTO `tbl_charges` (`id`, `fk_appointment_id`, `fk_patient_id`, `fk_charges_type_id`, `amount`, `no_of_count`, `total_amount`, `dr_name`, `date`, `created_at`, `updated_at`) VALUES
-(1, 3, 1, 1, 1000, 1, 1000, '', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24'),
-(2, 3, 1, 34, 5000, 2, 10000, '', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24'),
-(3, 3, 1, 4, 10000, 2, 20000, 'Dr. Swapnil', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24');
+(1, 1, 1, 37, 150, 1, 150, '', '29-07-2023', '2023-07-29 21:40:36', '2023-07-29 21:40:36'),
+(2, 2, 1, 1, 1000, 1, 1000, '', '30-07-2023', '2023-07-29 23:23:56', '2023-07-29 23:23:56'),
+(3, 2, 1, 34, 500, 2, 1000, '', '30-07-2023', '2023-07-29 23:23:56', '2023-07-29 23:23:56'),
+(4, 2, 1, 2, 1000, 2, 2000, '', '30-07-2023', '2023-07-29 23:23:56', '2023-07-29 23:23:56');
 
 -- --------------------------------------------------------
 
@@ -220,7 +223,7 @@ CREATE TABLE `tbl_charges_type` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_charges_type`
@@ -262,7 +265,8 @@ INSERT INTO `tbl_charges_type` (`id`, `charges_name`, `status`, `del_status`, `c
 (33, 'Other Dressing with TT Injection', 1, 1, '2023-06-06 18:36:50', '2023-06-06 18:36:50'),
 (34, 'Nursing Charges', 1, 1, '2023-06-06 18:37:19', '2023-06-29 16:24:45'),
 (35, 'qqq', 1, 0, '2023-06-29 13:02:56', '2023-06-29 13:51:24'),
-(36, 'aaa', 1, 0, '2023-06-29 16:15:47', '2023-06-29 16:15:52');
+(36, 'aaa', 1, 0, '2023-06-29 16:15:47', '2023-06-29 16:15:52'),
+(37, 'OPD Charges', 1, 1, '2023-07-29 19:45:14', '2023-07-29 19:45:14');
 
 -- --------------------------------------------------------
 
@@ -275,7 +279,7 @@ CREATE TABLE `tbl_cities` (
   `city` varchar(30) NOT NULL,
   `state_id` int(11) NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tbl_cities`
@@ -6039,7 +6043,7 @@ CREATE TABLE `tbl_designation` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_designation`
@@ -6063,7 +6067,7 @@ CREATE TABLE `tbl_diseases` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_diseases`
@@ -6306,7 +6310,7 @@ CREATE TABLE `tbl_doctor` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_doctor`
@@ -6328,7 +6332,7 @@ CREATE TABLE `tbl_gender` (
   `gender` varchar(100) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_gender`
@@ -6350,17 +6354,18 @@ CREATE TABLE `tbl_invoice_no` (
   `invoice_no` varchar(100) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_invoice_no`
 --
 
 INSERT INTO `tbl_invoice_no` (`id`, `invoice_no`, `created_at`, `updated_at`) VALUES
-(1, 'FXH2023001', '2023-07-12 15:43:38', '2023-07-12 15:43:38'),
-(2, 'FXH2023002', '2023-07-12 15:43:38', '2023-07-12 15:43:38'),
-(3, 'FXH2023003', '2023-07-17 10:48:11', '2023-07-17 10:48:11'),
-(4, 'FXH2023004', '2023-07-17 10:49:59', '2023-07-17 10:49:59');
+(1, 'FXH2023001', '2023-07-29 21:40:37', '2023-07-29 21:40:37'),
+(3, 'FXH2023002', '2023-07-29 21:56:33', '2023-07-29 21:56:33'),
+(7, 'FXH2023003', '2023-07-29 22:28:04', '2023-07-29 22:28:04'),
+(8, 'FXH2023004', '2023-07-29 23:23:56', '2023-07-29 23:23:56'),
+(9, 'FXH2023005', '2023-07-29 23:25:40', '2023-07-29 23:25:40');
 
 -- --------------------------------------------------------
 
@@ -6374,7 +6379,7 @@ CREATE TABLE `tbl_marital_status` (
   `status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_marital_status`
@@ -6416,7 +6421,7 @@ CREATE TABLE `tbl_patients` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_patients`
@@ -6441,7 +6446,7 @@ CREATE TABLE `tbl_patient_medical_documents` (
   `documents` longtext DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -6453,13 +6458,18 @@ CREATE TABLE `tbl_payment` (
   `id` bigint(20) NOT NULL,
   `fk_patient_id` int(11) DEFAULT NULL,
   `fk_appointment_id` int(11) DEFAULT NULL,
-  `payment_details` longtext DEFAULT NULL,
-  `deposite_amount` double DEFAULT NULL,
-  `invoice_no` longtext DEFAULT NULL,
+  `grand_total` double DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_payment`
+--
+
+INSERT INTO `tbl_payment` (`id`, `fk_patient_id`, `fk_appointment_id`, `grand_total`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 150, 10, '2023-07-29 21:56:33', '2023-07-29 21:56:33');
 
 -- --------------------------------------------------------
 
@@ -6475,8 +6485,6 @@ CREATE TABLE `tbl_payment_history` (
   `amount` double DEFAULT NULL,
   `mediclaim_amount` double DEFAULT NULL,
   `total_amount` double DEFAULT NULL,
-  `total_paid_amount` double DEFAULT NULL,
-  `remaining_amount` double DEFAULT NULL,
   `date` varchar(100) DEFAULT NULL,
   `invoice_no` varchar(100) DEFAULT NULL,
   `invoice_pdf` longtext DEFAULT NULL,
@@ -6485,14 +6493,16 @@ CREATE TABLE `tbl_payment_history` (
   `added_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_payment_history`
 --
 
-INSERT INTO `tbl_payment_history` (`id`, `fk_patient_id`, `fk_appointment_id`, `fk_payment_id`, `amount`, `mediclaim_amount`, `total_amount`, `total_paid_amount`, `remaining_amount`, `date`, `invoice_no`, `invoice_pdf`, `used_status`, `is_advance`, `added_by`, `created_at`, `updated_at`) VALUES
-(1, 1, 3, 1, 2000, NULL, 2000, NULL, NULL, '17-07-2023', 'FXH2023004', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_17_07_2023_10_49_59.pdf', 1, 1, 10, '2023-07-17 10:49:59', '2023-07-17 10:49:59');
+INSERT INTO `tbl_payment_history` (`id`, `fk_patient_id`, `fk_appointment_id`, `fk_payment_id`, `amount`, `mediclaim_amount`, `total_amount`, `date`, `invoice_no`, `invoice_pdf`, `used_status`, `is_advance`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 4, 150, 0, 150, '29-07-2023', 'FXH2023002', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT2460907929_07_2023_09_56_33_final_invoice.pdf', 1, 2, 10, '2023-07-29 21:56:33', '2023-07-29 21:56:33'),
+(5, 1, 2, 3, 5000, NULL, 5000, '30-07-2023', 'FXH2023003', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_30_07_2023_10_28_04.pdf', 1, 1, 10, '2023-07-29 22:28:04', '2023-07-29 22:28:04'),
+(6, 1, 2, 3, 8000, NULL, 8000, '31-07-2023', 'FXH2023005', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_31_07_2023_11_25_40.pdf', 1, 1, 10, '2023-07-29 23:25:40', '2023-07-29 23:25:40');
 
 -- --------------------------------------------------------
 
@@ -6507,7 +6517,7 @@ CREATE TABLE `tbl_payment_type` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_payment_type`
@@ -6544,7 +6554,7 @@ CREATE TABLE `tbl_staff` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_staff`
@@ -6565,7 +6575,7 @@ CREATE TABLE `tbl_states` (
   `name` varchar(30) NOT NULL,
   `country_id` int(11) NOT NULL DEFAULT 1,
   `status` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tbl_states`
@@ -6634,7 +6644,7 @@ CREATE TABLE `tbl_users` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_users`
@@ -6665,7 +6675,7 @@ CREATE TABLE `tbl_user_type` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_user_type`
@@ -6697,7 +6707,7 @@ CREATE TABLE `tbl_visit_location` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_visit_location`
@@ -6719,7 +6729,7 @@ CREATE TABLE `tbl_ward` (
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_ward`
@@ -6756,7 +6766,8 @@ ALTER TABLE `tbl_advance_amount`
 ALTER TABLE `tbl_appointment`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id` (`id`),
-  ADD KEY `fk_doctor_id` (`fk_doctor_id`,`fk_patient_id`,`appointment_date`,`appointment_time`);
+  ADD KEY `fk_doctor_id` (`fk_doctor_id`,`fk_patient_id`,`appointment_date`,`appointment_time`),
+  ADD KEY `fk_diseases_id` (`fk_diseases_id`);
 
 --
 -- Indexes for table `tbl_appointment_sub_type`
@@ -6865,7 +6876,7 @@ ALTER TABLE `tbl_payment`
 --
 ALTER TABLE `tbl_payment_history`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`,`fk_payment_id`,`total_amount`,`total_paid_amount`,`remaining_amount`),
+  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`,`fk_payment_id`,`total_amount`),
   ADD KEY `amount` (`amount`,`mediclaim_amount`,`invoice_no`,`used_status`,`is_advance`,`added_by`),
   ADD KEY `date` (`date`);
 
@@ -6936,7 +6947,7 @@ ALTER TABLE `tbl_advance_amount`
 -- AUTO_INCREMENT for table `tbl_appointment`
 --
 ALTER TABLE `tbl_appointment`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_appointment_sub_type`
@@ -6960,13 +6971,13 @@ ALTER TABLE `tbl_blood_group`
 -- AUTO_INCREMENT for table `tbl_charges`
 --
 ALTER TABLE `tbl_charges`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tbl_charges_type`
 --
 ALTER TABLE `tbl_charges_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `tbl_cities`
@@ -7002,7 +7013,7 @@ ALTER TABLE `tbl_gender`
 -- AUTO_INCREMENT for table `tbl_invoice_no`
 --
 ALTER TABLE `tbl_invoice_no`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tbl_marital_status`
@@ -7026,13 +7037,13 @@ ALTER TABLE `tbl_patient_medical_documents`
 -- AUTO_INCREMENT for table `tbl_payment`
 --
 ALTER TABLE `tbl_payment`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `tbl_payment_history`
 --
 ALTER TABLE `tbl_payment_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tbl_payment_type`
