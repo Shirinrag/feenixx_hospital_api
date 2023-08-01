@@ -1388,6 +1388,12 @@ class Superadmin_api extends REST_Controller {
         if ($validate) {
             $this->load->model('superadmin_model');
             $appointment_details = $this->superadmin_model->s_get_all_appointment_details();      
+            foreach($appointment_details as $appointment_details_key => $appointment_details_row){
+                $payment_info = $this->paymentcalculation->calculate_payment($appointment_details_row['id']);
+                $appointment_details[$appointment_details_key]['total_charges'] = $payment_info['total_charges'];
+                $appointment_details[$appointment_details_key]['total_paid_amount'] = $payment_info['total_paid_amount'];
+                $appointment_details[$appointment_details_key]['remaining_amount'] = $payment_info['remaining_amount'];
+            }
             $response['code'] = REST_Controller::HTTP_OK;
             $response['status'] = true;
             $response['message'] = 'success';

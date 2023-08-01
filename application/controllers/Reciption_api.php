@@ -357,6 +357,7 @@ class Reciption_api extends REST_Controller {
                     $appointment_details['payment_type'] =$payment_mode['payment_type'];
              
                     $payment_info = $this->paymentcalculation->calculate_payment($id);
+                    $surgery_details = $this->model->selectWhereData('tbl_surgery_details',array('fk_appointment_id'=>$id),array('surgery_date'),false);
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'success';
@@ -365,6 +366,7 @@ class Reciption_api extends REST_Controller {
                     $response['charges_payment_details'] = $charges_payment_details;
                     $response['final_payment_details'] = $final_payment_details;
                     $response['payment_info'] = $payment_info;
+                    $response['surgery_details'] = $surgery_details;
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
@@ -487,7 +489,6 @@ class Reciption_api extends REST_Controller {
                             }
                              $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
 
-                            $this->model->updateData('tbl_appointment',array('invoice_pdf'=>$invoice_pdf),array('id'=>$fk_appointment_id));
                              $insert_advance_payment = array(
                                 'fk_patient_id'=>$fk_patient_id,
                                 'fk_appointment_id'=>$fk_appointment_id,
@@ -677,7 +678,11 @@ class Reciption_api extends REST_Controller {
                             $pdfFilePath = FCPATH . "uploads/".$patient_id['patient_id']."_discharge_summary_".$invoice_date_12.".pdf";
 
                             $this->load->model('superadmin_model');
+
+                            $surgery_details = $this->model->selectWhereData('tbl_surgery_details',array('fk_appointment_id'=>$update_appointment_id),array('GROUP_CONCAT(surgery_date) as surgery_date'),true,'','fk_appointment_id');
+
                             $discharge_summary_data = $this->superadmin_model->discharge_summary_details($update_appointment_id);
+                            $discharge_summary_data['surgery_date']=$surgery_details['surgery_date'];
                              error_reporting(0);
                             ini_set('memory_limit', '256M'); 
                             // $this->load->library('Pdf');
@@ -709,6 +714,41 @@ class Reciption_api extends REST_Controller {
                             $response['code'] = REST_Controller::HTTP_OK;
                             $response['status'] = true;
                             $response['message'] = 'Discharge Summary Added Successfully';                  
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function add_surgery_details_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $fk_appointment_id = $this->input->post('fk_appointment_id');   
+                $surgery_date = $this->input->post('surgery_date');
+                $surgery_date = json_decode($surgery_date,true);
+    
+                if(empty($fk_appointment_id)){
+                    $response['message'] = "Appointment Id is required";
+                    $response['code'] = 201;
+                }else if(empty($surgery_date[0])){
+                    $response['message'] = "Surgery Date is required";
+                    $response['code'] = 201;
+                }else{
+                    foreach ($surgery_date as $surgery_date_key => $surgery_date_row) {
+                        if(!empty($surgery_date_row)){
+                            $curl_data = array(
+                                'fk_appointment_id'=>$fk_appointment_id,
+                                'surgery_date'=>$surgery_date_row,
+                            );
+                            $this->model->insertData('tbl_surgery_details',$curl_data);
+                        }
+                    }
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Surgery Date Added Successfully';                  
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

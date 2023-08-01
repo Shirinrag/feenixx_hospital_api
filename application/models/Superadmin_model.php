@@ -145,7 +145,7 @@ class Superadmin_model extends CI_Model {
 	}
 	public function s_get_all_appointment_details()
 	{
-		$this->db->select('tbl_appointment.appointment_date,tbl_appointment.appointment_time,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,GROUP_CONCAT(tbl_payment_history.amount) as amount,GROUP_CONCAT(tbl_payment_history.mediclaim_amount) as mediclaim_amount,GROUP_CONCAT(tbl_payment_history.total_amount) as total_amount,GROUP_CONCAT(tbl_payment_history.date) as date,tbl_gender.gender');
+		$this->db->select('tbl_appointment.id,tbl_appointment.appointment_date,tbl_appointment.appointment_time,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,GROUP_CONCAT(tbl_payment_history.amount) as amount,GROUP_CONCAT(tbl_payment_history.mediclaim_amount) as mediclaim_amount,GROUP_CONCAT(tbl_payment_history.total_amount) as total_amount,GROUP_CONCAT(tbl_payment_history.date) as date,tbl_gender.gender');
 		$this->db->from('tbl_appointment');
 		$this->db->join('tbl_patients','tbl_patients.id=tbl_appointment.fk_patient_id','left');
 		$this->db->join('tbl_doctor','tbl_doctor.id=tbl_appointment.fk_doctor_id','left');

@@ -84,9 +84,14 @@
             <td><?= $data['date_of_discharge']['date_of_discharge']." ".$data['date_of_discharge']['time_of_discharge']?></td>
         </tr>
         <tr>  
+            <th>Surgery Date</th>
+            <td><?= $data['surgery_details']['surgery_date']?></td>
+        </tr>
+        <tr>  
              <th>Consultant</th>
             <td><?= $data['doctor_data']['first_name']." ".$data['doctor_data']['last_name']?></td>
         </tr>
+        
     </table>
 
     <h2>Invoice Details</h2>

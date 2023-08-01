@@ -114,7 +114,7 @@ function generate_request_id($tbl_name='',$column_name='')
 function generate_invoice_no()
 {
     $CI = get_instance();
-    $payment_data = $CI->model->selectWhereData('tbl_invoice_no',array(),array('id'));
+    $surgery_details = $CI->model->selectWhereData('tbl_invoice_no',array(),array('id'));
     $year = date('Y');
     if(empty($payment_data)){                
             $new_invoice_id  = 'FXH'.$year.'001';
@@ -165,12 +165,14 @@ function generate_final_invoice_pdf($id='')
         $charges_data[$charges_data_key]['final_count'] = $final_charges_count;
      }
      $doctor_data = $CI->model->selectWhereData('tbl_doctor',array('id'=>$date_of_discharge['fk_doctor_id']),array('first_name','last_name'));
+     $surgery_details = $CI->model->selectWhereData('tbl_surgery_details',array('fk_appointment_id'=>$id),array('GROUP_CONCAT(surgery_date) as surgery_date'),true,'','fk_appointment_id');
       $payment_info = $CI->paymentcalculation->calculate_payment($id);
      $details['invoice_no'] = generate_invoice_no();
      $details['date_of_discharge'] =$date_of_discharge;
      $details['charges_data'] =$charges_data;
      $details['doctor_data'] =$doctor_data;
      $details['payment_data'] =$payment_info;
+     $details['surgery_details'] =$surgery_details;
      $details['date'] = date('d-m-Y');
      // foreach ($charges_data as $charges_data_key => $charges_data_row) {
         // if($is_discharge_done){ 

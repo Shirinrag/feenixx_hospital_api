@@ -60,8 +60,14 @@
             <td><?= $data['appointment_date'];?></td>
 
         </tr>
+        <tr>
             <th>Discharge Date</th>
             <td><?= $data['date_of_discharge'];?></td>
+          
+        </tr>
+        <tr>
+            <th>Surgery Date</th>
+            <td><?= $data['surgery_date'];?></td>
           
         </tr>
         <tr>

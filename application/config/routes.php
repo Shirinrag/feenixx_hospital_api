@@ -121,4 +121,5 @@ $route['add-appointment-charges-details']= 'reciption_api/add_appointment_charge
 $route['update-discharge-date'] = 'reciption_api/update_discharge_date';
 $route['update-discharge-time'] = 'reciption_api/update_discharge_time';
 $route['update-discharge-summary'] = 'reciption_api/update_discharge_summary';
+$route['add-surgery-details'] = 'reciption_api/add_surgery_details';
 
