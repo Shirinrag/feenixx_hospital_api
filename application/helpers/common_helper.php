@@ -114,9 +114,9 @@ function generate_request_id($tbl_name='',$column_name='')
 function generate_invoice_no()
 {
     $CI = get_instance();
-    $surgery_details = $CI->model->selectWhereData('tbl_invoice_no',array(),array('id'));
+    $invoice_data = $CI->model->selectWhereData('tbl_invoice_no',array(),array('id'));
     $year = date('Y');
-    if(empty($payment_data)){                
+    if(empty($invoice_data)){                
             $new_invoice_id  = 'FXH'.$year.'001';
     }else{
             $CI->load->model('superadmin_model');

@@ -184,21 +184,6 @@ class Reciption_api extends REST_Controller {
                     $response['message'] = "Total Paid Amount is required";
                     $response['code'] = 201;
                 }else{
-                            // $payment_data = $this->model->selectWhereData('tbl_invoice_no',array(),array('id'));
-                            // $year = date('Y');
-                            // if(empty($payment_data)){                
-                            //         $new_invoice_id  = 'FXH'.$year.'001';
-                            // }else{
-                            //         $this->load->model('superadmin_model');
-                            //         $payment_data = $this->superadmin_model->get_last_invoice_no();
-                            //         $explode = explode("H",$payment_data['invoice_no']);
-                            //         $count = 8-strlen($explode[1]+1);
-                            //         $invoice_rep =$explode[1]+1;                                                          
-                            //         for($i=0;$i<$count;$i++){
-                            //             $invoice_rep= $invoice_rep;
-                            //         }
-                            //         $new_invoice_id = 'FXH'.$invoice_rep;
-                            // }
                             $new_invoice_no = generate_invoice_no();
                              $date = date('d-m-Y');
                            $invoice_date_11 = str_replace("-", "_", $date);
@@ -471,22 +456,7 @@ class Reciption_api extends REST_Controller {
                            $invoice_date_11 = str_replace("-", "_", $invoice_date_1);
                            $invoice_date_12 = $invoice_date_11."_".date("h_i_s");
 
-                        $payment_data = $this->model->selectWhereData('tbl_invoice_no',array(),array('id'));
-                            $year = date('Y');
-                            if(empty($payment_data)){                
-                                    $new_invoice_id  = 'FXH'.$year.'001';
-                            }else{
-                                    $this->load->model('superadmin_model');
-
-                                    $payment_data = $this->superadmin_model->get_last_invoice_no();
-                                    $explode = explode("H",$payment_data['invoice_no']);
-                                    $count = 8-strlen($explode[1]+1);
-                                    $invoice_rep =$explode[1]+1;                                                          
-                                    for($i=0;$i<$count;$i++){
-                                        $invoice_rep= $invoice_rep;
-                                    }
-                                    $new_invoice_id = 'FXH'.$invoice_rep;
-                            }
+                        $new_invoice_id = generate_invoice_no();
                              $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
 
                              $insert_advance_payment = array(
