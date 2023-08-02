@@ -5,7 +5,7 @@ require APPPATH . '/libraries/REST_Controller.php';
 
 class Reciption_api extends REST_Controller {
 
-	public function __construct() {
+    public function __construct() {
         parent::__construct();
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Credentials: true');
@@ -13,7 +13,6 @@ class Reciption_api extends REST_Controller {
         header('Content-Type: text/html; charset=utf-8');
         header('Content-Type: application/json; charset=utf-8'); 
     }
-
    /*200 = OK
     201 = Bad Request (Required param is missing)
     202 = No Valid Auth key
@@ -25,7 +24,7 @@ class Reciption_api extends REST_Controller {
     208 = Curl Failed
     209 = Curl UNAUTHORIZED
     */ 
-	public function index() {
+    public function index() {
         $response = array('status' => false, 'msg' => 'Oops! Please try again later.', 'code' => 200);
         echo json_encode($response);
     }
@@ -69,7 +68,7 @@ class Reciption_api extends REST_Controller {
                 $admission_sub_type = $this->input->post('admission_sub_type');
                 $reference_doctor_name = $this->input->post('reference_doctor_name');
                 $admission_type = $this->input->post('admission_type');
-                // $deposite_amount = $this->input->post('deposite_amount');
+                $ipd_no = $this->input->post('ipd_no');
                 if(empty($doctor_id)){
                     $response['message'] = "Doctor Id is required";
                     $response['code'] = 201;
@@ -82,7 +81,6 @@ class Reciption_api extends REST_Controller {
                 }else if(empty($appointment_time)){
                     $response['message'] = "Appointment Time is required";
                     $response['code'] = 201;
-
                 }
                 else if(empty($admission_type)){
                     $response['message'] = "Admission Type is required";
@@ -102,7 +100,8 @@ class Reciption_api extends REST_Controller {
                             'appointment_time'=>$appointment_time,
                             'admission_type'=>$admission_type,
                             'reference_doctor_name'=>$reference_doctor_name,
-                            'fk_admission_sub_type_id'=>$admission_sub_type
+                            'fk_admission_sub_type_id'=>$admission_sub_type,
+                            'ipd_no'=>$ipd_no
                         );
                         $inserted_id = $this->model->insertData('tbl_appointment',$curl_data);
                         // if(!empty($deposite_amount)){
@@ -184,6 +183,21 @@ class Reciption_api extends REST_Controller {
                     $response['message'] = "Total Paid Amount is required";
                     $response['code'] = 201;
                 }else{
+                            // $payment_data = $this->model->selectWhereData('tbl_invoice_no',array(),array('id'));
+                            // $year = date('Y');
+                            // if(empty($payment_data)){                
+                            //         $new_invoice_id  = 'FXH'.$year.'001';
+                            // }else{
+                            //         $this->load->model('superadmin_model');
+                            //         $payment_data = $this->superadmin_model->get_last_invoice_no();
+                            //         $explode = explode("H",$payment_data['invoice_no']);
+                            //         $count = 8-strlen($explode[1]+1);
+                            //         $invoice_rep =$explode[1]+1;                                                          
+                            //         for($i=0;$i<$count;$i++){
+                            //             $invoice_rep= $invoice_rep;
+                            //         }
+                            //         $new_invoice_id = 'FXH'.$invoice_rep;
+                            // }
                             $new_invoice_no = generate_invoice_no();
                              $date = date('d-m-Y');
                            $invoice_date_11 = str_replace("-", "_", $date);
@@ -456,7 +470,23 @@ class Reciption_api extends REST_Controller {
                            $invoice_date_11 = str_replace("-", "_", $invoice_date_1);
                            $invoice_date_12 = $invoice_date_11."_".date("h_i_s");
 
-                        $new_invoice_id = generate_invoice_no();
+                            // $payment_data = $this->model->selectWhereData('tbl_invoice_no',array(),array('id'));
+                            // $year = date('Y');
+                            // if(empty($payment_data)){                
+                            //         $new_invoice_id  = 'FXH'.$year.'001';
+                            // }else{
+                            //         $this->load->model('superadmin_model');
+
+                            //         $payment_data = $this->superadmin_model->get_last_invoice_no();
+                            //         $explode = explode("H",$payment_data['invoice_no']);
+                            //         $count = 8-strlen($explode[1]+1);
+                            //         $invoice_rep =$explode[1]+1;                                                          
+                            //         for($i=0;$i<$count;$i++){
+                            //             $invoice_rep= $invoice_rep;
+                            //         }
+                            //         $new_invoice_id = 'FXH'.$invoice_rep;
+                            // }
+                             $new_invoice_id = generate_invoice_no();
                              $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
 
                              $insert_advance_payment = array(
@@ -698,8 +728,7 @@ class Reciption_api extends REST_Controller {
         if ($validate) {
                 $fk_appointment_id = $this->input->post('fk_appointment_id');   
                 $surgery_date = $this->input->post('surgery_date');
-                $surgery_date = json_decode($surgery_date,true);
-    
+                $surgery_date = json_decode($surgery_date,true);    
                 if(empty($fk_appointment_id)){
                     $response['message'] = "Appointment Id is required";
                     $response['code'] = 201;
@@ -720,6 +749,30 @@ class Reciption_api extends REST_Controller {
                     $response['status'] = true;
                     $response['message'] = 'Surgery Date Added Successfully';                  
                 }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+
+    public function get_patient_name_on_patient_id_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $contact_no = $this->input->post('contact_no');
+            if(empty($contact_no)){
+                $response['code'] = 201;
+                $response['message'] = "Contact No is required";
+            }else{
+               $patient_details = $this->model->selectWhereData('tbl_patients',array('contact_no'=>$contact_no),array('id','first_name','last_name'),false);          
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['patient_details'] = $patient_details;
+            }
+            
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';

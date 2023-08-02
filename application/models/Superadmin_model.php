@@ -221,7 +221,7 @@ class Superadmin_model extends CI_Model {
 
 	public function get_final_invoice_details($fk_appointment_id="",$fk_patient_id='')
 	{
-		$this->db->select('GROUP_CONCAT(tbl_charges.amount) AS charges_amount,GROUP_CONCAT(tbl_charges.no_of_count) AS charges_count,tbl_charges.date,tbl_charges_type.charges_name,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
+		$this->db->select('GROUP_CONCAT(tbl_charges.amount) AS charges_amount,GROUP_CONCAT(tbl_charges.no_of_count) AS charges_count,GROUP_CONCAT(tbl_charges.date) as date,tbl_charges_type.charges_name,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
 		$this->db->from('tbl_charges');
 		$this->db->join('tbl_charges_type','tbl_charges.fk_charges_type_id=tbl_charges_type.id','left');
 		$this->db->join('tbl_patients','tbl_charges.fk_patient_id=tbl_patients.id','left');

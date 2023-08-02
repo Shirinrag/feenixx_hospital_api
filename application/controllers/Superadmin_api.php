@@ -428,21 +428,22 @@ class Superadmin_api extends REST_Controller {
                     $response['message'] = "Pincode is required";
                     $response['code'] = 201;
                 }else{                    
-                        $check_contact_no_count = $this->model->CountWhereRecord('tbl_patients', array('contact_no'=>$phone_no,'status'=>1,'del_status'=>1));
-                        $check_contact_no_count_1 = $this->model->CountWhereRecord('tbl_users', array('contact_no'=>$phone_no,'login_status'=>1,'del_status'=>1));
-                        $check_email_count = $this->model->CountWhereRecord('tbl_patients', array('email'=>$email,'status'=>1,'del_status'=>1));
+                        // $check_contact_no_count = $this->model->CountWhereRecord('tbl_patients', array('contact_no'=>$phone_no,'status'=>1,'del_status'=>1));
+                        // $check_contact_no_count_1 = $this->model->CountWhereRecord('tbl_users', array('contact_no'=>$phone_no,'login_status'=>1,'del_status'=>1));
+                        // $check_email_count = $this->model->CountWhereRecord('tbl_patients', array('email'=>$email,'status'=>1,'del_status'=>1));
                         $check_email_count_1 = $this->model->CountWhereRecord('tbl_users', array('email'=>$email,'login_status'=>1,'del_status'=>1));
-                        if($check_contact_no_count > 0){
-                            $response['code'] = 201;
-                            $response['status'] = false;
-                            $response['message'] = 'Contact No is Already exist.';
-                            $response['error_status'] = 'contact_no';                     
-                        }elseif($check_contact_no_count_1 > 0){
-                            $response['code'] = 201;
-                            $response['status'] = false;
-                            $response['message'] = 'Contact No is Already exist.';
-                            $response['error_status'] = 'contact_no';                     
-                        }elseif($check_email_count > 0){
+                        // if($check_contact_no_count > 0){
+                        //     $response['code'] = 201;
+                        //     $response['status'] = false;
+                        //     $response['message'] = 'Contact No is Already exist.';
+                        //     $response['error_status'] = 'contact_no';                     
+                        // }elseif($check_contact_no_count_1 > 0){
+                        //     $response['code'] = 201;
+                        //     $response['status'] = false;
+                        //     $response['message'] = 'Contact No is Already exist.';
+                        //     $response['error_status'] = 'contact_no';                     
+                        // }else
+                        if($check_email_count > 0){
                             $response['code'] = 201;
                             $response['status'] = false;
                             $response['message'] = 'Email is Already exist.';

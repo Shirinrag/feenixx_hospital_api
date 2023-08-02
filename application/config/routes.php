@@ -101,7 +101,7 @@ $route['get-all-appointment-details-on-doctor-id'] = 'doctor_api/get_all_appoint
 $route['dr-update-appointment'] = 'doctor_api/dr_update_appointment';
 // ===========================Doctor Dashboard===============================
 $route['doctor-dashboard'] = 'doctor_api/dashboard_count_data';
-$route['get-user-type-on-id'] = 'common/get_user_type_on_id';
+$route['get-user-type-on-id'] = 'common_api/get_user_type_on_id';
 
 // ==================== ADD Charges===================================
 $route['add-charges'] = 'superadmin_api/add_charges';
@@ -122,4 +122,6 @@ $route['update-discharge-date'] = 'reciption_api/update_discharge_date';
 $route['update-discharge-time'] = 'reciption_api/update_discharge_time';
 $route['update-discharge-summary'] = 'reciption_api/update_discharge_summary';
 $route['add-surgery-details'] = 'reciption_api/add_surgery_details';
+$route['get-patient-name-on-patient-id'] = 'reciption_api/get_patient_name_on_patient_id';
+
 

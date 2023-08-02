@@ -151,13 +151,16 @@ function generate_final_invoice_pdf($id='')
         $charges_amount_explode = explode(',',$charges_amount_1);
         $charges_count_1 = $charges_data_row['charges_count']; 
         $charges_count_explode = explode(',',$charges_count_1);
+        $date_count_1 = $charges_data_row['date']; 
+        $date_count_explode = explode(',',$date_count_1);
+        $last_date = end($date_count_explode);
         foreach ($charges_amount_explode as $charges_amount_explode_key => $charges_amount_explode_row) {
             $total_charges_amount =  $charges_amount_explode_row * $charges_count_explode[$charges_amount_explode_key];
             $single_price_unit = $charges_amount_explode[0]/$charges_count_explode[0];
             $final_charges_amount = $total_charges_amount+$final_charges_amount;
             $final_charges_count = $final_charges_count+$charges_count_explode[$charges_amount_explode_key];
         }
-        if($charges_data_row['date'] ==$date_of_discharge['date_of_discharge']){
+        if($last_date ==$date_of_discharge['date_of_discharge']){
             $is_discharge_done = true;
         }
         $charges_data[$charges_data_key]['single_price_unit'] = $single_price_unit;

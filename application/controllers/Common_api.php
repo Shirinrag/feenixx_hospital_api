@@ -171,7 +171,7 @@ class Common_api extends REST_Controller {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
         if ($validate) {
-            $patient_data = $this->model->selectWhereData('tbl_patients',array(),array('id','patient_id','contact_no'),false);
+            $patient_data = $this->model->selectWhereData('tbl_patients',array('del_status'=>1,'status'=>1),array('id','patient_id','contact_no'),false);
             $diseases_data = $this->model->selectWhereData('tbl_diseases',array('status'=>1,'del_status'=>1),array('id','diseases_name'),false,array('id','DESC'));            
             $doctor_data = $this->model->selectWhereData('tbl_doctor',array('status'=>1,'del_status'=>1),array('id','first_name','last_name'),false,array('id','DESC'));            
             $appointment_type = $this->model->selectWhereData('tbl_appointment_type',array('status'=>1),array('id','type'),false,array('id','DESC'));              
@@ -205,12 +205,11 @@ class Common_api extends REST_Controller {
                 $response['code'] = 201;
                 $response['message'] = "Id is required";
             }else{
-               $patient_data = $this->model->selectWhereData('tbl_user_type',array(),array('id','patient_id'),false);          
+               $user_type = $this->model->selectWhereData('tbl_user_type',array('id'=>$id),array('user_type'));                  
                 $response['code'] = REST_Controller::HTTP_OK;
                 $response['status'] = true;
                 $response['message'] = 'success';
-                $response['patient_data'] = $patient_data;
-                $response['diseases_data'] = $diseases_data; 
+                $response['user_type'] = $user_type['user_type'];
             }
             
         }else {
