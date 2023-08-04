@@ -87,10 +87,10 @@ class Reciption_api extends REST_Controller {
                     $response['code'] = 201;
                 }else{
                     $appointment_count = $this->model->CountWhereInRecord('tbl_appointment',array('fk_patient_id'=>$patient_id,'appointment_date' => $appointment_date,'appointment_time'=>$appointment_time,));
-                    if($check_contact_no_count > 0){
+                    if($appointment_count > 0){
                         $response['code'] = 201;
                         $response['status'] = false;
-                        $response['message'] = 'Place Already exist.';
+                        $response['message'] = 'Appointment is already booked for this time';
                     }else{
                         $curl_data =  array(
                             'fk_doctor_id' => $doctor_id,
@@ -608,9 +608,11 @@ class Reciption_api extends REST_Controller {
                     }
                     $final_invoice = generate_final_invoice_pdf($fk_appointment_id);
 
+                    $appointment_type = $this->model->selectWhereData('tbl_appointment',array('id'=>$fk_appointment_id),array('appointment_type'));
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Charges Added Successfully';
+                    $response['appointment_type']= $appointment_type['appointment_type'];
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
