@@ -241,4 +241,30 @@ class Common_api extends REST_Controller {
         }
         echo json_encode($response);
     }
+
+    public function get_doctor_details_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+            $id = $this->input->post('id');
+            if(empty($id)){
+                $response['code']=201;
+                $response['message']="Id is required";
+            }else{
+                $doctor_data = $this->model->selectWhereData('tbl_doctor',array('status'=>1,'del_status'=>1,'id'=>$id),array('fk_gender_id'));            
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;  
+                if(!empty($doctor_data)){
+                    $response['doctor_data'] = $doctor_data;
+                }else{
+                    $response['doctor_data'] = [];
+                }
+            }           
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
 }

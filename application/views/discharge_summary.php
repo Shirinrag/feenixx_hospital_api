@@ -56,12 +56,12 @@
             <td><?= $data['first_name']." ".$data['last_name'];?></td>  
         </tr>
         <tr>
-            <th>Admission Date</th>
+            <th>Admission Date & Time</th>
             <td><?= $data['appointment_date']."  ".$data['appointment_time'];?></td>
 
         </tr>
         <tr>
-            <th>Discharge Date</th>
+            <th>Discharge Date & Time</th>
             <td><?= $data['date_of_discharge']."  ". $data['time_of_discharge'];?></td>
           
         </tr>

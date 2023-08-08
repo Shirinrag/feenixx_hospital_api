@@ -76,11 +76,11 @@
             <td><?= $data['charges_data']['0']['first_name']." ".$data['charges_data']['0']['last_name']?></td>
         </tr>
         <tr>  
-            <th>Date of Addmission</th>
+            <th>Addmission Date & Time</th>
             <td><?= $data['date_of_discharge']['appointment_date']." ".$data['date_of_discharge']['appointment_time'];?></td>
         </tr>
         <tr>  
-            <th>Date of Discharge</th>
+            <th>Discharge Date & Time</th>
             <td><?= $data['date_of_discharge']['date_of_discharge']." ".$data['date_of_discharge']['time_of_discharge']?></td>
         </tr>
         <tr>  
