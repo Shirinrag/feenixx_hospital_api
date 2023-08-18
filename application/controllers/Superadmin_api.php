@@ -49,7 +49,9 @@ class Superadmin_api extends REST_Controller {
                 $dob = $this->input->post('dob');
                 $gender = $this->input->post('gender');              
                 $profile_image = $this->input->post('image');
+                $pan_card = $this->input->post('pan_card');
                 $added_by = $this->input->post('added_by');
+
                 if(empty($first_name)){
                     $response['message'] = "First Name is required";
                     $response['code'] = 201;
@@ -142,6 +144,7 @@ class Superadmin_api extends REST_Controller {
                                 'pincode'=>$pincode,
                                 'dob'=>$dob,
                                 'image'=>$profile_image,
+                                'pan_card'=>$pan_card,
                                 'fk_gender_id'=>$gender
                             );
                             $inserted_id = $this->model->insertData('tbl_doctor',$curl_data);
@@ -236,6 +239,7 @@ class Superadmin_api extends REST_Controller {
                 $gender = $this->input->post('gender');              
                 $profile_image = $this->input->post('image');
                 $id = $this->input->post('id');
+                $pan_card = $this->input->post('pan_card');
                 if(empty($first_name)){
                     $response['message'] = "First Name is required";
                     $response['code'] = 201;
@@ -267,6 +271,15 @@ class Superadmin_api extends REST_Controller {
                     $response['message'] = "Gender is required";
                     $response['code'] = 201;
                 }else{
+
+                    $pan_card_1 ='';
+ 
+                    if(empty($pan_card))   {
+                        $pan_card_1 = $staff_detais['pan_card'];
+                    }else{
+                        $pan_card_1 = $pan_card;
+                    }  
+
                     $is_file = true;
                     $profile_image1 ="";
                     if (!empty($_FILES['image']['name'])) {
@@ -307,6 +320,7 @@ class Superadmin_api extends REST_Controller {
                             'pincode'=>$pincode,
                             'dob'=>$dob,
                             'fk_gender_id'=>$gender,
+                            'pan_card'=>$pan_card_1,    
                         );
                         $this->model->updateData('tbl_doctor',$curl_data,array('id'=>$id));
 
@@ -1399,6 +1413,130 @@ class Superadmin_api extends REST_Controller {
             $response['status'] = true;
             $response['message'] = 'success';
             $response['appointment_details_data'] = $appointment_details;
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    //  ============================ Add Specialization ====================
+    public function save_specialization_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $designation_name = $this->input->post('designation_name');
+                if(empty($designation_name)){
+                    $response['message'] = "First Name is required";
+                    $response['code'] = 201;
+                }else{
+                        $check_designation_name_count = $this->model->CountWhereRecord('tbl_designation', array('designation_name'=>$designation_name,'del_status'=>1));
+                        if($check_designation_name_count > 0){
+                             $response['code'] = 201;
+                            $response['status'] = false;
+                            $response['message'] = 'Specialization is Already exist.';
+                        }else{                            
+                            $curl_data =  array(
+                                'designation_name' => $designation_name,
+                            );
+                            $inserted_id = $this->model->insertData('tbl_designation',$curl_data);                       
+                            $response['code'] = REST_Controller::HTTP_OK;
+                            $response['status'] = true;
+                            $response['message'] = 'Specialization Added Successfully';
+                        }
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function display_all_specializtion_details_get()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                 $this->load->model('superadmin_model');
+                $specialization_data = $this->model->selectWhereData('tbl_designation',array('del_status'=>1),array('*','CONCAT(tbl_designation.status,",",tbl_designation.id) AS statusdata'),false,array('id',"DESC"));
+                $response['code'] = REST_Controller::HTTP_OK;
+                $response['status'] = true;
+                $response['message'] = 'success';
+                $response['specialization_data'] = $specialization_data;
+        } else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_specialization_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $designation_name = $this->input->post('designation_name');
+                $id = $this->input->post('id');
+                if(empty($designation_name)){
+                    $response['message'] = "Specialization is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data =  array(
+                        'designation_name' => $designation_name,                       
+                    );
+                    $this->model->updateData('tbl_designation',$curl_data,array('id'=>$id));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Specialization Updated Successfully';
+
+                }
+        }else {
+            $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+            $response['message'] = 'Unauthorised';
+        }
+        echo json_encode($response);
+    }
+    public function update_specialization_status_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if($validate){
+            $id = $this->input->post('id');
+            $status=$this->input->post('status');
+            if (empty($id)) {
+                $response['message'] = 'id is required';
+                $response['code'] = 201;
+            } else {
+                $update_data = array(
+                    'status'=>$status,
+                );
+                $this->model->updateData('tbl_designation',$update_data, array('id'=>$id));
+                $response['message'] = 'Specialization Status Changed Successfully';
+                $response['code'] = 200;
+                $response['status'] = true;
+            }
+        } else {
+            $response['message'] = 'Invalid Request';
+            $response['code'] = 204;
+        }
+        echo json_encode($response);
+    }
+    public function delete_specialization_post()
+    {
+        $response = array('code' => - 1, 'status' => false, 'message' => '');
+        $validate = validateToken();
+        if ($validate) {
+                $id = $this->input->post('id');
+                if(empty($id)){
+                    $response['message'] = "Id is required";
+                    $response['code'] = 201;
+                }else{
+                    $curl_data = array(
+                        'del_status' =>0,
+                    );
+                    $this->model->updateData('tbl_designation',$curl_data,array('id'=>$id));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Specialization Deleted Successfully';
+                }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
             $response['message'] = 'Unauthorised';

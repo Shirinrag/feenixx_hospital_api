@@ -83,15 +83,22 @@
             <th>Discharge Date & Time</th>
             <td><?= $data['date_of_discharge']['date_of_discharge']." ".$data['date_of_discharge']['time_of_discharge']?></td>
         </tr>
+        <?php if($data['date_of_discharge']['admission_type']==2){ ?>
         <tr>  
             <th>Surgery Date</th>
             <td><?= $data['surgery_details']['surgery_date']?></td>
         </tr>
+        <?php  } ?>
         <tr>  
              <th>Consultant</th>
             <td><?= $data['doctor_data']['first_name']." ".$data['doctor_data']['last_name']?></td>
         </tr>
-        
+         <?php if($data['date_of_discharge']['admission_type']==2){ ?>
+        <tr>  
+            <th>Diseases</th>
+            <td><?= $data['diseases']['diseases_name']?></td>
+        </tr>   
+         <?php  } ?>     
     </table>
 
     <h2>Invoice Details</h2>

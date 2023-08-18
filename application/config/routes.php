@@ -124,5 +124,14 @@ $route['update-discharge-summary'] = 'reciption_api/update_discharge_summary';
 $route['add-surgery-details'] = 'reciption_api/add_surgery_details';
 $route['get-patient-name-on-patient-id'] = 'reciption_api/get_patient_name_on_patient_id';
 $route['get-doctor-details'] = 'common_api/get_doctor_details';
+$route['cancel-appointment'] = 'reciption_api/cancel_appointment';
+
+// ============================ Specializtion ==============================
+$route['save-specialization'] = 'superadmin_api/save_specialization';
+
+$route['display-all-specialization-details'] = 'superadmin_api/display_all_specializtion_details';
+$route['update-specialization'] = 'superadmin_api/update_specialization';
+$route['delete-specialization'] = 'superadmin_api/delete_specialization';
+$route['update-specialization-status'] = 'superadmin_api/update_specialization_status';
 
 

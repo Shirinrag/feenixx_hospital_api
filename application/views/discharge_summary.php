@@ -58,25 +58,20 @@
         <tr>
             <th>Admission Date & Time</th>
             <td><?= $data['appointment_date']."  ".$data['appointment_time'];?></td>
-
         </tr>
         <tr>
             <th>Discharge Date & Time</th>
-            <td><?= $data['date_of_discharge']."  ". $data['time_of_discharge'];?></td>
-          
+            <td><?= $data['date_of_discharge']."  ". $data['time_of_discharge'];?></td>          
         </tr>
         <tr>
             <th>Surgery Date</th>
             <td><?= $data['surgery_date'];?></td>
-          
         </tr>
         <tr>
              <th>Under Care of Dr. Name</th>
-            <td><?= $data['doctor_first_name']." ".$data['doctor_last_name'];?></td>
-            
+            <td><?= $data['doctor_first_name']." ".$data['doctor_last_name'];?></td>            
         </tr>
     </table>
-
     <h2>Discharge Summary</h2>       
          <?= $data['discharge_summary'];?>
             

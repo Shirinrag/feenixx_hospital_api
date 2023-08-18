@@ -67,11 +67,17 @@
     <table>
         <tr>
             <th>Customer ID</th>
-            <th>Customer Name</th>
+            <td><?= $data['patient_id']?></td>
+            
         </tr>
         <tr>
-            <td><?= $data['patient_id']?></td>
+            <th>Customer Name</th>
             <td><?= $data['first_name']." ".$data['last_name']?></td>           
+        </tr>
+        <tr>
+             <th>Under Care of Dr. Name</th>
+            <td><?= $data['doctor_first_name']." ".$data['doctor_last_name'];?></td>
+            
         </tr>
     </table>
 

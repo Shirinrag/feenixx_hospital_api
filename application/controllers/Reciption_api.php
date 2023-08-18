@@ -244,7 +244,8 @@ class Reciption_api extends REST_Controller {
 
                                 $this->model->insertData('tbl_payment',$insert_payment);
                             }
-                            $payment_details = $this->superadmin_model->get_advanced_payment_data($inserted_id);                          
+                            $payment_details = $this->superadmin_model->get_advanced_payment_data($inserted_id);
+                           
                             // echo '<pre>'; print_r($payment_details); exit;
                             // error_reporting(0);
                             // $this->load->library('Pdf');
@@ -804,6 +805,31 @@ class Reciption_api extends REST_Controller {
                         // ob_end_clean();
                         // $mpdf->Output($pdfFilePath, "F");               
         $this->load->view('welcome_message');
+    }
+
+    public function cancel_appointment_post()
+    {
+            $response = array('code' => - 1, 'status' => false, 'message' => '');
+            $validate = validateToken();
+            if ($validate) {
+                $id = $this->input->post('id');
+                if(empty($id)){
+                    $response['code'] = 201;
+                    $response['message'] = "Id is required";
+                }else{
+                    $curl_data = array('del_status'=>0);
+                    $this->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
+                    $response['code'] = REST_Controller::HTTP_OK;
+                    $response['status'] = true;
+                    $response['message'] = 'Appointment Cancel Successfully';
+                    
+                }
+                
+            }else {
+                $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
+                $response['message'] = 'Unauthorised';
+            }
+            echo json_encode($response);
     }
 
 

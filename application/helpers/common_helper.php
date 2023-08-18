@@ -177,6 +177,7 @@ function generate_final_invoice_pdf($id='')
      $details['payment_data'] =$payment_info;
      $details['surgery_details'] =$surgery_details;
      $details['date'] = date('d-m-Y');
+     $details['diseases'] = $CI->superadmin_model->get_patient_disease_details($id);
      // foreach ($charges_data as $charges_data_key => $charges_data_row) {
         // if($is_discharge_done){ 
         //     $CI->load->library('Pdf');

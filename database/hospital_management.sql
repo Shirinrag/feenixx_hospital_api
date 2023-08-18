@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 28, 2023 at 03:57 PM
+-- Generation Time: Aug 18, 2023 at 02:02 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.4.29
 
@@ -46,33 +46,6 @@ INSERT INTO `email_template` (`id`, `subject`, `body`, `type`, `status`, `create
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tbl_advance_amount`
---
-
-CREATE TABLE `tbl_advance_amount` (
-  `id` int(11) NOT NULL,
-  `fk_appointment_id` int(11) DEFAULT NULL,
-  `fk_patient_id` int(11) DEFAULT NULL,
-  `advance_amount` double DEFAULT NULL,
-  `date` varchar(100) DEFAULT NULL,
-  `fk_payment_type` int(11) DEFAULT NULL,
-  `advance_invoice_no` varchar(100) DEFAULT NULL,
-  `advance_invoice` longtext DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `tbl_advance_amount`
---
-
-INSERT INTO `tbl_advance_amount` (`id`, `fk_appointment_id`, `fk_patient_id`, `advance_amount`, `date`, `fk_payment_type`, `advance_invoice_no`, `advance_invoice`, `created_at`, `updated_at`) VALUES
-(1, 3, 1, 1000, '12-07-2023', 2, 'FXH2023001', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_12_07_2023_03_43_38.pdf', '2023-07-12 15:43:38', '2023-07-12 15:43:38'),
-(2, 3, 1, 1000, '13-07-2023', 1, 'FXH2023002', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_13_07_2023_03_43_38.pdf', '2023-07-12 15:43:38', '2023-07-12 15:43:38');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `tbl_appointment`
 --
 
@@ -85,14 +58,18 @@ CREATE TABLE `tbl_appointment` (
   `appointment_date` varchar(100) DEFAULT NULL,
   `appointment_time` varchar(100) DEFAULT NULL,
   `date_of_discharge` varchar(100) DEFAULT NULL,
+  `time_of_discharge` varchar(100) DEFAULT NULL,
   `admission_type` varchar(100) DEFAULT NULL,
   `fk_admission_sub_type_id` int(11) DEFAULT NULL,
+  `discount_amount` double DEFAULT NULL,
   `prescription` longtext DEFAULT NULL,
   `description` longtext DEFAULT NULL,
   `discharge_summary` longtext DEFAULT NULL,
   `discharge_summary_pdf` longtext DEFAULT NULL,
+  `ipd_no` varchar(100) DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
   `invoice_pdf` longtext DEFAULT NULL,
+  `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -101,11 +78,9 @@ CREATE TABLE `tbl_appointment` (
 -- Dumping data for table `tbl_appointment`
 --
 
-INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `date_of_discharge`, `admission_type`, `fk_admission_sub_type_id`, `prescription`, `description`, `discharge_summary`, `discharge_summary_pdf`, `added_by`, `invoice_pdf`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 210, '', '28-06-2023', '16:30', NULL, '1', 0, 'uploads/pescription/LCT24609079/669939_download_(2).jpg', 'test', NULL, NULL, NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_invoice.pdf', '2023-06-27 11:57:32', '2023-06-27 12:33:53'),
-(2, 1, 1, NULL, '', '05-07-2023', '19:30', NULL, '1', 0, 'uploads/pescription/LCT24609079/325919_download_(2).jpg', 'test', NULL, NULL, NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_invoice.pdf', '2023-06-29 15:24:23', '2023-07-27 15:28:37'),
-(3, 1, 1, 210, '', '17-07-2023', '19:00', '21-07-2023', '2', 0, 'uploads/pescription/LCT24609079/442993_download.jpg', 'test', '<span style=\"font-size:14px\"><span style=\"font-family:Courier New,Courier,monospace\">DIAGNOSIS:- &nbsp;&nbsp;LRTI WITH K/C/O DM/HTN/BPH/IHD(SP PTCA IN FEB 22 ) /HF WITH EF 40% .<br />\r\nCOURSE IN HOSPITAL: - A&nbsp; 76 YRS /M PATIENT IS ADMITTED TO FEENIXX HOPSITAL WITH C/O SOB , COUGH .H/O PTCA&nbsp; .&nbsp; ECG DONE S/O ST CHANGES IN I, AVL, V6. CBC 8.9/6500/242000, SR. CREAT 1.72, TROP I NEGAIVE CPK MB 12.7. SPO2 WAS 88 % ON RA. R/S&nbsp; S/O B/L WHEEZE + . O2 SUPPORT STARTED.&nbsp; PATIENT MANGED WITH ANTI BIOTICS PPI, ANTI EMETICS AND IVF. SPUTUM C/S S/O GROWTH OF STREPTOCOCCUS. PATIENT RESPONDED WELL TO GIVEN TREATEMNT. PATIENT WAS CLINICALLY STABLE HENCE DISCHARED GIVEN.&nbsp;&nbsp;&nbsp;<br />\r\n<br />\r\nON EXAMINATION:-<br />\r\nT- 98&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />\r\nP- 78 /min<br />\r\nBP- 140/80 mmhg<br />\r\nSPO2- 88% &nbsp;ON RA<br />\r\nCNS:- CONSCIOUS , ORIENTED<br />\r\nCVS: - S1, S2 +<br />\r\nR/S: - WHEEZE + B/L&nbsp; LL<br />\r\nP/A &ndash; SOFT<br />\r\nTREATMENT GIVEN :-<br />\r\nINJ.PAN 40 MG BD<br />\r\nINJ. EMSET 4 MG IV TDS<br />\r\nINJ. RIXTAM&nbsp; IV BD<br />\r\nINJ. MONOCEF 1 GM IV BD<br />\r\nINJ. DERIPHYLLIN IV BD<br />\r\nTAB. ECOSPRIN<br />\r\nTAB. CLOPITAB<br />\r\nTAB. NIKORAM<br />\r\n<br />\r\nCONDITION AT TIME OF DISCHARGE:-<br />\r\nSTABLE<br />\r\nT :-97<br />\r\nP:- 80 /min<br />\r\nBP:- 120/80 mmhg<br />\r\nSPO2:- 98%<br />\r\n<br />\r\nON DISCHAGRE TREATMENT:-<br />\r\nTAB. ZIFI 200&nbsp;&nbsp; 1-----------------0--------------1 X 5 DAYS AFTER FOOD<br />\r\nTAB. CLARINID 250 1--------------0-----------1 X 3 DAYS AFTER FOOD<br />\r\nTAB. ECOSPRIN 75&nbsp;&nbsp; 0-------------1--------------0 X CONTINUE AFTER FOOD<br />\r\nTAB. VASOGLOR 90&nbsp;&nbsp; 1----------------0---------------1 X CONTINUE AFTER FOOD<br />\r\nTAB. AMLO&nbsp;&nbsp; 5 MG&nbsp; 1-------------------------0--------------1 X CONTINUE AFTER FOOD<br />\r\nTAB. AZTOR&nbsp; 40&nbsp; 0-------------------0------------------1 X CONTINUE AFTER FOOD<br />\r\nTAB. SILIODOL 8&nbsp;&nbsp;&nbsp; 0--------------------0-------------0&nbsp; X CONTINUE AFTER FOOD<br />\r\nTAB. NIKORAM&nbsp;&nbsp; 5 MG&nbsp;&nbsp; 1----------------0------------1 X CONTINUE AFTER FOOD<br />\r\nTAB. DYTOR PLUS&nbsp;&nbsp;&nbsp; 1-----------------1/2------------------0 X CONTINUE AFTER FOOD<br />\r\nNEB WITH DUOLIN + BUDECORT&nbsp;&nbsp;&nbsp; 1-----------------0---------------1 x 5 DAYS<br />\r\nTAB. PAN 40&nbsp;&nbsp; 1--------------------0---------------0 X 5 DAYS AFTER FOOD<br />\r\n&nbsp;TAB. GLYCOMET 500&nbsp;&nbsp; 1----------------0--------------1 X CONTINUE BEFORE&nbsp; FOOD<br />\r\n<br />\r\nFOLLOW UP:-<br />\r\nAFTER 7&nbsp; DAYS WITH CBC, CRP, SR. ELECTROLYTE<br />\r\n<br />\r\nPRECAUTION<br />\r\nLESS SALT INTAKE<br />\r\n1 LITR ONLY WATER INTAKE / DAILY<br />\r\nSTOP EATING PAPAD/ACHAR<br />\r\nDAILY EXERCISE </span></span><br />\r\n&nbsp;', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/LCT24609079_discharge_summary_24_07_2023_12_27_14.pdf', NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_19_07_2023_01_23_30.pdf', '2023-06-29 19:00:29', '2023-07-27 14:37:13'),
-(4, 1, 1, 123, '', '27-07-2023', '19:30', '28-07-2023', '2', 0, 'uploads/pescription/LCT24609079/757345_download.png', 'test', NULL, NULL, NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_invoice.pdf', '2023-07-27 17:16:20', '2023-07-27 17:30:33');
+INSERT INTO `tbl_appointment` (`id`, `fk_doctor_id`, `fk_patient_id`, `fk_diseases_id`, `reference_doctor_name`, `appointment_date`, `appointment_time`, `date_of_discharge`, `time_of_discharge`, `admission_type`, `fk_admission_sub_type_id`, `discount_amount`, `prescription`, `description`, `discharge_summary`, `discharge_summary_pdf`, `ipd_no`, `added_by`, `invoice_pdf`, `del_status`, `created_at`, `updated_at`) VALUES
+(1, 1, 2, 209, '', '02-08-2023', '21:30', NULL, NULL, '1', 0, 0, 'uploads/pescription/WZGL4297935/934602_download.jpg', 'Viral Fever', NULL, NULL, '', NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/WZGL4297935_02_08_2023_05_55_13_invoice.pdf', 1, '2023-08-02 17:53:56', '2023-08-18 12:35:43'),
+(2, 1, 3, 7, '', '02-08-2023', '20:30', '03-08-2023', '06:12:09', '2', 0, NULL, 'uploads/pescription/OFJ62863667/64d217637a524.png', 'appendictis', NULL, NULL, '12345', NULL, 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/OFJ62863667_02_08_2023_06_12_09_invoice.pdf', 0, '2023-08-02 18:01:01', '2023-08-18 12:35:59');
 
 -- --------------------------------------------------------
 
@@ -206,24 +181,15 @@ CREATE TABLE `tbl_charges` (
 --
 
 INSERT INTO `tbl_charges` (`id`, `fk_appointment_id`, `fk_patient_id`, `fk_charges_type_id`, `amount`, `no_of_count`, `total_amount`, `dr_name`, `date`, `created_at`, `updated_at`) VALUES
-(1, 3, 1, 1, 1000, 1, 1000, '', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24'),
-(2, 3, 1, 34, 5000, 2, 10000, '', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24'),
-(3, 3, 1, 4, 10000, 2, 20000, 'Dr. Swapnil', '17-07-2023', '2023-07-17 11:04:24', '2023-07-17 11:04:24'),
-(4, 3, 1, 34, 5000, 2, 10000, '', '18-07-2023', '2023-07-21 14:07:05', '2023-07-21 14:07:05'),
-(5, 3, 1, 4, 10000, 2, 20000, 'Dr. Swapnil', '18-07-2023', '2023-07-21 14:07:43', '2023-07-21 14:07:43'),
-(6, 3, 1, 34, 5000, 2, 10000, '', '19-07-2023', '2023-07-21 14:12:10', '2023-07-21 14:12:10'),
-(7, 3, 1, 4, 10000, 2, 20000, 'Dr. Swapnil', '19-07-2023', '2023-07-21 14:12:10', '2023-07-21 14:12:10'),
-(8, 3, 1, 34, 5000, 2, 10000, '', '19-07-2023', '2023-07-21 14:47:35', '2023-07-21 14:47:35'),
-(9, 3, 1, 4, 10000, 2, 20000, 'Dr. Swapnil', '19-07-2023', '2023-07-21 14:47:35', '2023-07-21 14:47:35'),
-(10, 3, 1, 34, 5000, 2, 10000, '', '20-07-2023', '2023-07-21 14:48:29', '2023-07-21 14:48:29'),
-(11, 3, 1, 4, 10000, 2, 20000, 'Dr. Swapnil', '20-07-2023', '2023-07-21 14:48:29', '2023-07-21 14:48:29'),
-(12, 3, 1, 34, 5000, 2, 10000, '', '21-07-2023', '2023-07-24 12:24:25', '2023-07-24 12:24:25'),
-(13, 3, 1, 4, 10000, 2, 20000, 'Dr. Swapnil', '21-07-2023', '2023-07-24 12:24:25', '2023-07-24 12:24:25'),
-(14, 2, 1, 33, 1000, 1, 1000, '', '27-07-2023', '2023-07-27 15:28:37', '2023-07-27 15:28:37'),
-(15, 4, 1, 4, 500, 1, 500, 'Dr. Swapnil', '27-07-2023', '2023-07-27 17:27:02', '2023-07-27 17:27:02'),
-(16, 4, 1, 34, 1000, 2, 2000, '', '27-07-2023', '2023-07-27 17:27:02', '2023-07-27 17:27:02'),
-(17, 4, 1, 4, 500, 1, 500, 'Dr. Swapnil', '28-07-2023', '2023-07-27 17:28:10', '2023-07-27 17:28:10'),
-(18, 4, 1, 34, 500, 1, 500, '', '28-07-2023', '2023-07-27 17:28:10', '2023-07-27 17:28:10');
+(1, 1, 2, 37, 150, 1, 150, '', '02-08-2023', '2023-08-02 17:55:13', '2023-08-02 17:55:13'),
+(2, 2, 3, 1, 1000, 1, 1000, '', '02-08-2023', '2023-08-02 18:05:31', '2023-08-02 18:05:31'),
+(3, 2, 3, 3, 1000, 1, 1000, '', '02-08-2023', '2023-08-02 18:05:31', '2023-08-02 18:05:31'),
+(4, 2, 3, 2, 500, 1, 500, '', '02-08-2023', '2023-08-02 18:05:31', '2023-08-02 18:05:31'),
+(5, 2, 3, 34, 500, 1, 500, '', '02-08-2023', '2023-08-02 18:05:31', '2023-08-02 18:05:31'),
+(6, 2, 3, 4, 500, 1, 500, '', '02-08-2023', '2023-08-02 18:05:31', '2023-08-02 18:05:31'),
+(7, 2, 3, 2, 500, 1, 500, '', '03-08-2023', '2023-08-02 18:07:12', '2023-08-02 18:07:12'),
+(8, 2, 3, 34, 500, 1, 500, '', '03-08-2023', '2023-08-02 18:07:12', '2023-08-02 18:07:12'),
+(9, 2, 3, 4, 500, 1, 500, 'Dr. Swapnil', '03-08-2023', '2023-08-02 18:07:12', '2023-08-02 18:07:12');
 
 -- --------------------------------------------------------
 
@@ -280,7 +246,8 @@ INSERT INTO `tbl_charges_type` (`id`, `charges_name`, `status`, `del_status`, `c
 (33, 'Other Dressing with TT Injection', 1, 1, '2023-06-06 18:36:50', '2023-06-06 18:36:50'),
 (34, 'Nursing Charges', 1, 1, '2023-06-06 18:37:19', '2023-06-29 16:24:45'),
 (35, 'qqq', 1, 0, '2023-06-29 13:02:56', '2023-06-29 13:51:24'),
-(36, 'aaa', 1, 0, '2023-06-29 16:15:47', '2023-06-29 16:15:52');
+(36, 'aaa', 1, 0, '2023-06-29 16:15:47', '2023-06-29 16:15:52'),
+(37, 'OPD Charges', 1, 1, '2023-07-29 19:45:14', '2023-07-29 19:45:14');
 
 -- --------------------------------------------------------
 
@@ -6066,7 +6033,17 @@ CREATE TABLE `tbl_designation` (
 INSERT INTO `tbl_designation` (`id`, `designation_name`, `status`, `del_status`, `created_at`, `updated_at`) VALUES
 (1, 'Gynaecologist', 1, 1, '2023-05-05 10:57:54', '2023-05-05 10:57:54'),
 (2, 'Physician & Diabetologist', 1, 1, '2023-05-05 10:57:54', '2023-05-05 10:57:54'),
-(3, 'Orthopaedic / Spine Surgeon', 1, 1, '2023-05-05 10:57:54', '2023-05-05 10:57:54');
+(3, 'Orthopaedic / Spine Surgeon', 1, 1, '2023-05-05 10:57:54', '2023-05-05 10:57:54'),
+(4, 'Pediatrician', 1, 1, '2023-08-16 10:51:39', '2023-08-16 10:51:39'),
+(5, 'Urologist', 1, 1, '2023-08-16 10:52:11', '2023-08-16 10:52:11'),
+(6, 'Neurosurgeon', 1, 1, '2023-08-16 10:52:28', '2023-08-16 10:52:28'),
+(7, 'Physiotherapist', 1, 1, '2023-08-16 10:52:35', '2023-08-16 10:52:35'),
+(8, 'Arthroscopy Specialist', 1, 1, '2023-08-16 10:52:42', '2023-08-16 10:52:42'),
+(9, 'General & Laparoscopic Surgeon', 1, 1, '2023-08-16 10:52:51', '2023-08-16 10:52:51'),
+(10, 'Psychiatrist', 1, 1, '2023-08-16 10:53:05', '2023-08-16 10:53:05'),
+(11, 'AnoRectal Surgeon(MS)', 1, 1, '2023-08-16 10:53:40', '2023-08-16 10:53:40'),
+(12, 'Orthopaedicss', 0, 0, '2023-08-16 10:53:52', '2023-08-16 11:22:56'),
+(13, 'Nepharologist', 1, 1, '2023-08-16 13:01:01', '2023-08-16 13:01:01');
 
 -- --------------------------------------------------------
 
@@ -6099,7 +6076,7 @@ INSERT INTO `tbl_diseases` (`id`, `diseases_name`, `status`, `del_status`, `crea
 (9, 'Arthritis', 1, 1, '2023-05-10 15:20:21', '2023-05-10 15:20:21'),
 (10, 'Asthma', 1, 1, '2023-05-10 15:20:21', '2023-05-10 15:20:21'),
 (11, 'Autism', 1, 1, '2023-05-10 15:20:21', '2023-05-10 15:20:21'),
-(12, 'Babesiosis', 1, 1, '2023-05-10 15:20:21', '2023-05-10 15:20:21'),
+(12, 'Babesiosis', 0, 1, '2023-05-10 15:20:21', '2023-08-16 11:00:43'),
 (13, 'Back pain', 1, 1, '2023-05-10 15:20:21', '2023-05-10 15:20:21'),
 (14, 'Bacterial Vaginosis', 1, 1, '2023-05-10 15:20:21', '2023-05-10 15:20:21'),
 (15, 'Blood clots', 1, 1, '2023-05-10 15:20:21', '2023-05-10 15:20:21'),
@@ -6320,6 +6297,7 @@ CREATE TABLE `tbl_doctor` (
   `city` varchar(100) DEFAULT NULL,
   `pincode` varchar(10) DEFAULT NULL,
   `image` longtext DEFAULT NULL,
+  `pan_card` longtext DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
   `del_status` int(11) NOT NULL DEFAULT 1,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -6330,10 +6308,11 @@ CREATE TABLE `tbl_doctor` (
 -- Dumping data for table `tbl_doctor`
 --
 
-INSERT INTO `tbl_doctor` (`id`, `first_name`, `last_name`, `email`, `contact_no`, `dob`, `fk_gender_id`, `fk_designation_id`, `address1`, `address2`, `state`, `city`, `pincode`, `image`, `status`, `del_status`, `created_at`, `updated_at`) VALUES
-(1, 'DR. SWAPNIL', 'GANESHPURE', 'swapnilganeshpure@gmail.com', '8010597078', '20/05/1988', 1, 2, 'Mumbai', '', '12', '329', '400007', 'uploads/236158_SWAPNILGANESHPURE.jpg', 1, 1, '2023-05-05 17:12:48', '2023-05-05 17:14:08'),
-(2, 'DR. DIPTI', 'GUPTA', 'diptigupta@gmail.com', '8010597077', '21-05-1985', 2, 1, 'Mumbai', '', '12', '329', '400007', 'uploads/873677_Dr.-DIPTI-GUPTA.jpg', 1, 1, '2023-05-06 09:36:05', '2023-05-06 09:36:05'),
-(3, 'DR. ARVIND', 'VATKAR', 'arvindvatkar@gmail.com', '8010597089', '21-05-1985', 1, 3, 'Mumbai', 'Mumbai', '12', '329', '400007', 'uploads/422420_Dr.-ARVIND-VATKAR.jpg', 1, 1, '2023-05-06 09:40:01', '2023-05-06 13:55:49');
+INSERT INTO `tbl_doctor` (`id`, `first_name`, `last_name`, `email`, `contact_no`, `dob`, `fk_gender_id`, `fk_designation_id`, `address1`, `address2`, `state`, `city`, `pincode`, `image`, `pan_card`, `status`, `del_status`, `created_at`, `updated_at`) VALUES
+(1, 'DR. SWAPNIL', 'GANESHPURE', 'swapnilganeshpure@gmail.com', '8010597078', '20/05/1988', 1, 2, 'Mumbai', '', '12', '329', '400007', 'uploads/236158_SWAPNILGANESHPURE.jpg', NULL, 1, 1, '2023-05-05 17:12:48', '2023-05-05 17:14:08'),
+(2, 'DR. DIPTI', 'GUPTA', 'diptigupta@gmail.com', '8010597077', '21-05-1985', 2, 1, 'Mumbai', '', '12', '329', '400007', 'uploads/873677_Dr.-DIPTI-GUPTA.jpg', NULL, 1, 1, '2023-05-06 09:36:05', '2023-05-06 09:36:05'),
+(3, 'DR. ARVIND', 'VATKAR', 'arvindvatkar@gmail.com', '8010597089', '21-05-1985', 1, 3, 'Mumbai', 'Mumbai', '12', '329', '400007', 'uploads/422420_Dr.-ARVIND-VATKAR.jpg', NULL, 1, 1, '2023-05-06 09:40:01', '2023-05-06 13:55:49'),
+(4, 'ss', 'ss', 'shirin111@stzsoft.com', '8010597034', '21-05-1992', 2, 1, 'Mumbai', '', '22', '2707', '400051', 'uploads/767193_1.png', 'uploads/pan_card/946837_download_(4).jpg', 1, 1, '2023-08-16 13:27:45', '2023-08-16 14:11:42');
 
 -- --------------------------------------------------------
 
@@ -6375,19 +6354,12 @@ CREATE TABLE `tbl_invoice_no` (
 --
 
 INSERT INTO `tbl_invoice_no` (`id`, `invoice_no`, `created_at`, `updated_at`) VALUES
-(1, 'FXH2023001', '2023-07-12 15:43:38', '2023-07-12 15:43:38'),
-(2, 'FXH2023002', '2023-07-12 15:43:38', '2023-07-12 15:43:38'),
-(3, 'FXH2023003', '2023-07-17 10:48:11', '2023-07-17 10:48:11'),
-(4, 'FXH2023004', '2023-07-17 10:49:59', '2023-07-17 10:49:59'),
-(5, 'FXH2023005', '2023-07-19 12:12:28', '2023-07-19 12:12:28'),
-(6, 'FXH2023006', '2023-07-21 13:23:30', '2023-07-21 13:23:30'),
-(7, 'FXH2023007', '2023-07-27 15:28:37', '2023-07-27 15:28:37'),
-(8, 'FXH2023008', '2023-07-27 17:27:02', '2023-07-27 17:27:02'),
-(9, 'FXH2023009', '2023-07-27 17:28:10', '2023-07-27 17:28:10'),
-(10, 'FXH2023010', '2023-07-27 17:28:37', '2023-07-27 17:28:37'),
-(11, 'FXH2023011', '2023-07-27 17:30:33', '2023-07-27 17:30:33'),
-(12, 'FXH2023012', '2023-07-27 17:30:33', '2023-07-27 17:30:33'),
-(13, 'FXH2023013', '2023-07-27 17:30:34', '2023-07-27 17:30:34');
+(1, 'FXH2023001', '2023-08-02 17:55:13', '2023-08-02 17:55:13'),
+(2, 'FXH2023002', '2023-08-02 18:00:13', '2023-08-02 18:00:13'),
+(3, 'FXH2023003', '2023-08-02 18:05:47', '2023-08-02 18:05:47'),
+(4, 'FXH2023004', '2023-08-02 18:12:08', '2023-08-02 18:12:08'),
+(5, 'FXH2023005', '2023-08-02 18:12:09', '2023-08-02 18:12:09'),
+(6, 'FXH2023006', '2023-08-02 18:12:09', '2023-08-02 18:12:09');
 
 -- --------------------------------------------------------
 
@@ -6453,7 +6425,10 @@ INSERT INTO `tbl_patients` (`id`, `patient_id`, `first_name`, `last_name`, `emai
 (1, 'LCT24609079', 'Shirin', 'Ragbansingh', 'ragbansinghshirin@gmail.com', '8010597070', '21/05/1992', 2, 1, 5, 'Asha Vihar Bld No 1', 'Hendre Pada Rd Kulgaon Badlapur (West)', 12, 344, '421503', NULL, 'Varsha Ragbansingh', '7875279816', 1, 0, '2023-05-08 10:15:33', '2023-06-29 14:28:48'),
 (2, 'WZGL4297935', 'Mansi', 'Palkar', 'mansipalkar@gmail.com', '8010594040', '19-04-1995', 2, 1, 1, 'Mumbai', 'Mumbai', 12, 779, '400007', 'uploads/insurance_document/WZGL4297935/502765_Circuit_Store__Order_Report.pdf', 'Shirin Ragbansinghqqqqq', '8010597075', 1, 1, '2023-05-09 17:41:41', '2023-05-18 10:12:16'),
 (3, 'OFJ62863667', 'Sharon', 'Ragbansingh', 'sharonragbansingh@gmail.com', '8626565656', '21-04-1994', 2, 1, 1, 'Mumbai', 'Mumbai', 22, 2503, '421503', 'uploads/insurance_document/OFJ62863667/203375_Database_Relationship.pdf', 'Shirin Ragbansingh', '8010597075', 1, 1, '2023-05-16 10:47:33', '2023-05-16 12:17:42'),
-(4, '2A704420208', 'Akash', 'Patil', 'test@gmail.com', '9656522332', '06-03-1995', 1, 1, 1, 'Mumbai', 'Mumbai', 22, 2836, '542323', 'uploads/insurance_document/2A704420208/310069_Circuit_Store__Order_Report_(1).pdf', 'Shirin Ragbansingh', '1234567890', 1, 1, '2023-05-18 10:14:44', '2023-05-18 10:14:44');
+(4, '2A704420208', 'Akash', 'Patil', 'test@gmail.com', '9656522332', '06-03-1995', 1, 1, 1, 'Mumbai', 'Mumbai', 22, 2836, '542323', 'uploads/insurance_document/2A704420208/310069_Circuit_Store__Order_Report_(1).pdf', 'Shirin Ragbansingh', '1234567890', 1, 1, '2023-05-18 10:14:44', '2023-05-18 10:14:44'),
+(5, 'E4W24133502', 'qq', 'qq', 'qq@stzsoft.com', '8010594070', '12-06-1990', 1, 1, 1, 'Mumbai', '', 22, 2707, '400076', 'uploads/insurance_document/E4W24133502/', 'Shirin Ragbansingh', '1234567890', 1, 0, '2023-08-08 16:20:19', '2023-08-08 16:20:58'),
+(6, 'N9EP5842723', 'ww', 'weweew', 'ww@stzsoft.com', '8010597077', '08-08-2023', 2, 1, 1, 'Mumbai', '', 22, 2707, '400007', 'uploads/insurance_document/N9EP5842723/', 'Shirin Ragbansingh', '1234567890', 1, 0, '2023-08-08 16:22:04', '2023-08-08 16:27:11'),
+(7, 'N9EP5842723', 'ww', 'weweew', 'ww@stzsoft.com', '8010597077', '08-08-2023', 2, 1, 1, 'Mumbai', '', 22, 2707, '400007', 'uploads/insurance_document/N9EP5842723/', 'Shirin Ragbansingh', '1234567890', 1, 1, '2023-08-08 16:27:15', '2023-08-08 16:27:15');
 
 -- --------------------------------------------------------
 
@@ -6480,9 +6455,7 @@ CREATE TABLE `tbl_payment` (
   `id` bigint(20) NOT NULL,
   `fk_patient_id` int(11) DEFAULT NULL,
   `fk_appointment_id` int(11) DEFAULT NULL,
-  `payment_details` longtext DEFAULT NULL,
-  `deposite_amount` double DEFAULT NULL,
-  `invoice_no` longtext DEFAULT NULL,
+  `grand_total` double DEFAULT NULL,
   `added_by` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -6492,8 +6465,8 @@ CREATE TABLE `tbl_payment` (
 -- Dumping data for table `tbl_payment`
 --
 
-INSERT INTO `tbl_payment` (`id`, `fk_patient_id`, `fk_appointment_id`, `payment_details`, `deposite_amount`, `invoice_no`, `added_by`, `created_at`, `updated_at`) VALUES
-(1, NULL, NULL, NULL, 1000, NULL, NULL, '2023-07-27 17:16:20', '2023-07-27 17:16:20');
+INSERT INTO `tbl_payment` (`id`, `fk_patient_id`, `fk_appointment_id`, `grand_total`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, 150, 10, '2023-08-02 18:00:13', '2023-08-02 18:00:13');
 
 -- --------------------------------------------------------
 
@@ -6509,8 +6482,6 @@ CREATE TABLE `tbl_payment_history` (
   `amount` double DEFAULT NULL,
   `mediclaim_amount` double DEFAULT NULL,
   `total_amount` double DEFAULT NULL,
-  `total_paid_amount` double DEFAULT NULL,
-  `remaining_amount` double DEFAULT NULL,
   `date` varchar(100) DEFAULT NULL,
   `invoice_no` varchar(100) DEFAULT NULL,
   `invoice_pdf` longtext DEFAULT NULL,
@@ -6525,11 +6496,9 @@ CREATE TABLE `tbl_payment_history` (
 -- Dumping data for table `tbl_payment_history`
 --
 
-INSERT INTO `tbl_payment_history` (`id`, `fk_patient_id`, `fk_appointment_id`, `fk_payment_id`, `amount`, `mediclaim_amount`, `total_amount`, `total_paid_amount`, `remaining_amount`, `date`, `invoice_no`, `invoice_pdf`, `used_status`, `is_advance`, `added_by`, `created_at`, `updated_at`) VALUES
-(1, 1, 3, 1, 2000, NULL, 2000, NULL, NULL, '17-07-2023', 'FXH2023004', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_17_07_2023_10_49_59.pdf', 1, 1, 10, '2023-07-17 10:49:59', '2023-07-17 10:49:59'),
-(2, 1, 3, 2, 1000, NULL, 1000, NULL, NULL, '18-07-2023', 'FXH2023005', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_18_07_2023_12_12_28.pdf', 1, 1, 10, '2023-07-19 12:12:28', '2023-07-19 12:12:28'),
-(3, 1, 3, 4, 50000, NULL, 50000, NULL, NULL, '19-07-2023', 'FXH2023006', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_19_07_2023_01_23_30.pdf', 1, 1, 10, '2023-07-21 13:23:30', '2023-07-21 13:23:30'),
-(4, 1, 4, 3, 1000, NULL, 1000, NULL, NULL, '27-07-2023', 'FXH2023010', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/LCT24609079_advance_invoice_27_07_2023_05_28_37.pdf', 1, 1, 10, '2023-07-27 17:28:37', '2023-07-27 17:28:37');
+INSERT INTO `tbl_payment_history` (`id`, `fk_patient_id`, `fk_appointment_id`, `fk_payment_id`, `amount`, `mediclaim_amount`, `total_amount`, `date`, `invoice_no`, `invoice_pdf`, `used_status`, `is_advance`, `added_by`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, 4, 150, 0, 150, '02-08-2023', 'FXH2023002', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/WZGL429793502_08_2023_06_00_13_final_invoice.pdf', 1, 2, 10, '2023-08-02 18:00:13', '2023-08-02 18:00:13'),
+(2, 3, 2, 4, 2500, NULL, 2500, '02-08-2023', 'FXH2023003', 'http://localhost/feenixx_hospital/feenixx_hospital_api/uploads/invoice/OFJ62863667_advance_invoice_02_08_2023_06_05_47.pdf', 1, 1, 10, '2023-08-02 18:05:47', '2023-08-02 18:05:47');
 
 -- --------------------------------------------------------
 
@@ -6654,6 +6623,28 @@ INSERT INTO `tbl_states` (`id`, `name`, `country_id`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tbl_surgery_details`
+--
+
+CREATE TABLE `tbl_surgery_details` (
+  `id` bigint(20) NOT NULL,
+  `fk_appointment_id` int(11) DEFAULT NULL,
+  `surgery_date` varchar(100) DEFAULT NULL,
+  `surgery_name` varchar(100) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_surgery_details`
+--
+
+INSERT INTO `tbl_surgery_details` (`id`, `fk_appointment_id`, `surgery_date`, `surgery_name`, `created_at`, `updated_at`) VALUES
+(1, 2, '02-08-2023', NULL, '2023-08-02 18:07:41', '2023-08-02 18:07:41');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tbl_users`
 --
 
@@ -6687,7 +6678,11 @@ INSERT INTO `tbl_users` (`id`, `fk_id`, `first_name`, `last_name`, `email`, `con
 (7, 3, 'Sharon', 'Ragbansingh', 'sharonragbansingh@gmail.com', '8626565656', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, NULL, 1, '2023-05-16 10:47:33', '2023-05-16 10:47:33'),
 (8, 1, 'Mansi', 'Palkar', 'mansi.palkar@stzsoft.com', '8656555555', 'c2FUMklvMmwzWE9yOUF3OFVuRnM4Zz09', 3, 1, NULL, 1, '2023-05-17 15:54:05', '2023-05-17 15:54:05'),
 (9, 4, 'Akash', 'Patil', 'test@gmail.com', '9656522332', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, NULL, 1, '2023-05-18 10:14:44', '2023-05-18 10:14:44'),
-(10, 2, 'Jayshree', 'Badal', 'jayshreebadal@gmail.com', '0427780044', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 6, 1, NULL, 1, '2023-05-22 11:13:00', '2023-05-22 11:13:00');
+(10, 2, 'Jayshree', 'Badal', 'jayshreebadal@gmail.com', '0427780044', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 6, 1, NULL, 1, '2023-05-22 11:13:00', '2023-05-22 11:13:00'),
+(11, 5, 'qq', 'qq', 'qq@stzsoft.com', '8010594070', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, 10, 0, '2023-08-08 16:20:19', '2023-08-08 16:20:58'),
+(12, 6, 'ww', 'weweew', 'ww@stzsoft.com', '8010597077', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, 10, 0, '2023-08-08 16:22:04', '2023-08-08 16:27:11'),
+(13, 7, 'ww', 'weweew', 'ww@stzsoft.com', '8010597077', 'ZDNjZGJBYlRpbU1jNlNIVHdoWXJGZz09', 4, 1, 10, 1, '2023-08-08 16:27:15', '2023-08-08 16:27:15'),
+(14, 4, 'ss', 'ss', 'shirin111@stzsoft.com', '8010597034', 'VDlnK2FqVjVSUWphVkpQLzF6RmRjQT09', 2, 1, 1, 1, '2023-08-16 13:27:45', '2023-08-16 13:27:45');
 
 -- --------------------------------------------------------
 
@@ -6779,13 +6774,6 @@ INSERT INTO `tbl_ward` (`id`, `wards`, `status`, `del_status`, `created_at`, `up
 --
 ALTER TABLE `email_template`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `tbl_advance_amount`
---
-ALTER TABLE `tbl_advance_amount`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`,`fk_appointment_id`,`fk_patient_id`,`advance_amount`,`date`);
 
 --
 -- Indexes for table `tbl_appointment`
@@ -6903,7 +6891,7 @@ ALTER TABLE `tbl_payment`
 --
 ALTER TABLE `tbl_payment_history`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`,`fk_payment_id`,`total_amount`,`total_paid_amount`,`remaining_amount`),
+  ADD KEY `id` (`id`,`fk_patient_id`,`fk_appointment_id`,`fk_payment_id`,`total_amount`),
   ADD KEY `amount` (`amount`,`mediclaim_amount`,`invoice_no`,`used_status`,`is_advance`,`added_by`),
   ADD KEY `date` (`date`);
 
@@ -6924,6 +6912,12 @@ ALTER TABLE `tbl_staff`
 -- Indexes for table `tbl_states`
 --
 ALTER TABLE `tbl_states`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tbl_surgery_details`
+--
+ALTER TABLE `tbl_surgery_details`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -6965,16 +6959,10 @@ ALTER TABLE `email_template`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `tbl_advance_amount`
---
-ALTER TABLE `tbl_advance_amount`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
 -- AUTO_INCREMENT for table `tbl_appointment`
 --
 ALTER TABLE `tbl_appointment`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_appointment_sub_type`
@@ -6998,13 +6986,13 @@ ALTER TABLE `tbl_blood_group`
 -- AUTO_INCREMENT for table `tbl_charges`
 --
 ALTER TABLE `tbl_charges`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tbl_charges_type`
 --
 ALTER TABLE `tbl_charges_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `tbl_cities`
@@ -7016,7 +7004,7 @@ ALTER TABLE `tbl_cities`
 -- AUTO_INCREMENT for table `tbl_designation`
 --
 ALTER TABLE `tbl_designation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `tbl_diseases`
@@ -7028,7 +7016,7 @@ ALTER TABLE `tbl_diseases`
 -- AUTO_INCREMENT for table `tbl_doctor`
 --
 ALTER TABLE `tbl_doctor`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tbl_gender`
@@ -7040,7 +7028,7 @@ ALTER TABLE `tbl_gender`
 -- AUTO_INCREMENT for table `tbl_invoice_no`
 --
 ALTER TABLE `tbl_invoice_no`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tbl_marital_status`
@@ -7052,7 +7040,7 @@ ALTER TABLE `tbl_marital_status`
 -- AUTO_INCREMENT for table `tbl_patients`
 --
 ALTER TABLE `tbl_patients`
-  MODIFY `id` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbl_patient_medical_documents`
@@ -7070,7 +7058,7 @@ ALTER TABLE `tbl_payment`
 -- AUTO_INCREMENT for table `tbl_payment_history`
 --
 ALTER TABLE `tbl_payment_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_payment_type`
@@ -7091,10 +7079,16 @@ ALTER TABLE `tbl_states`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
+-- AUTO_INCREMENT for table `tbl_surgery_details`
+--
+ALTER TABLE `tbl_surgery_details`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tbl_user_type`
