@@ -132,6 +132,138 @@ function generate_invoice_no()
     }
     return $new_invoice_id;
 }
+// function generate_final_invoice_pdf($id='')
+// {
+//      $CI = get_instance();
+//      ini_set('memory_limit', '256M');
+//      $CI->load->model('superadmin_model');
+//      $date_of_discharge = $CI->model->selectWhereData('tbl_appointment',array('id'=>$id),array('*'));
+//      $charges_data = $CI->superadmin_model->get_final_invoice_details($id);
+//      $final_charges_draft = [];
+//      $is_discharge_done = false;
+//      $invoice_date_1 = date('d-m-Y');
+//      $invoice_date_11 = str_replace("-", "_", $invoice_date_1);
+//      $invoice_date_12 = $invoice_date_11."_".date("h_i_s");
+//      foreach ($charges_data as $charges_data_key => $charges_data_row) {
+//         $final_charges_amount = 0;
+//         $final_charges_count = 0;
+//         $charges_amount_1 = $charges_data_row['charges_amount']; 
+//         $charges_amount_explode = explode(',',$charges_amount_1);
+//         $charges_count_1 = $charges_data_row['charges_count']; 
+//         $charges_count_explode = explode(',',$charges_count_1);
+//         $date_count_1 = $charges_data_row['date']; 
+//         $date_count_explode = explode(',',$date_count_1);
+
+//         $last_date = end($date_count_explode);
+//         foreach ($charges_amount_explode as $charges_amount_explode_key => $charges_amount_explode_row) {
+//             $total_charges_amount =  $charges_amount_explode_row * $charges_count_explode[$charges_amount_explode_key];
+//             $single_price_unit = $charges_amount_explode[0]/$charges_count_explode[0];
+//             $final_charges_amount = $total_charges_amount+$final_charges_amount;
+//             $final_charges_count = $final_charges_count+$charges_count_explode[$charges_amount_explode_key];
+//         }
+//         if($last_date ==$date_of_discharge['date_of_discharge']){
+//             $is_discharge_done = true;
+//         }
+//         $charges_data[$charges_data_key]['single_price_unit'] = $single_price_unit;
+//         $charges_data[$charges_data_key]['final_amount'] = $final_charges_amount;
+//         $charges_data[$charges_data_key]['final_count'] = $final_charges_count;
+//      }
+//      $doctor_data = $CI->model->selectWhereData('tbl_doctor',array('id'=>$date_of_discharge['fk_doctor_id']),array('first_name','last_name'));
+//      $surgery_details = $CI->model->selectWhereData('tbl_surgery_details',array('fk_appointment_id'=>$id),array('GROUP_CONCAT(surgery_date) as surgery_date'),true,'','fk_appointment_id');
+//       $payment_info = $CI->paymentcalculation->calculate_payment($id);
+//      $details['invoice_no'] = generate_invoice_no();
+//      $details['date_of_discharge'] =$date_of_discharge;
+//      $details['charges_data'] =$charges_data;
+//      $details['doctor_data'] =$doctor_data;
+//      $details['payment_data'] =$payment_info;
+//      $details['surgery_details'] =$surgery_details;
+//      $details['date'] = date('d-m-Y');
+//      $details['diseases'] = $CI->superadmin_model->get_patient_disease_details($id);
+//      // foreach ($charges_data as $charges_data_key => $charges_data_row) {
+//         // if($is_discharge_done){ 
+//         //     $CI->load->library('Pdf');
+//         //     $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_invoice.pdf";
+//         //     $pdf = new Pdf();
+//         //     $html = $CI->load->view('invoice', array('data'=>$details),true);
+//         //     // $pdf->SetTitle('Pdf Example');
+//         //     $pdf->SetHeaderMargin(30);
+//         //     $pdf->SetTopMargin(20);
+//         //     $pdf->setFooterMargin(20);
+//         //     $pdf->SetAutoPageBreak(true);
+//         //     // $pdf->SetAuthor('Author');
+//         //     $pdf->SetDisplayMode('real', 'default');
+//         //     $pdf->AddPage();
+//         //     $pdf->writeHTML($html, true, false, true, false, '');
+//         //     $pdf->Output($pdfFilePath, "F");
+//         // }
+//         if($date_of_discharge['admission_type']==2 && $is_discharge_done){          
+//               $patient_ids = str_replace("/", "_", @$charges_data[0]['patient_id']);   
+//                 $pdfFilePath = FCPATH . "uploads/invoice/".@$patient_ids."_".$invoice_date_12."_invoice.pdf";
+//                 $CI->load->library('m_pdf');
+//                 $html = $CI->load->view('invoice', array('data'=>$details),true);
+//                 $mpdf = new mPDF();
+//                 $mpdf->SetDisplayMode('fullpage');
+//                 $mpdf->AddPage('P', 'A4');
+//                 $mpdf->WriteHTML($html);
+//                 ob_end_clean();
+//                 $mpdf->Output($pdfFilePath, "F");  
+//                 $pdf = base_url()."uploads/invoice/".@$patient_ids."_".$invoice_date_12."_invoice.pdf";
+//                  $curl_data = array('invoice_pdf'=>$pdf);
+//                  $CI->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
+//                  $invoice_no = $details['invoice_no'];
+//                  $insert_invoice_no = array('invoice_no'=>$invoice_no);
+//                  $CI->model->insertData('tbl_invoice_no',$insert_invoice_no);
+//             // $CI->load->library('Pdf');
+//             //     $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_invoice.pdf";
+//             //     $pdf = new Pdf();
+//             //     $html = $CI->load->view('invoice', array('data'=>$details),true);
+//             //     // $pdf->SetTitle('Pdf Example');
+//             //     $pdf->SetHeaderMargin(30);
+//             //     $pdf->SetTopMargin(20);
+//             //     $pdf->setFooterMargin(20);
+//             //     $pdf->SetAutoPageBreak(true);
+//             //     // $pdf->SetAuthor('Author');
+//             //     $pdf->SetDisplayMode('real', 'default');
+//             //     $pdf->AddPage();
+//             //     $pdf->writeHTML($html, true, false, true, false, '');
+//             //     $pdf->Output($pdfFilePath, "F");
+//         }
+//         else if($date_of_discharge['admission_type']== 1){             
+//                 $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
+//                 $CI->load->library('m_pdf');
+//                 $data = $details;
+//                 $html = $CI->load->view('invoice', array('data'=>$data),true);
+//                 $mpdf = new mPDF();
+//                 $mpdf->SetDisplayMode('fullpage');
+//                 $mpdf->AddPage('P', 'A4');
+//                 $mpdf->WriteHTML($html);
+//                 ob_end_clean();
+//                 $mpdf->Output($pdfFilePath, "F");
+
+//                 $pdf = base_url()."uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
+//                  $curl_data = array('invoice_pdf'=>$pdf);
+//                  $CI->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
+//                  $invoice_no = $details['invoice_no'];
+//                  $insert_invoice_no = array('invoice_no'=>$invoice_no);
+//                  $CI->model->insertData('tbl_invoice_no',$insert_invoice_no);
+//                 // $CI->load->library('Pdf');
+//                 // $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_invoice.pdf";
+//                 // $pdf = new Pdf();
+//                 // $html = $CI->load->view('invoice', array('data'=>$details),true);
+//                 // // $pdf->SetTitle('Pdf Example');
+//                 // $pdf->SetHeaderMargin(30);
+//                 // $pdf->SetTopMargin(20);
+//                 // $pdf->setFooterMargin(20);
+//                 // $pdf->SetAutoPageBreak(true);
+//                 // // $pdf->SetAuthor('Author');
+//                 // $pdf->SetDisplayMode('real', 'default');
+//                 // $pdf->AddPage();
+//                 // $pdf->writeHTML($html, true, false, true, false, '');
+//                 // $pdf->Output($pdfFilePath, "F"); 
+//             }
+//      // }
+     
+// }
 function generate_final_invoice_pdf($id='')
 {
      $CI = get_instance();
@@ -153,12 +285,14 @@ function generate_final_invoice_pdf($id='')
         $charges_count_explode = explode(',',$charges_count_1);
         $date_count_1 = $charges_data_row['date']; 
         $date_count_explode = explode(',',$date_count_1);
+        $charges_total_amount_1 = $charges_data_row['charges_total_amount'];
+        $charges_total_amount = explode(',',$charges_total_amount_1);
         $last_date = end($date_count_explode);
-        foreach ($charges_amount_explode as $charges_amount_explode_key => $charges_amount_explode_row) {
-            $total_charges_amount =  $charges_amount_explode_row * $charges_count_explode[$charges_amount_explode_key];
-            $single_price_unit = $charges_amount_explode[0]/$charges_count_explode[0];
+        foreach ($charges_total_amount as $charges_total_amount_key => $charges_total_amount_row) {
+            $total_charges_amount =  $charges_amount_explode[$charges_total_amount_key] * $charges_count_explode[$charges_total_amount_key];
+            $single_price_unit = $charges_total_amount[0]/$charges_count_explode[0];
             $final_charges_amount = $total_charges_amount+$final_charges_amount;
-            $final_charges_count = $final_charges_count+$charges_count_explode[$charges_amount_explode_key];
+            $final_charges_count = $final_charges_count+$charges_count_explode[$charges_total_amount_key];
         }
         if($last_date ==$date_of_discharge['date_of_discharge']){
             $is_discharge_done = true;
@@ -196,8 +330,8 @@ function generate_final_invoice_pdf($id='')
         //     $pdf->Output($pdfFilePath, "F");
         // }
         if($date_of_discharge['admission_type']==2 && $is_discharge_done){          
-                 
-                $pdfFilePath = FCPATH . "uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
+              $patient_ids = str_replace("/", "_", @$charges_data[0]['patient_id']);   
+                $pdfFilePath = FCPATH . "uploads/invoice/".@$patient_ids."_".$invoice_date_12."_invoice.pdf";
                 $CI->load->library('m_pdf');
                 $html = $CI->load->view('invoice', array('data'=>$details),true);
                 $mpdf = new mPDF();
@@ -206,7 +340,7 @@ function generate_final_invoice_pdf($id='')
                 $mpdf->WriteHTML($html);
                 ob_end_clean();
                 $mpdf->Output($pdfFilePath, "F");  
-                $pdf = base_url()."uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
+                $pdf = base_url()."uploads/invoice/".@$patient_ids."_".$invoice_date_12."_invoice.pdf";
                  $curl_data = array('invoice_pdf'=>$pdf);
                  $CI->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
                  $invoice_no = $details['invoice_no'];

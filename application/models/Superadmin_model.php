@@ -22,7 +22,7 @@ class Superadmin_model extends CI_Model {
 	}
 	public function get_patient_details_on_patient_id($id='')
 	{
-		$this->db->select('tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_gender.gender,tbl_blood_group.blood_group');
+		$this->db->select('tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_gender.gender,tbl_blood_group.blood_group,tbl_patients.insurance_status,tbl_patients.company_name');
 		$this->db->from('tbl_patients');
 		$this->db->join('tbl_gender','tbl_gender.id=tbl_patients.fk_gender_id','left');
 		$this->db->join('tbl_blood_group','tbl_blood_group.id=tbl_patients.fk_blood_group_id','left');
@@ -119,7 +119,7 @@ class Superadmin_model extends CI_Model {
 	}
 	public function get_payment_data_on_appointment_id($id='')
 	{
-		$this->db->select('tbl_appointment.*,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_blood_group.blood_group,tbl_diseases.diseases_name,tbl_gender.gender,tbl_payment.id as payment_id,tbl_appointment_type.type,tbl_appointment_sub_type.sub_type');
+		$this->db->select('tbl_appointment.*,tbl_patients.patient_id,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.email,tbl_patients.contact_no,tbl_doctor.first_name as doctor_first_name,tbl_doctor.last_name as doctor_last_name,tbl_blood_group.blood_group,tbl_diseases.diseases_name,tbl_gender.gender,tbl_payment.id as payment_id,tbl_appointment_type.type,tbl_appointment_sub_type.sub_type,tbl_patients.insurance_status,tbl_patients.company_name');
 		$this->db->from('tbl_appointment');
 		$this->db->join('tbl_patients','tbl_patients.id=tbl_appointment.fk_patient_id','left');
 		$this->db->join('tbl_doctor','tbl_doctor.id=tbl_appointment.fk_doctor_id','left');
@@ -224,7 +224,7 @@ class Superadmin_model extends CI_Model {
 
 	public function get_final_invoice_details($fk_appointment_id="",$fk_patient_id='')
 	{
-		$this->db->select('GROUP_CONCAT(tbl_charges.amount) AS charges_amount,GROUP_CONCAT(tbl_charges.no_of_count) AS charges_count,GROUP_CONCAT(tbl_charges.date) as date,tbl_charges_type.charges_name,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
+		$this->db->select('GROUP_CONCAT(tbl_charges.amount) AS charges_amount,GROUP_CONCAT(tbl_charges.no_of_count) AS charges_count,GROUP_CONCAT(tbl_charges.date) as date,GROUP_CONCAT(tbl_charges.total_amount) AS charges_total_amount,tbl_charges_type.charges_name,tbl_patients.first_name,tbl_patients.last_name,tbl_patients.patient_id');
 		$this->db->from('tbl_charges');
 		$this->db->join('tbl_charges_type','tbl_charges.fk_charges_type_id=tbl_charges_type.id','left');
 		$this->db->join('tbl_patients','tbl_charges.fk_patient_id=tbl_patients.id','left');

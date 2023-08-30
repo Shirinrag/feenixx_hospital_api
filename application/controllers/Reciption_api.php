@@ -204,7 +204,8 @@ class Reciption_api extends REST_Controller {
                            $invoice_date_12 = $invoice_date_11."_".date("h_i_s");
 
                             $patient_id = $this->model->selectWhereData('tbl_patients',array('id'=>$fk_patient_id),array('patient_id'));
-                            $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id'].$invoice_date_12."_final_invoice.pdf";
+                            $patient_id_1 = str_replace("/","_",$patient_id['patient_id']);
+                            $invoice_pdf = base_url() . "uploads/invoice/".$patient_id_1.$invoice_date_12."_final_invoice.pdf";
 
                             $payment_info = $this->paymentcalculation->calculate_payment($fk_appointment_id);
 
@@ -265,7 +266,7 @@ class Reciption_api extends REST_Controller {
                             // $pdf->Output($pdfFilePath, "F");
                             
                             ini_set('memory_limit', '256M');
-                            $pdfFilePath = FCPATH . "uploads/invoice/".$payment_details['patient_id'].$invoice_date_12."_final_invoice.pdf";
+                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id_1.$invoice_date_12."_final_invoice.pdf";
                             $this->load->library('m_pdf');
                             $details = $payment_details;
                             $html = $this->load->view('payment_invoice', array('data'=>$details),true);
@@ -463,7 +464,7 @@ class Reciption_api extends REST_Controller {
                 }else{
                     $this->load->model('superadmin_model');
                     $patient_id = $this->model->selectWhereData('tbl_patients',array('id'=>$fk_patient_id),array('patient_id'));
-                    
+                     $patient_id_1 = str_replace("/","_",$patient_id['patient_id']);
 
                     foreach ($advance_amount as $advance_amount_key =>    $advance_amount_row) {
 
@@ -488,7 +489,7 @@ class Reciption_api extends REST_Controller {
                             //         $new_invoice_id = 'FXH'.$invoice_rep;
                             // }
                              $new_invoice_id = generate_invoice_no();
-                             $invoice_pdf = base_url() . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
+                             $invoice_pdf = base_url() . "uploads/invoice/".$patient_id_1."_advance_invoice_".$invoice_date_12.".pdf";
 
                              $insert_advance_payment = array(
                                 'fk_patient_id'=>$fk_patient_id,
@@ -512,7 +513,7 @@ class Reciption_api extends REST_Controller {
                             $advance_payment_details = $this->superadmin_model->get_advanced_payment_data($inserted_id);
                             error_reporting(0);
                             ini_set('memory_limit', '256M');                  
-                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id['patient_id']."_advance_invoice_".$invoice_date_12.".pdf";
+                            $pdfFilePath = FCPATH . "uploads/invoice/".$patient_id_1."_advance_invoice_".$invoice_date_12.".pdf";
                                                         
                              $this->load->library('m_pdf');
                             $data = $advance_payment_details;
@@ -609,11 +610,11 @@ class Reciption_api extends REST_Controller {
                     }
                     $final_invoice = generate_final_invoice_pdf($fk_appointment_id);
 
-                    $appointment_type = $this->model->selectWhereData('tbl_appointment',array('id'=>$fk_appointment_id),array('appointment_type'));
+                    $appointment_type = $this->model->selectWhereData('tbl_appointment',array('id'=>$fk_appointment_id),array('admission_type'));
                     $response['code'] = REST_Controller::HTTP_OK;
                     $response['status'] = true;
                     $response['message'] = 'Charges Added Successfully';
-                    $response['appointment_type']= $appointment_type['appointment_type'];
+                    $response['appointment_type']= $appointment_type['admission_type'];
                 }
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;
