@@ -11,7 +11,8 @@ class Doctor_api extends REST_Controller {
         header('Access-Control-Allow-Credentials: true');
         header('Access-Control-Allow-Headers: Content-Type');
         header('Content-Type: text/html; charset=utf-8');
-        header('Content-Type: application/json; charset=utf-8'); 
+        header('Content-Type: application/json; charset=utf-8');
+        
     }
 
    /*200 = OK
@@ -58,16 +59,17 @@ class Doctor_api extends REST_Controller {
         }
         echo json_encode($response);
     }
-    public function dashboard_count_data_get()
+    public function dashboard_count_data_post()
     {
         $response = array('code' => - 1, 'status' => false, 'message' => '');
         $validate = validateToken();
         if ($validate) {
+            $id = $this->input->post('id');
             $patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1));
             $male_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>1));
             $female_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>2));
             $transgender_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>3));
-            $appointment_count = $this->model->countrecord('tbl_appointment');
+            $appointment_count = $this->model->selectWhereData('tbl_appointment',array('fk_doctor_id'=>$id),array('count("id") as count'));
             $diseases_count = $this->model->CountWhereInRecord('tbl_diseases',array('del_status'=>1));
             $response['code'] = REST_Controller::HTTP_OK;
             $response['status'] = true;
@@ -76,7 +78,7 @@ class Doctor_api extends REST_Controller {
             $response['male_patient_count'] = $male_patient_count;
             $response['female_patient_count'] = $female_patient_count;
             $response['transgender_patient_count'] = $transgender_patient_count;
-            $response['appointment_count'] = $appointment_count;
+            $response['appointment_count'] = $appointment_count['count'];
             $response['diseases_count'] = $diseases_count;
         }else {
             $response['code'] = REST_Controller::HTTP_UNAUTHORIZED;

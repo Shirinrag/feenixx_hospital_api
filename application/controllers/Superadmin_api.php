@@ -816,7 +816,7 @@ class Superadmin_api extends REST_Controller {
             $male_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>1));
             $female_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>2));
             $transgender_patient_count = $this->model->CountWhereInRecord('tbl_patients',array('del_status'=>1,'fk_gender_id'=>3));
-            $appointment_count = $this->model->countrecord('tbl_appointment');
+            $appointment_count = $this->model->CountWhereInRecord('tbl_appointment',array('del_status'=>1));
             $diseases_count = $this->model->CountWhereInRecord('tbl_diseases',array('del_status'=>1));
             $response['code'] = REST_Controller::HTTP_OK;
             $response['status'] = true;

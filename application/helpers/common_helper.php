@@ -303,7 +303,7 @@ function generate_final_invoice_pdf($id='')
      }
      $doctor_data = $CI->model->selectWhereData('tbl_doctor',array('id'=>$date_of_discharge['fk_doctor_id']),array('first_name','last_name'));
      $surgery_details = $CI->model->selectWhereData('tbl_surgery_details',array('fk_appointment_id'=>$id),array('GROUP_CONCAT(surgery_date) as surgery_date'),true,'','fk_appointment_id');
-      $payment_info = $CI->paymentcalculation->calculate_payment($id);
+     $payment_info = $CI->paymentcalculation->calculate_payment($id);
      $details['invoice_no'] = generate_invoice_no();
      $details['date_of_discharge'] =$date_of_discharge;
      $details['charges_data'] =$charges_data;
@@ -329,8 +329,8 @@ function generate_final_invoice_pdf($id='')
         //     $pdf->writeHTML($html, true, false, true, false, '');
         //     $pdf->Output($pdfFilePath, "F");
         // }
-        if($date_of_discharge['admission_type']==2 && $is_discharge_done){          
-              $patient_ids = str_replace("/", "_", @$charges_data[0]['patient_id']);   
+        if($date_of_discharge['admission_type']==2 && $is_discharge_done){
+                $patient_ids = str_replace("/", "_", @$charges_data[0]['patient_id']);   
                 $pdfFilePath = FCPATH . "uploads/invoice/".@$patient_ids."_".$invoice_date_12."_invoice.pdf";
                 $CI->load->library('m_pdf');
                 $html = $CI->load->view('invoice', array('data'=>$details),true);
@@ -372,7 +372,6 @@ function generate_final_invoice_pdf($id='')
                 $mpdf->WriteHTML($html);
                 ob_end_clean();
                 $mpdf->Output($pdfFilePath, "F");
-
                 $pdf = base_url()."uploads/invoice/".@$charges_data[0]['patient_id']."_".$invoice_date_12."_invoice.pdf";
                  $curl_data = array('invoice_pdf'=>$pdf);
                  $CI->model->updateData('tbl_appointment',$curl_data,array('id'=>$id));
